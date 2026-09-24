@@ -1,0 +1,11 @@
+{
+  "name": "txg-information-center",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "24.x"
+  },
+  "dependencies": {
+    "libphonenumber-js": "^1.12.31"
+  }
+}
