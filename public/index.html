@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+/>
+
+<title>TXG Information Center</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:#07090d;
+  color:#f5f7fa;
+  font-family:Inter,Arial,sans-serif;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.container{
+  width:min(1100px,94%);
+  margin:auto;
+}
+
+.login{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.login-box{
+  width:min(420px,92%);
+  background:#10141b;
+  border:1px solid #252c38;
+  border-radius:24px;
+  padding:30px;
+  box-shadow:0 20px 80px #0008;
+}
+
+.logo{
+  font-size:28px;
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.sub{
+  color:#8f99a8;
+  margin-bottom:25px;
+}
+
+input,select,button{
+  width:100%;
+  border:0;
+  outline:0;
+  border-radius:13px;
+  padding:14px;
+  font-size:15px;
+}
+
+input,select{
+  background:#171c25;
+  color:#fff;
+  border:1px solid #29313d;
+}
+
+button{
+  cursor:pointer;
+  background:#fff;
+  color:#080a0e;
+  font-weight:800;
+}
+
+button:hover{
+  opacity:.9;
+}
+
+.error{
+  color:#ff7474;
+  margin-top:12px;
+}
+
+header{
+  border-bottom:1px solid #202630;
+  background:#0a0d12;
+  position:sticky;
+  top:0;
+  z-index:5;
+}
+
+.nav{
+  min-height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.brand{
+  font-size:20px;
+  font-weight:900;
+}
+
+.logout{
+  width:auto;
+  padding:9px 14px;
+  background:#171c25;
+  color:#fff;
+  border:1px solid #29313d;
+}
+
+main{
+  padding:30px 0 60px;
+}
+
+.hero{
+  margin-bottom:25px;
+}
+
+.hero h1{
+  margin:0 0 8px;
+  font-size:32px;
+}
+
+.hero p{
+  color:#8993a3;
+}
+
+.tools{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+  margin-bottom:22px;
+}
+
+.tool{
+  text-align:left;
+  background:#11161e;
+  color:#fff;
+  border:1px solid #252d39;
+}
+
+.tool.active{
+  border-color:#fff;
+  background:#1a2029;
+}
+
+.search{
+  background:#10141b;
+  border:1px solid #252c38;
+  padding:20px;
+  border-radius:20px;
+}
+
+.row{
+  display:grid;
+  grid-template-columns:1fr 180px;
+  gap:10px;
+}
+
+.result{
+  margin-top:20px;
+}
+
+.card{
+  background:#10141b;
+  border:1px solid #252c38;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:12px;
+}
+
+.card h3{
+  margin-top:0;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(210px,1fr));
+  gap:10px;
+}
+
+.item{
+  background:#171c25;
+  border-radius:12px;
+  padding:13px;
+}
+
+.label{
+  color:#8993a3;
+  font-size:12px;
+  margin-bottom:5px;
+}
+
+.value{
+  word-break:break-word;
+  font-weight:700;
+}
+
+.loading{
+  color:#9da7b5;
+}
+
+pre{
+  white-space:pre-wrap;
+  word-break:break-word;
+  color:#cdd5df;
+}
+
+@media(max-width:650px){
+  .row{
+    grid-template-columns:1fr;
+  }
+
+  .hero h1{
+    font-size:26px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<section id="loginPage" class="login">
+  <div class="login-box">
+    <div class="logo">TXG Information</div>
+    <div class="sub">
+      Secure lookup administration
+    </div>
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Admin password"
+      autocomplete="current-password"
+    >
+
+    <br><br>
+
+    <button onclick="login()">
+      LOGIN
+    </button>
+
+    <div id="loginError" class="error"></div>
+  </div>
+</section>
+
+
+<section id="app" class="hidden">
+
+<header>
+  <div class="container nav">
+    <div class="brand">
+      TXG INFORMATION
+    </div>
+
+    <button
+      class="logout"
+      onclick="logout()"
+    >
+      Logout
+    </button>
+  </div>
+</header>
+
+
+<main class="container">
+
+  <div class="hero">
+    <h1>Information Center</h1>
+    <p>
+      Lookup dashboard — no search history is stored.
+    </p>
+  </div>
+
+
+  <div class="tools">
+
+    <button
+      class="tool active"
+      data-module="mobile"
+      onclick="selectTool(this)"
+    >
+      📱 Mobile
+    </button>
+
+    <button
+      class="tool"
+      data-module="upi"
+      onclick="selectTool(this)"
+    >
+      💳 UPI
+    </button>
+
+    <button
+      class="tool"
+      data-module="ifsc"
+      onclick="selectTool(this)"
+    >
+      🏦 IFSC
+    </button>
+
+    <button
+      class="tool"
+      data-module="pincode"
+      onclick="selectTool(this)"
+    >
+      📮 PIN Code
+    </button>
+
+    <button
+      class="tool"
+      data-module="email"
+      onclick="selectTool(this)"
+    >
+      📧 Email
+    </button>
+
+    <button
+      class="tool"
+      data-module="ip"
+      onclick="selectTool(this)"
+    >
+      🌐 IP
+    </button>
+
+    <button
+      class="tool"
+      data-module="domain"
+      onclick="selectTool(this)"
+    >
+      🔗 Domain
+    </button>
+
+    <button
+      class="tool"
+      data-module="url"
+      onclick="selectTool(this)"
+    >
+      🛡️ URL
+    </button>
+
+    <button
+      class="tool"
+      data-module="ffid"
+      onclick="selectTool(this)"
+    >
+      🎮 FF ID
+    </button>
+
+  </div>
+
+
+  <div class="search">
+
+    <div class="row">
+
+      <input
+        id="query"
+        placeholder="Enter value..."
+        maxlength="2048"
+      >
+
+      <button onclick="lookup()">
+        CHECK
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div id="result" class="result"></div>
+
+</main>
+
+</section>
+
+
+<script>
+let currentModule = "mobile";
+
+const tokenKey =
+  "txg_information_session";
+
+function getToken(){
+  return sessionStorage.getItem(tokenKey);
+}
+
+function showApp(){
+  document
+    .getElementById("loginPage")
+    .classList.add("hidden");
+
+  document
+    .getElementById("app")
+    .classList.remove("hidden");
+}
+
+function showLogin(){
+  document
+    .getElementById("app")
+    .classList.add("hidden");
+
+  document
+    .getElementById("loginPage")
+    .classList.remove("hidden");
+}
+
+if(getToken()){
+  showApp();
+}
+
+async function login(){
+
+  const password =
+    document.getElementById("password").value;
+
+  const error =
+    document.getElementById("loginError");
+
+  error.textContent = "";
+
+  if(!password){
+    error.textContent =
+      "Enter admin password";
+    return;
+  }
+
+  try{
+
+    const response =
+      await fetch("/api/auth",{
+        method:"POST",
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+        body:JSON.stringify({
+          password
+        })
+      });
+
+    const data =
+      await response.json();
+
+    if(!data.success){
+      error.textContent =
+        data.error || "Login failed";
+      return;
+    }
+
+    sessionStorage.setItem(
+      tokenKey,
+      data.token
+    );
+
+    document
+      .getElementById("password")
+      .value = "";
+
+    showApp();
+
+  }catch{
+    error.textContent =
+      "Server unavailable";
+  }
+}
+
+function logout(){
+
+  sessionStorage.removeItem(tokenKey);
+
+  document
+    .getElementById("result")
+    .innerHTML = "";
+
+  showLogin();
+}
+
+function selectTool(button){
+
+  document
+    .querySelectorAll(".tool")
+    .forEach(x =>
+      x.classList.remove("active")
+    );
+
+  button.classList.add("active");
+
+  currentModule =
+    button.dataset.module;
+
+  const placeholders = {
+    mobile:
+      "9876543210",
+    upi:
+      "9876543210@upi",
+    ifsc:
+      "SBIN0001234",
+    pincode:
+      "110001",
+    email:
+      "name@example.com",
+    ip:
+      "8.8.8.8",
+    domain:
+      "example.com",
+    url:
+      "https://example.com",
+    ffid:
+      "Enter public FF ID"
+  };
+
+  document
+    .getElementById("query")
+    .placeholder =
+      placeholders[currentModule] ||
+      "Enter value...";
+
+  document
+    .getElementById("query")
+    .value = "";
+
+  document
+    .getElementById("result")
+    .innerHTML = "";
+}
+
+async function lookup(){
+
+  const input =
+    document.getElementById("query");
+
+  const result =
+    document.getElementById("result");
+
+  const value =
+    input.value.trim();
+
+  if(!value){
+    result.innerHTML =
+      '<div class="card">Enter a value.</div>';
+    return;
+  }
+
+  result.innerHTML =
+    '<div class="card loading">Checking...</div>';
+
+  try{
+
+    const response =
+      await fetch("/api/lookup",{
+        method:"POST",
+        headers:{
+          "Content-Type":
+            "application/json",
+          "Authorization":
+            "Bearer " + getToken()
+        },
+        body:JSON.stringify({
+          module:currentModule,
+          value
+        })
+      });
+
+    const data =
+      await response.json();
+
+    if(response.status === 401){
+      logout();
+      return;
+    }
+
+    if(!data.success){
+      result.innerHTML =
+        `<div class="card">
+          ${escapeHtml(
+            data.error || "Lookup failed"
+          )}
+        </div>`;
+      return;
+    }
+
+    renderResult(data.result);
+
+  }catch{
+    result.innerHTML =
+      '<div class="card">Lookup failed.</div>';
+  }
+}
+
+function escapeHtml(value){
+
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+function renderResult(data){
+
+  const result =
+    document.getElementById("result");
+
+  const title =
+    data.type
+      ? data.type.toUpperCase()
+      : "RESULT";
+
+  let html =
+    `<div class="card">
+      <h3>${escapeHtml(title)}</h3>
+      <div class="grid">`;
+
+  function add(label,value){
+
+    if(
+      value === undefined ||
+      value === null ||
+      value === ""
+    ){
+      return;
+    }
+
+    if(typeof value === "object"){
+      value = JSON.stringify(
+        value,
+        null,
+        2
+      );
+    }
+
+    html += `
+      <div class="item">
+        <div class="label">
+          ${escapeHtml(label)}
+        </div>
+        <div class="value">
+          ${escapeHtml(value)}
+        </div>
+      </div>
+    `;
+  }
+
+  for(const [key,value] of Object.entries(data)){
+
+    if(key === "type"){
+      continue;
+    }
+
+    const label =
+      key
+        .replaceAll("_"," ")
+        .replace(
+          /\b\w/g,
+          x => x.toUpperCase()
+        );
+
+    add(label,value);
+  }
+
+  html +=
+    `</div></div>`;
+
+  result.innerHTML = html;
+}
+</script>
+
+</body>
+</html>
