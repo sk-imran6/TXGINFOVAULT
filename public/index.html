@@ -1,1104 +1,568 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
 
-  <title>TXG Information Center</title>
+<meta charset="UTF-8">
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<meta
+ name="viewport"
+ content="width=device-width,initial-scale=1"
+>
 
-    :root {
-      --bg: #07090f;
-      --card: #0d111b;
-      --card2: #111724;
-      --border: rgba(255,255,255,.08);
-      --text: #f5f7fb;
-      --muted: #8d96a8;
-      --accent: #7c5cff;
-      --accent2: #00d4ff;
-      --danger: #ff5470;
-      --success: #30d890;
-    }
+<title>TXG Information</title>
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background:
-        radial-gradient(
-          circle at top right,
-          rgba(124,92,255,.16),
-          transparent 35%
-        ),
-        radial-gradient(
-          circle at bottom left,
-          rgba(0,212,255,.08),
-          transparent 35%
-        ),
-        var(--bg);
-      color: var(--text);
-      font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        sans-serif;
-    }
+<style>
 
-    button,
-    input {
-      font: inherit;
-    }
+*{
+ box-sizing:border-box;
+}
 
-    .hidden {
-      display: none !important;
-    }
+body{
+ margin:0;
+ background:#07090f;
+ color:#fff;
+ font-family:Arial,sans-serif;
+}
 
-    .center {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-    }
+.login{
+ min-height:100vh;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ padding:20px;
+}
 
-    .login-card {
-      width: min(420px, 100%);
-      background: rgba(13,17,27,.92);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 30px;
-      box-shadow: 0 25px 80px rgba(0,0,0,.45);
-      backdrop-filter: blur(20px);
-    }
+.card{
+ width:100%;
+ max-width:430px;
+ background:#101521;
+ border:1px solid #252c3b;
+ border-radius:22px;
+ padding:25px;
+}
 
-    .logo {
-      width: 58px;
-      height: 58px;
-      display: grid;
-      place-items: center;
-      border-radius: 18px;
-      background: linear-gradient(
-        135deg,
-        var(--accent),
-        var(--accent2)
-      );
-      color: white;
-      font-weight: 900;
-      font-size: 20px;
-      margin-bottom: 18px;
-    }
+.logo{
+ font-size:28px;
+ font-weight:bold;
+ margin-bottom:10px;
+}
 
-    h1,
-    h2,
-    h3 {
-      margin-top: 0;
-    }
+input{
+ width:100%;
+ padding:14px;
+ margin:8px 0;
+ background:#080b11;
+ color:white;
+ border:1px solid #293141;
+ border-radius:12px;
+ outline:none;
+}
 
-    .muted {
-      color: var(--muted);
-    }
+button{
+ border:0;
+ padding:13px 18px;
+ border-radius:12px;
+ background:#7157ff;
+ color:white;
+ font-weight:bold;
+ cursor:pointer;
+}
 
-    .input {
-      width: 100%;
-      padding: 14px 15px;
-      border-radius: 13px;
-      border: 1px solid var(--border);
-      background: #080b12;
-      color: white;
-      outline: none;
-      margin-top: 8px;
-    }
+.login button{
+ width:100%;
+ margin-top:10px;
+}
 
-    .input:focus {
-      border-color: var(--accent);
-    }
+#panel{
+ display:none;
+ padding:20px;
+ max-width:1200px;
+ margin:auto;
+}
 
-    .field {
-      margin: 16px 0;
-    }
+.header{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ margin-bottom:25px;
+}
 
-    .btn {
-      width: 100%;
-      border: 0;
-      border-radius: 13px;
-      padding: 14px;
-      color: white;
-      background: linear-gradient(
-        135deg,
-        var(--accent),
-        #4d8dff
-      );
-      cursor: pointer;
-      font-weight: 700;
-    }
+.tools{
+ display:grid;
+ grid-template-columns:
+ repeat(auto-fit,minmax(260px,1fr));
+ gap:15px;
+}
 
-    .btn:hover {
-      opacity: .92;
-    }
+.tool{
+ background:#101521;
+ border:1px solid #252c3b;
+ border-radius:18px;
+ padding:18px;
+}
 
-    .btn.secondary {
-      background: var(--card2);
-      border: 1px solid var(--border);
-    }
+.tool h3{
+ margin-top:0;
+}
 
-    .error {
-      color: var(--danger);
-      margin-top: 12px;
-      font-size: 14px;
-    }
+.row{
+ display:flex;
+ gap:7px;
+}
 
-    .success {
-      color: var(--success);
-      margin-top: 12px;
-      font-size: 14px;
-    }
+.row button{
+ white-space:nowrap;
+}
 
-    .app {
-      display: none;
-      min-height: 100vh;
-    }
+.result{
+ margin-top:12px;
+ padding:12px;
+ background:#080b11;
+ border-radius:12px;
+ font-size:13px;
+ overflow:auto;
+}
 
-    .sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 250px;
-      padding: 25px 18px;
-      background: rgba(9,12,19,.95);
-      border-right: 1px solid var(--border);
-    }
+.line{
+ padding:7px 0;
+ border-bottom:1px solid #202635;
+}
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 30px;
-    }
+.key{
+ color:#8f99ab;
+}
 
-    .brand-logo {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      border-radius: 13px;
-      background: linear-gradient(
-        135deg,
-        var(--accent),
-        var(--accent2)
-      );
-      font-weight: 900;
-    }
+.error{
+ color:#ff526d;
+ margin-top:10px;
+}
 
-    .nav {
-      display: grid;
-      gap: 7px;
-    }
+@media(max-width:600px){
 
-    .nav button {
-      width: 100%;
-      padding: 12px;
-      text-align: left;
-      color: var(--muted);
-      background: transparent;
-      border: 0;
-      border-radius: 10px;
-      cursor: pointer;
-    }
+ .row{
+  flex-direction:column;
+ }
 
-    .nav button:hover,
-    .nav button.active {
-      background: var(--card2);
-      color: white;
-    }
+ .header{
+  align-items:flex-start;
+ }
 
-    .main {
-      margin-left: 250px;
-      padding: 30px;
-      max-width: 1300px;
-    }
+}
 
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
+</style>
 
-    .logout {
-      width: auto;
-      padding: 10px 15px;
-    }
-
-    .tools {
-      display: grid;
-      grid-template-columns:
-        repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-    }
-
-    .tool {
-      background: rgba(13,17,27,.9);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px;
-    }
-
-    .tool-icon {
-      font-size: 25px;
-      margin-bottom: 12px;
-    }
-
-    .lookup-row {
-      display: flex;
-      gap: 8px;
-      margin-top: 15px;
-    }
-
-    .lookup-row .input {
-      margin: 0;
-      min-width: 0;
-    }
-
-    .lookup-row .btn {
-      width: auto;
-      white-space: nowrap;
-    }
-
-    .result {
-      margin-top: 14px;
-      padding: 15px;
-      border-radius: 14px;
-      background: #080b12;
-      border: 1px solid var(--border);
-      font-size: 13px;
-      overflow-x: auto;
-    }
-
-    .result-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,.05);
-    }
-
-    .result-row:last-child {
-      border-bottom: 0;
-    }
-
-    .result-key {
-      color: var(--muted);
-    }
-
-    .result-value {
-      text-align: right;
-      word-break: break-word;
-    }
-
-    .settings {
-      max-width: 550px;
-      background: rgba(13,17,27,.9);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 22px;
-    }
-
-    @media(max-width: 800px) {
-      .sidebar {
-        position: static;
-        width: auto;
-        min-height: auto;
-        border-right: 0;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .main {
-        margin-left: 0;
-        padding: 18px;
-      }
-
-      .nav {
-        grid-template-columns:
-          repeat(2, minmax(0, 1fr));
-      }
-
-      .topbar {
-        align-items: flex-start;
-      }
-
-      .lookup-row {
-        flex-direction: column;
-      }
-
-      .lookup-row .btn {
-        width: 100%;
-      }
-    }
-  </style>
 </head>
 
 <body>
 
-  <!-- LOGIN -->
+<div
+ id="login"
+ class="login"
+>
 
-  <section id="loginScreen" class="center">
-    <div class="login-card">
+<div class="card">
 
-      <div class="logo">TXG</div>
+<div class="logo">
+TXG INFORMATION
+</div>
 
-      <h1>TXG Information</h1>
+<p>
+Secure Information Center
+</p>
 
-      <p class="muted">
-        Secure information lookup center
-      </p>
+<input
+ id="password"
+ type="password"
+ placeholder="Admin Password"
+>
 
-      <div class="field">
-        <label>Password</label>
+<button onclick="enter()">
+ENTER PANEL
+</button>
 
-        <input
-          id="loginPassword"
-          class="input"
-          type="password"
-          placeholder="Enter admin password"
-          autocomplete="current-password"
-        />
-      </div>
+<div
+ id="loginError"
+ class="error"
+></div>
 
-      <button
-        class="btn"
-        onclick="login()"
-      >
-        Login
-      </button>
+</div>
 
-      <div
-        id="loginError"
-        class="error"
-      ></div>
+</div>
 
-    </div>
-  </section>
 
+<div id="panel">
 
-  <!-- APPLICATION -->
+<div class="header">
 
-  <section id="app" class="app">
+<div>
 
-    <aside class="sidebar">
+<h1>TXG Information</h1>
 
-      <div class="brand">
-        <div class="brand-logo">TXG</div>
+<div>
+Mobile • UPI • IFSC • PIN • Email • IP
+</div>
 
-        <div>
-          <strong>TXG Center</strong>
-          <div class="muted">
-            Admin Panel
-          </div>
-        </div>
-      </div>
+</div>
 
-      <div class="nav">
+<button onclick="logout()">
+Logout
+</button>
 
-        <button
-          class="active"
-          onclick="showPage('dashboard', this)"
-        >
-          🏠 Dashboard
-        </button>
+</div>
 
-        <button
-          onclick="showPage('settings', this)"
-        >
-          ⚙️ Settings
-        </button>
 
-        <button
-          onclick="logout()"
-        >
-          🚪 Logout
-        </button>
+<div class="tools">
 
-      </div>
 
-    </aside>
+<div class="tool">
 
+<h3>📱 Mobile</h3>
 
-    <main class="main">
+<input
+ id="mobile"
+ placeholder="+91 9876543210"
+>
 
-      <div class="topbar">
+<button
+ onclick="search('mobile','mobile')"
+>
+Search
+</button>
 
-        <div>
-          <h1>Information Center</h1>
+<div id="mobileResult"></div>
 
-          <div class="muted">
-            Public / authorized information lookup
-          </div>
-        </div>
+</div>
 
-        <button
-          class="btn logout"
-          onclick="logout()"
-        >
-          Logout
-        </button>
 
-      </div>
+<div class="tool">
 
+<h3>💳 UPI</h3>
 
-      <!-- DASHBOARD -->
+<input
+ id="upi"
+ placeholder="example@upi"
+>
 
-      <section id="dashboardPage">
+<button
+ onclick="search('upi','upi')"
+>
+Search
+</button>
 
-        <div class="tools">
+<div id="upiResult"></div>
 
-          <!-- MOBILE -->
+</div>
 
-          <div class="tool">
-            <div class="tool-icon">📱</div>
 
-            <h3>Mobile Number</h3>
+<div class="tool">
 
-            <div class="muted">
-              Validate and inspect number metadata.
-            </div>
+<h3>🏦 IFSC</h3>
 
-            <div class="lookup-row">
+<input
+ id="ifsc"
+ placeholder="SBIN0000001"
+>
 
-              <input
-                id="mobileInput"
-                class="input"
-                placeholder="+91 9876543210"
-              />
+<button
+ onclick="search('ifsc','ifsc')"
+>
+Search
+</button>
 
-              <button
-                class="btn"
-                onclick="lookup('mobile','mobileInput','mobileResult')"
-              >
-                Search
-              </button>
+<div id="ifscResult"></div>
 
-            </div>
+</div>
 
-            <div id="mobileResult"></div>
-          </div>
 
+<div class="tool">
 
-          <!-- UPI -->
+<h3>📮 PIN Code</h3>
 
-          <div class="tool">
-            <div class="tool-icon">💳</div>
+<input
+ id="pin"
+ placeholder="700001"
+>
 
-            <h3>UPI</h3>
+<button
+ onclick="search('pin','pin')"
+>
+Search
+</button>
 
-            <div class="muted">
-              Parse a UPI ID and visible information.
-            </div>
+<div id="pinResult"></div>
 
-            <div class="lookup-row">
+</div>
 
-              <input
-                id="upiInput"
-                class="input"
-                placeholder="example@upi"
-              />
 
-              <button
-                class="btn"
-                onclick="lookup('upi','upiInput','upiResult')"
-              >
-                Search
-              </button>
+<div class="tool">
 
-            </div>
+<h3>📧 Email</h3>
 
-            <div id="upiResult"></div>
-          </div>
+<input
+ id="email"
+ placeholder="user@example.com"
+>
 
+<button
+ onclick="search('email','email')"
+>
+Search
+</button>
 
-          <!-- IFSC -->
+<div id="emailResult"></div>
 
-          <div class="tool">
-            <div class="tool-icon">🏦</div>
+</div>
 
-            <h3>IFSC</h3>
 
-            <div class="muted">
-              Bank and branch information.
-            </div>
+<div class="tool">
 
-            <div class="lookup-row">
+<h3>🌐 IP Address</h3>
 
-              <input
-                id="ifscInput"
-                class="input"
-                placeholder="SBIN0000001"
-              />
+<input
+ id="ip"
+ placeholder="8.8.8.8"
+>
 
-              <button
-                class="btn"
-                onclick="lookup('ifsc','ifscInput','ifscResult')"
-              >
-                Search
-              </button>
+<button
+ onclick="search('ip','ip')"
+>
+Search
+</button>
 
-            </div>
+<div id="ipResult"></div>
 
-            <div id="ifscResult"></div>
-          </div>
+</div>
 
 
-          <!-- PIN -->
+</div>
 
-          <div class="tool">
-            <div class="tool-icon">📮</div>
-
-            <h3>PIN Code</h3>
-
-            <div class="muted">
-              India Post location information.
-            </div>
-
-            <div class="lookup-row">
-
-              <input
-                id="pinInput"
-                class="input"
-                placeholder="700001"
-              />
-
-              <button
-                class="btn"
-                onclick="lookup('pin','pinInput','pinResult')"
-              >
-                Search
-              </button>
-
-            </div>
-
-            <div id="pinResult"></div>
-          </div>
-
-
-          <!-- EMAIL -->
-
-          <div class="tool">
-            <div class="tool-icon">📧</div>
-
-            <h3>Email</h3>
-
-            <div class="muted">
-              Domain and mail DNS information.
-            </div>
-
-            <div class="lookup-row">
-
-              <input
-                id="emailInput"
-                class="input"
-                placeholder="user@example.com"
-              />
-
-              <button
-                class="btn"
-                onclick="lookup('email','emailInput','emailResult')"
-              >
-                Search
-              </button>
-
-            </div>
-
-            <div id="emailResult"></div>
-          </div>
-
-
-          <!-- IP -->
-
-          <div class="tool">
-            <div class="tool-icon">🌐</div>
-
-            <h3>IP Address</h3>
-
-            <div class="muted">
-              Approximate network/geolocation data.
-            </div>
-
-            <div class="lookup-row">
-
-              <input
-                id="ipInput"
-                class="input"
-                placeholder="8.8.8.8"
-              />
-
-              <button
-                class="btn"
-                onclick="lookup('ip','ipInput','ipResult')"
-              >
-                Search
-              </button>
-
-            </div>
-
-            <div id="ipResult"></div>
-          </div>
-
-
-          <!-- DOMAIN -->
-
-          <div class="tool">
-            <div class="tool-icon">🔗</div>
-
-            <h3>Domain</h3>
-
-            <div class="muted">
-              DNS records for a domain.
-            </div>
-
-            <div class="lookup-row">
-
-              <input
-                id="domainInput"
-                class="input"
-                placeholder="example.com"
-              />
-
-              <button
-                class="btn"
-                onclick="lookup('domain','domainInput','domainResult')"
-              >
-                Search
-              </button>
-
-            </div>
-
-            <div id="domainResult"></div>
-          </div>
-
-
-          <!-- URL -->
-
-          <div class="tool">
-            <div class="tool-icon">🛡️</div>
-
-            <h3>URL Safety</h3>
-
-            <div class="muted">
-              Basic DNS and private-target checks.
-            </div>
-
-            <div class="lookup-row">
-
-              <input
-                id="urlInput"
-                class="input"
-                placeholder="https://example.com"
-              />
-
-              <button
-                class="btn"
-                onclick="lookup('url','urlInput','urlResult')"
-              >
-                Check
-              </button>
-
-            </div>
-
-            <div id="urlResult"></div>
-          </div>
-
-
-          <!-- FF -->
-
-          <div class="tool">
-            <div class="tool-icon">🎮</div>
-
-            <h3>FF ID</h3>
-
-            <div class="muted">
-              Public/authorized profile lookup.
-            </div>
-
-            <div class="lookup-row">
-
-              <input
-                id="ffidInput"
-                class="input"
-                placeholder="Free Fire ID"
-              />
-
-              <button
-                class="btn"
-                onclick="lookup('ffid','ffidInput','ffidResult')"
-              >
-                Search
-              </button>
-
-            </div>
-
-            <div id="ffidResult"></div>
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- SETTINGS -->
-
-      <section
-        id="settingsPage"
-        class="hidden"
-      >
-
-        <div class="settings">
-
-          <h2>Admin Settings</h2>
-
-          <p class="muted">
-            Change your panel password.
-          </p>
-
-          <div class="field">
-
-            <label>Current password</label>
-
-            <input
-              id="currentPassword"
-              class="input"
-              type="password"
-            />
-
-          </div>
-
-          <div class="field">
-
-            <label>New password</label>
-
-            <input
-              id="newPassword"
-              class="input"
-              type="password"
-            />
-
-          </div>
-
-          <div class="field">
-
-            <label>Confirm new password</label>
-
-            <input
-              id="confirmPassword"
-              class="input"
-              type="password"
-            />
-
-          </div>
-
-          <button
-            class="btn"
-            onclick="changePassword()"
-          >
-            Change Password
-          </button>
-
-          <div id="passwordMessage"></div>
-
-        </div>
-
-      </section>
-
-    </main>
-
-  </section>
+</div>
 
 
 <script>
-async function api(url, options = {}) {
-  const response = await fetch(url, {
-    credentials: "same-origin",
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {})
-    }
-  });
 
-  let data;
+const PASSWORD =
+"TXG@Admin#2026!Secure";
 
-  try {
-    data = await response.json();
-  } catch {
-    data = {
-      ok: false,
-      error: "Invalid server response"
-    };
-  }
 
-  if (!response.ok) {
-    throw new Error(
-      data.error || "Request failed"
-    );
-  }
+function enter(){
 
-  return data;
+ const p =
+ document.getElementById(
+  "password"
+ ).value;
+
+ if(p !== PASSWORD){
+
+  document.getElementById(
+   "loginError"
+  ).textContent =
+   "Wrong password.";
+
+  return;
+ }
+
+ sessionStorage.setItem(
+  "txg_login",
+  "1"
+ );
+
+ document.getElementById(
+  "login"
+ ).style.display="none";
+
+ document.getElementById(
+  "panel"
+ ).style.display="block";
 }
 
 
-async function checkSession() {
-  try {
-    await api("/api/auth?action=status");
+function logout(){
 
-    document
-      .getElementById("loginScreen")
-      .classList.add("hidden");
+ sessionStorage.removeItem(
+  "txg_login"
+ );
 
-    document
-      .getElementById("app")
-      .style.display = "block";
-
-  } catch {
-    document
-      .getElementById("loginScreen")
-      .classList.remove("hidden");
-
-    document
-      .getElementById("app")
-      .style.display = "none";
-  }
+ location.reload();
 }
 
 
-async function login() {
-  const password =
-    document.getElementById("loginPassword").value;
+if(
+ sessionStorage.getItem(
+  "txg_login"
+ ) === "1"
+){
 
-  const error =
-    document.getElementById("loginError");
+ document.getElementById(
+  "login"
+ ).style.display="none";
 
-  error.textContent = "";
-
-  try {
-    await api(
-      "/api/auth?action=login",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          password
-        })
-      }
-    );
-
-    document
-      .getElementById("loginPassword")
-      .value = "";
-
-    await checkSession();
-
-  } catch (e) {
-    error.textContent = e.message;
-  }
+ document.getElementById(
+  "panel"
+ ).style.display="block";
 }
 
 
-async function logout() {
-  try {
-    await api(
-      "/api/auth?action=logout",
-      {
-        method: "POST",
-        body: "{}"
-      }
-    );
-  } finally {
-    location.reload();
-  }
-}
+async function search(type,id){
 
+ const value =
+ document.getElementById(id)
+ .value.trim();
 
-function showPage(page, button) {
-  document
-    .getElementById("dashboardPage")
-    .classList.toggle(
-      "hidden",
-      page !== "dashboard"
-    );
+ const output =
+ document.getElementById(
+  id+"Result"
+ );
 
-  document
-    .getElementById("settingsPage")
-    .classList.toggle(
-      "hidden",
-      page !== "settings"
-    );
+ if(!value){
 
-  document
-    .querySelectorAll(".nav button")
-    .forEach(btn => {
-      btn.classList.remove("active");
-    });
+  output.innerHTML =
+   '<div class="error">Enter value.</div>';
 
-  if (button) {
-    button.classList.add("active");
-  }
-}
+  return;
+ }
 
+ output.innerHTML =
+  "Searching...";
 
-async function lookup(type, inputId, resultId) {
-  const input =
-    document.getElementById(inputId);
+ try{
 
-  const output =
-    document.getElementById(resultId);
+  const response =
+   await fetch("/api/lookup",{
 
-  const value = input.value.trim();
+    method:"POST",
 
-  if (!value) {
-    output.innerHTML =
-      '<div class="error">Enter a value.</div>';
+    headers:{
+     "Content-Type":
+      "application/json",
 
-    return;
+     "x-txg-key":
+      PASSWORD
+    },
+
+    body:JSON.stringify({
+     type,
+     value
+    })
+
+   });
+
+  const data =
+   await response.json();
+
+  if(!response.ok){
+
+   throw new Error(
+    data.error || "Failed"
+   );
+
   }
 
   output.innerHTML =
-    '<div class="muted">Searching...</div>';
+   render(data.data);
 
-  try {
-    const response = await api(
-      "/api/lookup",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          type,
-          value
-        })
-      }
+ }catch(e){
+
+  output.innerHTML =
+   `<div class="error">
+   ${escapeHtml(e.message)}
+   </div>`;
+
+ }
+
+}
+
+
+function render(data){
+
+ if(
+  data === null ||
+  data === undefined
+ ){
+  return "";
+ }
+
+ if(
+  typeof data !== "object"
+ ){
+  return escapeHtml(data);
+ }
+
+ let html =
+  '<div class="result">';
+
+ for(
+  const [key,value]
+  of Object.entries(data)
+ ){
+
+  let display;
+
+  if(
+   typeof value === "object"
+  ){
+
+   display =
+    JSON.stringify(
+     value,
+     null,
+     2
     );
 
-    output.innerHTML =
-      renderObject(response.data);
+  }else{
 
-  } catch (e) {
-    output.innerHTML =
-      `<div class="error">${escapeHtml(e.message)}</div>`;
-  }
-}
+   display =
+    String(value);
 
-
-function escapeHtml(value) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-
-function renderObject(obj) {
-  if (
-    obj === null ||
-    obj === undefined
-  ) {
-    return "";
   }
 
-  if (
-    typeof obj !== "object"
-  ) {
-    return escapeHtml(obj);
-  }
-
-  let html =
-    '<div class="result">';
-
-  for (const [key, value] of Object.entries(obj)) {
-
-    let display;
-
-    if (Array.isArray(value)) {
-      display =
-        value.length
-          ? JSON.stringify(value, null, 2)
-          : "None";
-    } else if (
-      typeof value === "object" &&
-      value !== null
-    ) {
-      display =
-        JSON.stringify(value, null, 2);
-    } else {
-      display =
-        value === ""
-          ? "Not available"
-          : String(value);
-    }
-
-    html += `
-      <div class="result-row">
-        <div class="result-key">
-          ${escapeHtml(formatKey(key))}
-        </div>
-
-        <div class="result-value">
-          ${escapeHtml(display)}
-        </div>
+  html +=
+   `<div class="line">
+      <div class="key">
+       ${escapeHtml(
+        format(key)
+       )}
       </div>
-    `;
-  }
+      <div>
+       ${escapeHtml(display)}
+      </div>
+    </div>`;
+ }
 
-  html += "</div>";
+ html +=
+  "</div>";
 
-  return html;
+ return html;
 }
 
 
-function formatKey(key) {
-  return String(key)
-    .replaceAll("_", " ")
-    .replace(
-      /([A-Z])/g,
-      " $1"
-    )
-    .replace(
-      /^./,
-      x => x.toUpperCase()
-    );
+function format(key){
+
+ return String(key)
+  .replace(
+   /([A-Z])/g,
+   " $1"
+  )
+  .replace(
+   /^./,
+   x=>x.toUpperCase()
+  );
+
 }
 
 
-async function changePassword() {
-  const currentPassword =
-    document.getElementById(
-      "currentPassword"
-    ).value;
+function escapeHtml(value){
 
-  const newPassword =
-    document.getElementById(
-      "newPassword"
-    ).value;
+ return String(value ?? "")
+  .replaceAll("&","&amp;")
+  .replaceAll("<","&lt;")
+  .replaceAll(">","&gt;")
+  .replaceAll('"',"&quot;")
+  .replaceAll("'","&#039;");
 
-  const confirmPassword =
-    document.getElementById(
-      "confirmPassword"
-    ).value;
+}
 
-  const message =
-    document.getElementById(
-      "passwordMessage"
-    );
+</script>
 
-  message.className = "";
-  message.textContent = "";
-
-  if (newPassword !== confirmPassword) {
-    message.className = "error";
-    message.textContent =
-      "
+</body>
+</html>
