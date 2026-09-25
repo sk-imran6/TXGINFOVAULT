@@ -1,682 +1,1104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1"
-/>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-<title>TXG Information Center</title>
+  <title>TXG Information Center</title>
 
-<style>
-*{
-  box-sizing:border-box;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-body{
-  margin:0;
-  background:#07090d;
-  color:#f5f7fa;
-  font-family:Inter,Arial,sans-serif;
-}
+    :root {
+      --bg: #07090f;
+      --card: #0d111b;
+      --card2: #111724;
+      --border: rgba(255,255,255,.08);
+      --text: #f5f7fb;
+      --muted: #8d96a8;
+      --accent: #7c5cff;
+      --accent2: #00d4ff;
+      --danger: #ff5470;
+      --success: #30d890;
+    }
 
-.hidden{
-  display:none!important;
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(
+          circle at top right,
+          rgba(124,92,255,.16),
+          transparent 35%
+        ),
+        radial-gradient(
+          circle at bottom left,
+          rgba(0,212,255,.08),
+          transparent 35%
+        ),
+        var(--bg);
+      color: var(--text);
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
 
-.container{
-  width:min(1100px,94%);
-  margin:auto;
-}
+    button,
+    input {
+      font: inherit;
+    }
 
-.login{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+    .hidden {
+      display: none !important;
+    }
 
-.login-box{
-  width:min(420px,92%);
-  background:#10141b;
-  border:1px solid #252c38;
-  border-radius:24px;
-  padding:30px;
-  box-shadow:0 20px 80px #0008;
-}
+    .center {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
 
-.logo{
-  font-size:28px;
-  font-weight:800;
-  margin-bottom:8px;
-}
+    .login-card {
+      width: min(420px, 100%);
+      background: rgba(13,17,27,.92);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 25px 80px rgba(0,0,0,.45);
+      backdrop-filter: blur(20px);
+    }
 
-.sub{
-  color:#8f99a8;
-  margin-bottom:25px;
-}
+    .logo {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      background: linear-gradient(
+        135deg,
+        var(--accent),
+        var(--accent2)
+      );
+      color: white;
+      font-weight: 900;
+      font-size: 20px;
+      margin-bottom: 18px;
+    }
 
-input,select,button{
-  width:100%;
-  border:0;
-  outline:0;
-  border-radius:13px;
-  padding:14px;
-  font-size:15px;
-}
+    h1,
+    h2,
+    h3 {
+      margin-top: 0;
+    }
 
-input,select{
-  background:#171c25;
-  color:#fff;
-  border:1px solid #29313d;
-}
+    .muted {
+      color: var(--muted);
+    }
 
-button{
-  cursor:pointer;
-  background:#fff;
-  color:#080a0e;
-  font-weight:800;
-}
+    .input {
+      width: 100%;
+      padding: 14px 15px;
+      border-radius: 13px;
+      border: 1px solid var(--border);
+      background: #080b12;
+      color: white;
+      outline: none;
+      margin-top: 8px;
+    }
 
-button:hover{
-  opacity:.9;
-}
+    .input:focus {
+      border-color: var(--accent);
+    }
 
-.error{
-  color:#ff7474;
-  margin-top:12px;
-}
+    .field {
+      margin: 16px 0;
+    }
 
-header{
-  border-bottom:1px solid #202630;
-  background:#0a0d12;
-  position:sticky;
-  top:0;
-  z-index:5;
-}
+    .btn {
+      width: 100%;
+      border: 0;
+      border-radius: 13px;
+      padding: 14px;
+      color: white;
+      background: linear-gradient(
+        135deg,
+        var(--accent),
+        #4d8dff
+      );
+      cursor: pointer;
+      font-weight: 700;
+    }
 
-.nav{
-  min-height:72px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
+    .btn:hover {
+      opacity: .92;
+    }
 
-.brand{
-  font-size:20px;
-  font-weight:900;
-}
+    .btn.secondary {
+      background: var(--card2);
+      border: 1px solid var(--border);
+    }
 
-.logout{
-  width:auto;
-  padding:9px 14px;
-  background:#171c25;
-  color:#fff;
-  border:1px solid #29313d;
-}
+    .error {
+      color: var(--danger);
+      margin-top: 12px;
+      font-size: 14px;
+    }
 
-main{
-  padding:30px 0 60px;
-}
+    .success {
+      color: var(--success);
+      margin-top: 12px;
+      font-size: 14px;
+    }
 
-.hero{
-  margin-bottom:25px;
-}
+    .app {
+      display: none;
+      min-height: 100vh;
+    }
 
-.hero h1{
-  margin:0 0 8px;
-  font-size:32px;
-}
+    .sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 250px;
+      padding: 25px 18px;
+      background: rgba(9,12,19,.95);
+      border-right: 1px solid var(--border);
+    }
 
-.hero p{
-  color:#8993a3;
-}
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 30px;
+    }
 
-.tools{
-  display:grid;
-  grid-template-columns:
-    repeat(auto-fit,minmax(150px,1fr));
-  gap:10px;
-  margin-bottom:22px;
-}
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: linear-gradient(
+        135deg,
+        var(--accent),
+        var(--accent2)
+      );
+      font-weight: 900;
+    }
 
-.tool{
-  text-align:left;
-  background:#11161e;
-  color:#fff;
-  border:1px solid #252d39;
-}
+    .nav {
+      display: grid;
+      gap: 7px;
+    }
 
-.tool.active{
-  border-color:#fff;
-  background:#1a2029;
-}
+    .nav button {
+      width: 100%;
+      padding: 12px;
+      text-align: left;
+      color: var(--muted);
+      background: transparent;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+    }
 
-.search{
-  background:#10141b;
-  border:1px solid #252c38;
-  padding:20px;
-  border-radius:20px;
-}
+    .nav button:hover,
+    .nav button.active {
+      background: var(--card2);
+      color: white;
+    }
 
-.row{
-  display:grid;
-  grid-template-columns:1fr 180px;
-  gap:10px;
-}
+    .main {
+      margin-left: 250px;
+      padding: 30px;
+      max-width: 1300px;
+    }
 
-.result{
-  margin-top:20px;
-}
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
 
-.card{
-  background:#10141b;
-  border:1px solid #252c38;
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:12px;
-}
+    .logout {
+      width: auto;
+      padding: 10px 15px;
+    }
 
-.card h3{
-  margin-top:0;
-}
+    .tools {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns:
-    repeat(auto-fit,minmax(210px,1fr));
-  gap:10px;
-}
+    .tool {
+      background: rgba(13,17,27,.9);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+    }
 
-.item{
-  background:#171c25;
-  border-radius:12px;
-  padding:13px;
-}
+    .tool-icon {
+      font-size: 25px;
+      margin-bottom: 12px;
+    }
 
-.label{
-  color:#8993a3;
-  font-size:12px;
-  margin-bottom:5px;
-}
+    .lookup-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+    }
 
-.value{
-  word-break:break-word;
-  font-weight:700;
-}
+    .lookup-row .input {
+      margin: 0;
+      min-width: 0;
+    }
 
-.loading{
-  color:#9da7b5;
-}
+    .lookup-row .btn {
+      width: auto;
+      white-space: nowrap;
+    }
 
-pre{
-  white-space:pre-wrap;
-  word-break:break-word;
-  color:#cdd5df;
-}
+    .result {
+      margin-top: 14px;
+      padding: 15px;
+      border-radius: 14px;
+      background: #080b12;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      overflow-x: auto;
+    }
 
-@media(max-width:650px){
-  .row{
-    grid-template-columns:1fr;
-  }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
 
-  .hero h1{
-    font-size:26px;
-  }
-}
-</style>
+    .result-row:last-child {
+      border-bottom: 0;
+    }
+
+    .result-key {
+      color: var(--muted);
+    }
+
+    .result-value {
+      text-align: right;
+      word-break: break-word;
+    }
+
+    .settings {
+      max-width: 550px;
+      background: rgba(13,17,27,.9);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px;
+    }
+
+    @media(max-width: 800px) {
+      .sidebar {
+        position: static;
+        width: auto;
+        min-height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .main {
+        margin-left: 0;
+        padding: 18px;
+      }
+
+      .nav {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+
+      .topbar {
+        align-items: flex-start;
+      }
+
+      .lookup-row {
+        flex-direction: column;
+      }
+
+      .lookup-row .btn {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<section id="loginPage" class="login">
-  <div class="login-box">
-    <div class="logo">TXG Information</div>
-    <div class="sub">
-      Secure lookup administration
-    </div>
+  <!-- LOGIN -->
 
-    <input
-      id="password"
-      type="password"
-      placeholder="Admin password"
-      autocomplete="current-password"
-    >
+  <section id="loginScreen" class="center">
+    <div class="login-card">
 
-    <br><br>
+      <div class="logo">TXG</div>
 
-    <button onclick="login()">
-      LOGIN
-    </button>
+      <h1>TXG Information</h1>
 
-    <div id="loginError" class="error"></div>
-  </div>
-</section>
+      <p class="muted">
+        Secure information lookup center
+      </p>
 
+      <div class="field">
+        <label>Password</label>
 
-<section id="app" class="hidden">
+        <input
+          id="loginPassword"
+          class="input"
+          type="password"
+          placeholder="Enter admin password"
+          autocomplete="current-password"
+        />
+      </div>
 
-<header>
-  <div class="container nav">
-    <div class="brand">
-      TXG INFORMATION
-    </div>
-
-    <button
-      class="logout"
-      onclick="logout()"
-    >
-      Logout
-    </button>
-  </div>
-</header>
-
-
-<main class="container">
-
-  <div class="hero">
-    <h1>Information Center</h1>
-    <p>
-      Lookup dashboard — no search history is stored.
-    </p>
-  </div>
-
-
-  <div class="tools">
-
-    <button
-      class="tool active"
-      data-module="mobile"
-      onclick="selectTool(this)"
-    >
-      📱 Mobile
-    </button>
-
-    <button
-      class="tool"
-      data-module="upi"
-      onclick="selectTool(this)"
-    >
-      💳 UPI
-    </button>
-
-    <button
-      class="tool"
-      data-module="ifsc"
-      onclick="selectTool(this)"
-    >
-      🏦 IFSC
-    </button>
-
-    <button
-      class="tool"
-      data-module="pincode"
-      onclick="selectTool(this)"
-    >
-      📮 PIN Code
-    </button>
-
-    <button
-      class="tool"
-      data-module="email"
-      onclick="selectTool(this)"
-    >
-      📧 Email
-    </button>
-
-    <button
-      class="tool"
-      data-module="ip"
-      onclick="selectTool(this)"
-    >
-      🌐 IP
-    </button>
-
-    <button
-      class="tool"
-      data-module="domain"
-      onclick="selectTool(this)"
-    >
-      🔗 Domain
-    </button>
-
-    <button
-      class="tool"
-      data-module="url"
-      onclick="selectTool(this)"
-    >
-      🛡️ URL
-    </button>
-
-    <button
-      class="tool"
-      data-module="ffid"
-      onclick="selectTool(this)"
-    >
-      🎮 FF ID
-    </button>
-
-  </div>
-
-
-  <div class="search">
-
-    <div class="row">
-
-      <input
-        id="query"
-        placeholder="Enter value..."
-        maxlength="2048"
+      <button
+        class="btn"
+        onclick="login()"
       >
-
-      <button onclick="lookup()">
-        CHECK
+        Login
       </button>
 
+      <div
+        id="loginError"
+        class="error"
+      ></div>
+
     </div>
+  </section>
 
-  </div>
+
+  <!-- APPLICATION -->
+
+  <section id="app" class="app">
+
+    <aside class="sidebar">
+
+      <div class="brand">
+        <div class="brand-logo">TXG</div>
+
+        <div>
+          <strong>TXG Center</strong>
+          <div class="muted">
+            Admin Panel
+          </div>
+        </div>
+      </div>
+
+      <div class="nav">
+
+        <button
+          class="active"
+          onclick="showPage('dashboard', this)"
+        >
+          🏠 Dashboard
+        </button>
+
+        <button
+          onclick="showPage('settings', this)"
+        >
+          ⚙️ Settings
+        </button>
+
+        <button
+          onclick="logout()"
+        >
+          🚪 Logout
+        </button>
+
+      </div>
+
+    </aside>
 
 
-  <div id="result" class="result"></div>
+    <main class="main">
 
-</main>
+      <div class="topbar">
 
-</section>
+        <div>
+          <h1>Information Center</h1>
+
+          <div class="muted">
+            Public / authorized information lookup
+          </div>
+        </div>
+
+        <button
+          class="btn logout"
+          onclick="logout()"
+        >
+          Logout
+        </button>
+
+      </div>
+
+
+      <!-- DASHBOARD -->
+
+      <section id="dashboardPage">
+
+        <div class="tools">
+
+          <!-- MOBILE -->
+
+          <div class="tool">
+            <div class="tool-icon">📱</div>
+
+            <h3>Mobile Number</h3>
+
+            <div class="muted">
+              Validate and inspect number metadata.
+            </div>
+
+            <div class="lookup-row">
+
+              <input
+                id="mobileInput"
+                class="input"
+                placeholder="+91 9876543210"
+              />
+
+              <button
+                class="btn"
+                onclick="lookup('mobile','mobileInput','mobileResult')"
+              >
+                Search
+              </button>
+
+            </div>
+
+            <div id="mobileResult"></div>
+          </div>
+
+
+          <!-- UPI -->
+
+          <div class="tool">
+            <div class="tool-icon">💳</div>
+
+            <h3>UPI</h3>
+
+            <div class="muted">
+              Parse a UPI ID and visible information.
+            </div>
+
+            <div class="lookup-row">
+
+              <input
+                id="upiInput"
+                class="input"
+                placeholder="example@upi"
+              />
+
+              <button
+                class="btn"
+                onclick="lookup('upi','upiInput','upiResult')"
+              >
+                Search
+              </button>
+
+            </div>
+
+            <div id="upiResult"></div>
+          </div>
+
+
+          <!-- IFSC -->
+
+          <div class="tool">
+            <div class="tool-icon">🏦</div>
+
+            <h3>IFSC</h3>
+
+            <div class="muted">
+              Bank and branch information.
+            </div>
+
+            <div class="lookup-row">
+
+              <input
+                id="ifscInput"
+                class="input"
+                placeholder="SBIN0000001"
+              />
+
+              <button
+                class="btn"
+                onclick="lookup('ifsc','ifscInput','ifscResult')"
+              >
+                Search
+              </button>
+
+            </div>
+
+            <div id="ifscResult"></div>
+          </div>
+
+
+          <!-- PIN -->
+
+          <div class="tool">
+            <div class="tool-icon">📮</div>
+
+            <h3>PIN Code</h3>
+
+            <div class="muted">
+              India Post location information.
+            </div>
+
+            <div class="lookup-row">
+
+              <input
+                id="pinInput"
+                class="input"
+                placeholder="700001"
+              />
+
+              <button
+                class="btn"
+                onclick="lookup('pin','pinInput','pinResult')"
+              >
+                Search
+              </button>
+
+            </div>
+
+            <div id="pinResult"></div>
+          </div>
+
+
+          <!-- EMAIL -->
+
+          <div class="tool">
+            <div class="tool-icon">📧</div>
+
+            <h3>Email</h3>
+
+            <div class="muted">
+              Domain and mail DNS information.
+            </div>
+
+            <div class="lookup-row">
+
+              <input
+                id="emailInput"
+                class="input"
+                placeholder="user@example.com"
+              />
+
+              <button
+                class="btn"
+                onclick="lookup('email','emailInput','emailResult')"
+              >
+                Search
+              </button>
+
+            </div>
+
+            <div id="emailResult"></div>
+          </div>
+
+
+          <!-- IP -->
+
+          <div class="tool">
+            <div class="tool-icon">🌐</div>
+
+            <h3>IP Address</h3>
+
+            <div class="muted">
+              Approximate network/geolocation data.
+            </div>
+
+            <div class="lookup-row">
+
+              <input
+                id="ipInput"
+                class="input"
+                placeholder="8.8.8.8"
+              />
+
+              <button
+                class="btn"
+                onclick="lookup('ip','ipInput','ipResult')"
+              >
+                Search
+              </button>
+
+            </div>
+
+            <div id="ipResult"></div>
+          </div>
+
+
+          <!-- DOMAIN -->
+
+          <div class="tool">
+            <div class="tool-icon">🔗</div>
+
+            <h3>Domain</h3>
+
+            <div class="muted">
+              DNS records for a domain.
+            </div>
+
+            <div class="lookup-row">
+
+              <input
+                id="domainInput"
+                class="input"
+                placeholder="example.com"
+              />
+
+              <button
+                class="btn"
+                onclick="lookup('domain','domainInput','domainResult')"
+              >
+                Search
+              </button>
+
+            </div>
+
+            <div id="domainResult"></div>
+          </div>
+
+
+          <!-- URL -->
+
+          <div class="tool">
+            <div class="tool-icon">🛡️</div>
+
+            <h3>URL Safety</h3>
+
+            <div class="muted">
+              Basic DNS and private-target checks.
+            </div>
+
+            <div class="lookup-row">
+
+              <input
+                id="urlInput"
+                class="input"
+                placeholder="https://example.com"
+              />
+
+              <button
+                class="btn"
+                onclick="lookup('url','urlInput','urlResult')"
+              >
+                Check
+              </button>
+
+            </div>
+
+            <div id="urlResult"></div>
+          </div>
+
+
+          <!-- FF -->
+
+          <div class="tool">
+            <div class="tool-icon">🎮</div>
+
+            <h3>FF ID</h3>
+
+            <div class="muted">
+              Public/authorized profile lookup.
+            </div>
+
+            <div class="lookup-row">
+
+              <input
+                id="ffidInput"
+                class="input"
+                placeholder="Free Fire ID"
+              />
+
+              <button
+                class="btn"
+                onclick="lookup('ffid','ffidInput','ffidResult')"
+              >
+                Search
+              </button>
+
+            </div>
+
+            <div id="ffidResult"></div>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- SETTINGS -->
+
+      <section
+        id="settingsPage"
+        class="hidden"
+      >
+
+        <div class="settings">
+
+          <h2>Admin Settings</h2>
+
+          <p class="muted">
+            Change your panel password.
+          </p>
+
+          <div class="field">
+
+            <label>Current password</label>
+
+            <input
+              id="currentPassword"
+              class="input"
+              type="password"
+            />
+
+          </div>
+
+          <div class="field">
+
+            <label>New password</label>
+
+            <input
+              id="newPassword"
+              class="input"
+              type="password"
+            />
+
+          </div>
+
+          <div class="field">
+
+            <label>Confirm new password</label>
+
+            <input
+              id="confirmPassword"
+              class="input"
+              type="password"
+            />
+
+          </div>
+
+          <button
+            class="btn"
+            onclick="changePassword()"
+          >
+            Change Password
+          </button>
+
+          <div id="passwordMessage"></div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  </section>
 
 
 <script>
-let currentModule = "mobile";
+async function api(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: "same-origin",
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {})
+    }
+  });
 
-const tokenKey =
-  "txg_information_session";
+  let data;
 
-function getToken(){
-  return sessionStorage.getItem(tokenKey);
+  try {
+    data = await response.json();
+  } catch {
+    data = {
+      ok: false,
+      error: "Invalid server response"
+    };
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data.error || "Request failed"
+    );
+  }
+
+  return data;
 }
 
-function showApp(){
-  document
-    .getElementById("loginPage")
-    .classList.add("hidden");
 
-  document
-    .getElementById("app")
-    .classList.remove("hidden");
+async function checkSession() {
+  try {
+    await api("/api/auth?action=status");
+
+    document
+      .getElementById("loginScreen")
+      .classList.add("hidden");
+
+    document
+      .getElementById("app")
+      .style.display = "block";
+
+  } catch {
+    document
+      .getElementById("loginScreen")
+      .classList.remove("hidden");
+
+    document
+      .getElementById("app")
+      .style.display = "none";
+  }
 }
 
-function showLogin(){
-  document
-    .getElementById("app")
-    .classList.add("hidden");
 
-  document
-    .getElementById("loginPage")
-    .classList.remove("hidden");
-}
-
-if(getToken()){
-  showApp();
-}
-
-async function login(){
-
+async function login() {
   const password =
-    document.getElementById("password").value;
+    document.getElementById("loginPassword").value;
 
   const error =
     document.getElementById("loginError");
 
   error.textContent = "";
 
-  if(!password){
-    error.textContent =
-      "Enter admin password";
-    return;
-  }
-
-  try{
-
-    const response =
-      await fetch("/api/auth",{
-        method:"POST",
-        headers:{
-          "Content-Type":
-            "application/json"
-        },
-        body:JSON.stringify({
+  try {
+    await api(
+      "/api/auth?action=login",
+      {
+        method: "POST",
+        body: JSON.stringify({
           password
         })
-      });
-
-    const data =
-      await response.json();
-
-    if(!data.success){
-      error.textContent =
-        data.error || "Login failed";
-      return;
-    }
-
-    sessionStorage.setItem(
-      tokenKey,
-      data.token
+      }
     );
 
     document
-      .getElementById("password")
+      .getElementById("loginPassword")
       .value = "";
 
-    showApp();
+    await checkSession();
 
-  }catch{
-    error.textContent =
-      "Server unavailable";
+  } catch (e) {
+    error.textContent = e.message;
   }
 }
 
-function logout(){
 
-  sessionStorage.removeItem(tokenKey);
-
-  document
-    .getElementById("result")
-    .innerHTML = "";
-
-  showLogin();
+async function logout() {
+  try {
+    await api(
+      "/api/auth?action=logout",
+      {
+        method: "POST",
+        body: "{}"
+      }
+    );
+  } finally {
+    location.reload();
+  }
 }
 
-function selectTool(button){
 
+function showPage(page, button) {
   document
-    .querySelectorAll(".tool")
-    .forEach(x =>
-      x.classList.remove("active")
+    .getElementById("dashboardPage")
+    .classList.toggle(
+      "hidden",
+      page !== "dashboard"
     );
 
-  button.classList.add("active");
-
-  currentModule =
-    button.dataset.module;
-
-  const placeholders = {
-    mobile:
-      "9876543210",
-    upi:
-      "9876543210@upi",
-    ifsc:
-      "SBIN0001234",
-    pincode:
-      "110001",
-    email:
-      "name@example.com",
-    ip:
-      "8.8.8.8",
-    domain:
-      "example.com",
-    url:
-      "https://example.com",
-    ffid:
-      "Enter public FF ID"
-  };
+  document
+    .getElementById("settingsPage")
+    .classList.toggle(
+      "hidden",
+      page !== "settings"
+    );
 
   document
-    .getElementById("query")
-    .placeholder =
-      placeholders[currentModule] ||
-      "Enter value...";
+    .querySelectorAll(".nav button")
+    .forEach(btn => {
+      btn.classList.remove("active");
+    });
 
-  document
-    .getElementById("query")
-    .value = "";
-
-  document
-    .getElementById("result")
-    .innerHTML = "";
+  if (button) {
+    button.classList.add("active");
+  }
 }
 
-async function lookup(){
 
+async function lookup(type, inputId, resultId) {
   const input =
-    document.getElementById("query");
+    document.getElementById(inputId);
 
-  const result =
-    document.getElementById("result");
+  const output =
+    document.getElementById(resultId);
 
-  const value =
-    input.value.trim();
+  const value = input.value.trim();
 
-  if(!value){
-    result.innerHTML =
-      '<div class="card">Enter a value.</div>';
+  if (!value) {
+    output.innerHTML =
+      '<div class="error">Enter a value.</div>';
+
     return;
   }
 
-  result.innerHTML =
-    '<div class="card loading">Checking...</div>';
+  output.innerHTML =
+    '<div class="muted">Searching...</div>';
 
-  try{
-
-    const response =
-      await fetch("/api/lookup",{
-        method:"POST",
-        headers:{
-          "Content-Type":
-            "application/json",
-          "Authorization":
-            "Bearer " + getToken()
-        },
-        body:JSON.stringify({
-          module:currentModule,
+  try {
+    const response = await api(
+      "/api/lookup",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          type,
           value
         })
-      });
+      }
+    );
 
-    const data =
-      await response.json();
+    output.innerHTML =
+      renderObject(response.data);
 
-    if(response.status === 401){
-      logout();
-      return;
-    }
-
-    if(!data.success){
-      result.innerHTML =
-        `<div class="card">
-          ${escapeHtml(
-            data.error || "Lookup failed"
-          )}
-        </div>`;
-      return;
-    }
-
-    renderResult(data.result);
-
-  }catch{
-    result.innerHTML =
-      '<div class="card">Lookup failed.</div>';
+  } catch (e) {
+    output.innerHTML =
+      `<div class="error">${escapeHtml(e.message)}</div>`;
   }
 }
 
-function escapeHtml(value){
 
+function escapeHtml(value) {
   return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-function renderResult(data){
 
-  const result =
-    document.getElementById("result");
+function renderObject(obj) {
+  if (
+    obj === null ||
+    obj === undefined
+  ) {
+    return "";
+  }
 
-  const title =
-    data.type
-      ? data.type.toUpperCase()
-      : "RESULT";
+  if (
+    typeof obj !== "object"
+  ) {
+    return escapeHtml(obj);
+  }
 
   let html =
-    `<div class="card">
-      <h3>${escapeHtml(title)}</h3>
-      <div class="grid">`;
+    '<div class="result">';
 
-  function add(label,value){
+  for (const [key, value] of Object.entries(obj)) {
 
-    if(
-      value === undefined ||
-      value === null ||
-      value === ""
-    ){
-      return;
-    }
+    let display;
 
-    if(typeof value === "object"){
-      value = JSON.stringify(
-        value,
-        null,
-        2
-      );
+    if (Array.isArray(value)) {
+      display =
+        value.length
+          ? JSON.stringify(value, null, 2)
+          : "None";
+    } else if (
+      typeof value === "object" &&
+      value !== null
+    ) {
+      display =
+        JSON.stringify(value, null, 2);
+    } else {
+      display =
+        value === ""
+          ? "Not available"
+          : String(value);
     }
 
     html += `
-      <div class="item">
-        <div class="label">
-          ${escapeHtml(label)}
+      <div class="result-row">
+        <div class="result-key">
+          ${escapeHtml(formatKey(key))}
         </div>
-        <div class="value">
-          ${escapeHtml(value)}
+
+        <div class="result-value">
+          ${escapeHtml(display)}
         </div>
       </div>
     `;
   }
 
-  for(const [key,value] of Object.entries(data)){
+  html += "</div>";
 
-    if(key === "type"){
-      continue;
-    }
-
-    const label =
-      key
-        .replaceAll("_"," ")
-        .replace(
-          /\b\w/g,
-          x => x.toUpperCase()
-        );
-
-    add(label,value);
-  }
-
-  html +=
-    `</div></div>`;
-
-  result.innerHTML = html;
+  return html;
 }
-</script>
 
-</body>
-</html>
+
+function formatKey(key) {
+  return String(key)
+    .replaceAll("_", " ")
+    .replace(
+      /([A-Z])/g,
+      " $1"
+    )
+    .replace(
+      /^./,
+      x => x.toUpperCase()
+    );
+}
+
+
+async function changePassword() {
+  const currentPassword =
+    document.getElementById(
+      "currentPassword"
+    ).value;
+
+  const newPassword =
+    document.getElementById(
+      "newPassword"
+    ).value;
+
+  const confirmPassword =
+    document.getElementById(
+      "confirmPassword"
+    ).value;
+
+  const message =
+    document.getElementById(
+      "passwordMessage"
+    );
+
+  message.className = "";
+  message.textContent = "";
+
+  if (newPassword !== confirmPassword) {
+    message.className = "error";
+    message.textContent =
+      "
