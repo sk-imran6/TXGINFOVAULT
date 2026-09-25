@@ -1,538 +1,598 @@
-import {
+const dns = require("dns").promises;
+const net = require("net");
+
+const {
+  requireAuth
+} = require("../lib/auth");
+
+const {
   parsePhoneNumberFromString
-} from "libphonenumber-js/max";
+} = require("libphonenumber-js");
 
-import crypto from "crypto";
+function headers(res) {
+  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("Referrer-Policy", "no-referrer");
+}
 
-const SESSION_SECRET = process.env.SESSION_SECRET;
+function maskName(value) {
+  value = String(value || "").trim();
 
-function base64urlDecode(value) {
-  value = value.replace(/-/g, "+").replace(/_/g, "/");
-
-  while (value.length % 4) {
-    value += "=";
+  if (!value || value === "Not available") {
+    return "Not available";
   }
 
-  return Buffer.from(value, "base64").toString();
+  return value
+    .split(/\s+/)
+    .map(word => {
+      if (word.length <= 3) {
+        return "*".repeat(word.length);
+      }
+
+      return (
+        word.slice(0, 2) +
+        "*".repeat(word.length - 3) +
+        word.slice(-1)
+      );
+    })
+    .join(" ");
 }
 
-function sign(data) {
-  return Buffer.from(
-    crypto
-      .createHmac("sha256", SESSION_SECRET)
-      .update(data)
-      .digest()
-  )
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/g, "");
-}
+function maskAddress(value) {
+  value = String(value || "").trim();
 
-function verifyToken(token) {
-  try {
-    if (!token || !SESSION_SECRET) return false;
-
-    const parts = token.split(".");
-
-    if (parts.length !== 2) return false;
-
-    const encoded = parts[0];
-    const signature = parts[1];
-
-    const expected = sign(encoded);
-
-    const a = Buffer.from(signature);
-    const b = Buffer.from(expected);
-
-    if (
-      a.length !== b.length ||
-      !crypto.timingSafeEqual(a, b)
-    ) {
-      return false;
-    }
-
-    const payload = JSON.parse(
-      base64urlDecode(encoded)
-    );
-
-    if (!payload.exp || Date.now() > payload.exp) {
-      return false;
-    }
-
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function clean(value, max = 200) {
-  return String(value || "")
-    .trim()
-    .slice(0, max);
-}
-
-function maskNumber(number) {
-  const digits = String(number).replace(/\D/g, "");
-
-  if (digits.length <= 6) {
-    return "*".repeat(digits.length);
+  if (!value || value === "Not available") {
+    return "Not available";
   }
 
-  return (
-    digits.slice(0, 4) +
-    "*".repeat(Math.max(1, digits.length - 6)) +
-    digits.slice(-2)
-  );
+  return value
+    .split(/\s+/)
+    .map(word => {
+      if (word.length <= 3) {
+        return "*".repeat(word.length);
+      }
+
+      return (
+        word.slice(0, 2) +
+        "*".repeat(word.length - 3) +
+        word.slice(-1)
+      );
+    })
+    .join(" ");
 }
 
-function isPrivateIP(ip) {
-  const value = String(ip);
-
-  if (
-    value === "127.0.0.1" ||
-    value === "::1" ||
-    value.startsWith("10.") ||
-    value.startsWith("192.168.") ||
-    value.startsWith("172.16.") ||
-    value.startsWith("172.17.") ||
-    value.startsWith("172.18.") ||
-    value.startsWith("172.19.") ||
-    value.startsWith("172.20.") ||
-    value.startsWith("172.21.") ||
-    value.startsWith("172.22.") ||
-    value.startsWith("172.23.") ||
-    value.startsWith("172.24.") ||
-    value.startsWith("172.25.") ||
-    value.startsWith("172.26.") ||
-    value.startsWith("172.27.") ||
-    value.startsWith("172.28.") ||
-    value.startsWith("172.29.") ||
-    value.startsWith("172.30.") ||
-    value.startsWith("172.31.")
-  ) {
-    return true;
-  }
-
-  return false;
+/*
+ * IMPORTANT:
+ *
+ * This function intentionally does NOT scrape telecom/KYC databases.
+ *
+ * If you have an authorized provider that legitimately returns
+ * subscriber information, integrate that provider here.
+ */
+async function getAuthorizedSubscriberData(phone) {
+  return {
+    name: null,
+    address: null
+  };
 }
 
-async function jsonFetch(url) {
-  const controller = new AbortController();
+async function mobileLookup(input) {
+  const raw = String(input || "").trim();
 
-  const timer = setTimeout(() => {
-    controller.abort();
-  }, 7000);
-
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "User-Agent": "TXG-Information/1.0"
-      },
-      signal: controller.signal
-    });
-
-    if (!response.ok) {
-      throw new Error("Provider error");
-    }
-
-    return await response.json();
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-async function dnsLookup(name, type) {
-  const host = encodeURIComponent(name);
-
-  return await jsonFetch(
-    `https://dns.google/resolve?name=${host}&type=${type}`
-  );
-}
-
-async function mobileLookup(value) {
   const phone = parsePhoneNumberFromString(
-    value,
+    raw,
     "IN"
   );
 
   if (!phone) {
     return {
-      type: "mobile",
       valid: false,
-      error: "Could not parse number"
+      error: "Invalid phone number"
     };
   }
 
-  const valid = phone.isValid();
-  const possible = phone.isPossible();
+  const subscriber =
+    await getAuthorizedSubscriberData(phone.number);
 
   return {
-    type: "mobile",
-    valid,
-    possible,
-    number: maskNumber(phone.number),
-    country: phone.country || null,
-    countryCode: "+" + phone.countryCallingCode,
+    valid: phone.isValid(),
+    possible: phone.isPossible(),
+
+    number: phone.number,
+    country: phone.country || "Unknown",
+    countryCode: phone.countryCallingCode,
+
     nationalFormat: phone.formatNational(),
     internationalFormat: phone.formatInternational(),
-    numberType: phone.getType() || "UNKNOWN",
-    ownerName: "Not available",
-    address: "Not available",
+
+    numberType:
+      phone.getType?.() || "Unknown",
+
+    ownerName: maskName(subscriber.name),
+    address: maskAddress(subscriber.address),
+
     liveLocation: "Not available"
   };
 }
 
-async function ifscLookup(value) {
-  const ifsc = clean(value, 20).toUpperCase();
+async function ifscLookup(ifsc) {
+  const code = String(ifsc || "")
+    .trim()
+    .toUpperCase();
 
-  if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc)) {
+  if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(code)) {
     return {
-      type: "ifsc",
       valid: false,
       error: "Invalid IFSC format"
     };
   }
 
-  const data = await jsonFetch(
-    `https://ifsc.razorpay.com/${encodeURIComponent(ifsc)}`
+  const response = await fetch(
+    `https://ifsc.razorpay.com/${encodeURIComponent(code)}`
   );
 
+  if (!response.ok) {
+    return {
+      valid: false,
+      error: "IFSC not found"
+    };
+  }
+
+  const data = await response.json();
+
   return {
-    type: "ifsc",
     valid: true,
-    ...data
+    ifsc: data.IFSC || code,
+    bank: data.BANK || "Unknown",
+    branch: data.BRANCH || "Unknown",
+    address: data.ADDRESS || "Unknown",
+    city: data.CITY || "Unknown",
+    district: data.DISTRICT || "Unknown",
+    state: data.STATE || "Unknown"
   };
 }
 
-async function pinLookup(value) {
-  const pin = clean(value, 10);
+async function pinLookup(pin) {
+  const code = String(pin || "").trim();
 
-  if (!/^\d{6}$/.test(pin)) {
+  if (!/^\d{6}$/.test(code)) {
     return {
-      type: "pincode",
       valid: false,
       error: "PIN must contain 6 digits"
     };
   }
 
-  const data = await jsonFetch(
-    `https://api.postalpincode.in/pincode/${pin}`
+  const response = await fetch(
+    `https://api.postalpincode.in/pincode/${code}`
   );
 
-  const first = Array.isArray(data)
-    ? data[0]
-    : null;
+  if (!response.ok) {
+    return {
+      valid: false,
+      error: "PIN lookup failed"
+    };
+  }
+
+  const data = await response.json();
+
+  const result = data?.[0];
+
+  if (!result || result.Status !== "Success") {
+    return {
+      valid: false,
+      error: "PIN not found"
+    };
+  }
 
   return {
-    type: "pincode",
-    pin,
-    status: first?.Status || null,
-    message: first?.Message || null,
-    postOffices: first?.PostOffice || []
+    valid: true,
+    pin: code,
+    message: result.Message,
+    offices: (result.PostOffice || []).map(item => ({
+      name: item.Name,
+      branchType: item.BranchType,
+      deliveryStatus: item.DeliveryStatus,
+      district: item.District,
+      division: item.Division,
+      region: item.Region,
+      state: item.State,
+      country: item.Country
+    }))
   };
 }
 
-async function emailLookup(value) {
-  const email = clean(value, 254).toLowerCase();
+async function emailLookup(email) {
+  const value = String(email || "")
+    .trim()
+    .toLowerCase();
 
   const match =
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    value.match(/^[^\s@]+@([^\s@]+\.[^\s@]+)$/);
 
   if (!match) {
     return {
-      type: "email",
       valid: false,
-      email
+      error: "Invalid email address"
     };
   }
 
-  const domain = email.split("@")[1];
+  const domain = match[1];
 
-  const mx = await dnsLookup(domain, "MX");
+  let mx = [];
+  let ns = [];
 
-  const ns = await dnsLookup(domain, "NS");
+  try {
+    mx = await dns.resolveMx(domain);
+  } catch {}
+
+  try {
+    ns = await dns.resolveNs(domain);
+  } catch {}
 
   return {
-    type: "email",
     valid: true,
-    email,
+    email: value,
     domain,
-    mxAvailable:
-      Array.isArray(mx.Answer) &&
-      mx.Answer.length > 0,
-    mxRecords: mx.Answer || [],
-    nsRecords: ns.Answer || [],
-    ownerName: "Not available"
+    hasMX: mx.length > 0,
+    mx: mx.sort((a, b) => a.priority - b.priority),
+    ns
   };
 }
 
-async function ipLookup(value) {
-  const ip = clean(value, 80);
+async function ipLookup(ip) {
+  const value = String(ip || "").trim();
 
-  if (isPrivateIP(ip)) {
+  if (!net.isIP(value)) {
     return {
-      type: "ip",
       valid: false,
-      error: "Private/local IP addresses are not queried"
+      error: "Invalid IP address"
     };
   }
 
-  const data = await jsonFetch(
-    `https://ipwho.is/${encodeURIComponent(ip)}`
+  const response = await fetch(
+    `https://ipwho.is/${encodeURIComponent(value)}`
   );
 
+  if (!response.ok) {
+    return {
+      valid: false,
+      error: "IP lookup failed"
+    };
+  }
+
+  const data = await response.json();
+
   return {
-    type: "ip",
-    ...data
+    valid: Boolean(data.success),
+    ip: data.ip || value,
+    type: data.type || "Unknown",
+    continent: data.continent || "Unknown",
+    country: data.country || "Unknown",
+    region: data.region || "Unknown",
+    city: data.city || "Unknown",
+    latitude: data.latitude ?? null,
+    longitude: data.longitude ?? null,
+    isp: data.connection?.isp || "Unknown",
+    organization: data.connection?.org || "Unknown",
+    asn: data.connection?.asn || "Unknown",
+    note: "IP geolocation is approximate and is not a person's exact location."
   };
 }
 
-async function domainLookup(value) {
-  let domain = clean(value, 253)
-    .toLowerCase()
-    .replace(/^https?:\/\//, "")
-    .split("/")[0];
+async function domainLookup(domain) {
+  let value = String(domain || "")
+    .trim()
+    .toLowerCase();
+
+  value = value.replace(/^https?:\/\//, "");
+  value = value.split("/")[0];
 
   if (
-    !domain ||
-    domain.length > 253 ||
-    !/^[a-z0-9.-]+$/.test(domain)
+    !/^(?=.{1,253}$)([a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i.test(
+      value
+    )
   ) {
     return {
-      type: "domain",
       valid: false,
       error: "Invalid domain"
     };
   }
 
-  const [a, mx, ns, txt] = await Promise.all([
-    dnsLookup(domain, "A"),
-    dnsLookup(domain, "MX"),
-    dnsLookup(domain, "NS"),
-    dnsLookup(domain, "TXT")
-  ]);
-
-  return {
-    type: "domain",
+  const result = {
     valid: true,
-    domain,
-    aRecords: a.Answer || [],
-    mxRecords: mx.Answer || [],
-    nsRecords: ns.Answer || [],
-    txtRecords: txt.Answer || []
+    domain: value,
+    A: [],
+    AAAA: [],
+    MX: [],
+    NS: [],
+    TXT: []
   };
-}
-
-async function urlLookup(value) {
-  const raw = clean(value, 2048);
-
-  let url;
 
   try {
-    url = new URL(
-      /^https?:\/\//i.test(raw)
-        ? raw
-        : "https://" + raw
-    );
+    result.A = await dns.resolve4(value);
+  } catch {}
+
+  try {
+    result.AAAA = await dns.resolve6(value);
+  } catch {}
+
+  try {
+    result.MX = await dns.resolveMx(value);
+  } catch {}
+
+  try {
+    result.NS = await dns.resolveNs(value);
+  } catch {}
+
+  try {
+    result.TXT = await dns.resolveTxt(value);
+  } catch {}
+
+  return result;
+}
+
+function isPrivateIPv4(ip) {
+  const parts = ip.split(".").map(Number);
+
+  if (parts.length !== 4 || parts.some(Number.isNaN)) {
+    return false;
+  }
+
+  const [a, b] = parts;
+
+  return (
+    a === 10 ||
+    a === 127 ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168) ||
+    a === 0
+  );
+}
+
+function isBlockedHostname(hostname) {
+  const host = hostname.toLowerCase();
+
+  return (
+    host === "localhost" ||
+    host.endsWith(".localhost") ||
+    host.endsWith(".local") ||
+    host.endsWith(".internal") ||
+    host === "0.0.0.0"
+  );
+}
+
+async function urlLookup(input) {
+  let parsed;
+
+  try {
+    parsed = new URL(String(input || "").trim());
   } catch {
     return {
-      type: "url",
       valid: false,
       error: "Invalid URL"
     };
   }
 
-  if (
-    url.protocol !== "http:" &&
-    url.protocol !== "https:"
-  ) {
+  if (!["http:", "https:"].includes(parsed.protocol)) {
     return {
-      type: "url",
       valid: false,
-      error: "Only HTTP/HTTPS URLs are supported"
+      error: "Only HTTP and HTTPS URLs are supported"
     };
   }
 
-  const hostname = url.hostname;
+  const hostname = parsed.hostname;
 
-  if (
-    hostname === "localhost" ||
-    hostname === "127.0.0.1" ||
-    hostname === "::1" ||
-    hostname.endsWith(".local")
-  ) {
+  if (isBlockedHostname(hostname)) {
     return {
-      type: "url",
       valid: false,
-      error: "Local URLs are blocked"
+      safe: false,
+      error: "Local/internal hostnames are blocked"
     };
   }
 
-  const dns = await dnsLookup(hostname, "A");
+  if (net.isIP(hostname) === 4 && isPrivateIPv4(hostname)) {
+    return {
+      valid: false,
+      safe: false,
+      error: "Private IP targets are blocked"
+    };
+  }
+
+  let addresses = [];
+
+  try {
+    addresses = await dns.lookup(hostname, {
+      all: true
+    });
+  } catch {
+    return {
+      valid: false,
+      safe: false,
+      error: "Hostname could not be resolved"
+    };
+  }
+
+  const privateTarget = addresses.some(item => {
+    return net.isIP(item.address) === 4 &&
+      isPrivateIPv4(item.address);
+  });
+
+  if (privateTarget) {
+    return {
+      valid: false,
+      safe: false,
+      error: "URL resolves to a private IP"
+    };
+  }
 
   return {
-    type: "url",
     valid: true,
-    protocol: url.protocol,
+    safe: true,
+    protocol: parsed.protocol,
     hostname,
-    port: url.port || null,
-    pathname: url.pathname,
-    hasQuery: Boolean(url.search),
-    hasFragment: Boolean(url.hash),
-    dnsRecords: dns.Answer || [],
-    note:
-      "This checker does not download or execute the target URL."
+    port: parsed.port || "default",
+    pathname: parsed.pathname,
+    resolvedAddresses: addresses,
+    note: "This check does not guarantee that a website is malware-free."
   };
 }
 
-async function upiLookup(value) {
-  const upi = clean(value, 200).toLowerCase();
+function upiLookup(value) {
+  const input = String(value || "")
+    .trim()
+    .toLowerCase();
 
-  const valid =
-    /^[a-z0-9._-]{2,256}@[a-z0-9.-]{2,64}$/.test(upi);
+  const match = input.match(
+    /^([a-z0-9._-]{2,})@([a-z0-9.-]{2,})$/
+  );
 
-  let detectedNumber = null;
+  if (!match) {
+    return {
+      valid: false,
+      error: "Invalid UPI ID format"
+    };
+  }
 
-  if (valid) {
-    const beforeAt = upi.split("@")[0];
+  const localPart = match[1];
+  const handle = match[2];
 
-    if (/^\d{8,15}$/.test(beforeAt)) {
-      detectedNumber = beforeAt;
-    }
+  const visibleNumber =
+    /^\d{8,15}$/.test(localPart)
+      ? localPart
+      : null;
+
+  return {
+    valid: true,
+    upi: input,
+    handle,
+    visibleNumber: visibleNumber
+      ? maskNumber(visibleNumber)
+      : "Not present in UPI ID",
+
+    ownerName: "Not available",
+    linkedMobile: "Not available",
+    address: "Not available",
+
+    note:
+      "A UPI ID does not by itself reveal hidden private KYC or linked-mobile data."
+  };
+}
+
+function maskNumber(number) {
+  const value = String(number || "");
+
+  if (value.length <= 4) {
+    return "*".repeat(value.length);
+  }
+
+  return (
+    value.slice(0, 2) +
+    "*".repeat(value.length - 4) +
+    value.slice(-2)
+  );
+}
+
+async function ffLookup(ffid) {
+  const id = String(ffid || "").trim();
+
+  if (!id) {
+    return {
+      valid: false,
+      error: "FF ID required"
+    };
   }
 
   return {
-    type: "upi",
-    valid,
-    upiId: upi,
-    detectedNumber,
-    providerHandle:
-      valid ? upi.split("@")[1] : null,
-    ownerName: "Not available",
-    linkedMobile: "Not available"
-  };
-}
-
-async function ffLookup(value) {
-  const id = clean(value, 50);
-
-  return {
-    type: "ffid",
-    valid: Boolean(id),
+    valid: true,
     ffId: id,
-    status:
-      "Public/authorized FF profile provider not configured",
-    information: null
+    status: "Provider not configured",
+    playerName: "Not available",
+    region: "Not available",
+    note:
+      "Connect an authorized/public FF profile provider to retrieve profile information."
   };
 }
 
-export default async function handler(req, res) {
-  res.setHeader("Cache-Control", "no-store");
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader(
-    "Referrer-Policy",
-    "no-referrer"
-  );
+module.exports = async function handler(req, res) {
+  headers(res);
 
   if (req.method !== "POST") {
     return res.status(405).json({
-      success: false,
-      error: "POST only"
+      ok: false,
+      error: "POST required"
     });
   }
 
-  const auth =
-    req.headers.authorization || "";
+  const authenticated = await requireAuth(req, res);
 
-  const token = auth.startsWith("Bearer ")
-    ? auth.slice(7)
-    : "";
-
-  if (!verifyToken(token)) {
-    return res.status(401).json({
-      success: false,
-      error: "Session expired"
-    });
+  if (!authenticated) {
+    return;
   }
 
   try {
-    const body = req.body || {};
+    const {
+      type,
+      value
+    } = req.body || {};
 
-    const moduleName = clean(
-      body.module,
-      30
-    );
+    let data;
 
-    const value = clean(
-      body.value,
-      2048
-    );
-
-    if (!value) {
-      return res.status(400).json({
-        success: false,
-        error: "Input required"
-      });
-    }
-
-    let result;
-
-    switch (moduleName) {
+    switch (type) {
       case "mobile":
-        result = await mobileLookup(value);
-        break;
-
-      case "ifsc":
-        result = await ifscLookup(value);
-        break;
-
-      case "pincode":
-        result = await pinLookup(value);
-        break;
-
-      case "email":
-        result = await emailLookup(value);
-        break;
-
-      case "ip":
-        result = await ipLookup(value);
-        break;
-
-      case "domain":
-        result = await domainLookup(value);
-        break;
-
-      case "url":
-        result = await urlLookup(value);
+        data = await mobileLookup(value);
         break;
 
       case "upi":
-        result = await upiLookup(value);
+        data = upiLookup(value);
+        break;
+
+      case "ifsc":
+        data = await ifscLookup(value);
+        break;
+
+      case "pin":
+        data = await pinLookup(value);
+        break;
+
+      case "email":
+        data = await emailLookup(value);
+        break;
+
+      case "ip":
+        data = await ipLookup(value);
+        break;
+
+      case "domain":
+        data = await domainLookup(value);
+        break;
+
+      case "url":
+        data = await urlLookup(value);
         break;
 
       case "ffid":
-        result = await ffLookup(value);
+        data = await ffLookup(value);
         break;
 
       default:
         return res.status(400).json({
-          success: false,
-          error: "Unknown lookup"
+          ok: false,
+          error: "Unknown lookup type"
         });
     }
 
     return res.status(200).json({
-      success: true,
-      result
+      ok: true,
+      type,
+      data
     });
-
   } catch (error) {
+    console.error(error);
+
     return res.status(500).json({
-      success: false,
-      error: "Lookup provider unavailable"
+      ok: false,
+      error: "Lookup failed"
     });
   }
-}
+};
