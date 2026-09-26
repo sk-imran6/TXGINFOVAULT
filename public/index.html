@@ -1,13 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-  name="viewport"
-  content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>TXG Information Center</title>
 
@@ -22,10 +17,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  font-family:
-    Inter,
-    Arial,
-    sans-serif;
+  font-family: Inter, Arial, sans-serif;
   background: #020712;
   color: #eaf4ff;
 }
@@ -36,7 +28,7 @@ body {
 
 
 /* ==========================================
-   BACKGROUND
+   CODE BACKGROUND
 ========================================== */
 
 .code-bg {
@@ -45,31 +37,36 @@ body {
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
-  opacity: .22;
+  opacity: .30;
 }
 
 .code-line {
   position: absolute;
   white-space: nowrap;
   color: #168cff;
-  font-family: monospace;
-  font-size: 12px;
+  font-family: "Courier New", monospace;
+  font-size: 10px;
+  opacity: .45;
   animation: moveCode linear infinite;
+  will-change: transform;
+  text-shadow: 0 0 5px rgba(22,140,255,.25);
 }
 
 @keyframes moveCode {
+
   from {
-    transform: translateX(110vw);
+    transform: translateX(120vw);
   }
 
   to {
-    transform: translateX(-120vw);
+    transform: translateX(-140vw);
   }
+
 }
 
 
 /* ==========================================
-   MAIN
+   APP
 ========================================== */
 
 .app {
@@ -94,12 +91,12 @@ body {
 
 .login-box {
   width: min(430px, 100%);
-  background: rgba(5, 14, 29, .92);
-  border: 1px solid rgba(0, 132, 255, .28);
+  background: rgba(5,14,29,.93);
+  border: 1px solid rgba(0,132,255,.30);
   border-radius: 22px;
   padding: 32px;
   box-shadow:
-    0 0 60px rgba(0, 100, 255, .12);
+    0 0 60px rgba(0,100,255,.14);
   backdrop-filter: blur(18px);
 }
 
@@ -143,17 +140,22 @@ input {
 input:focus {
   border-color: #148cff;
   box-shadow:
-    0 0 0 3px rgba(20, 140, 255, .12);
+    0 0 0 3px rgba(20,140,255,.12);
 }
 
 
 /* ==========================================
-   BUTTON
+   BUTTONS
 ========================================== */
 
 button {
   border: 0;
   cursor: pointer;
+}
+
+button:disabled {
+  opacity: .55;
+  cursor: not-allowed;
 }
 
 .primary {
@@ -243,16 +245,16 @@ button {
 
 
 /* ==========================================
-   MODULE
+   CARDS
 ========================================== */
 
 .card {
   min-height: 145px;
   padding: 22px;
   border-radius: 18px;
-  border: 1px solid rgba(35, 93, 145, .35);
+  border: 1px solid rgba(35,93,145,.35);
   background:
-    rgba(5, 15, 29, .86);
+    rgba(5,15,29,.88);
   backdrop-filter: blur(15px);
   transition: .2s;
 }
@@ -260,7 +262,9 @@ button {
 .card:hover {
   transform: translateY(-2px);
   border-color:
-    rgba(20, 140, 255, .7);
+    rgba(20,140,255,.7);
+  box-shadow:
+    0 8px 30px rgba(0,80,180,.10);
 }
 
 .card-title {
@@ -284,6 +288,10 @@ button {
   font-weight: 700;
 }
 
+.search-btn:hover {
+  background: #168cff;
+}
+
 
 /* ==========================================
    CUSTOM API
@@ -293,8 +301,10 @@ button {
   margin-top: 18px;
   padding: 23px;
   border-radius: 18px;
-  border: 1px solid rgba(35, 93, 145, .35);
-  background: rgba(5, 15, 29, .88);
+  border: 1px solid rgba(35,93,145,.35);
+  background:
+    rgba(5,15,29,.88);
+  backdrop-filter: blur(15px);
 }
 
 .custom-list {
@@ -320,6 +330,10 @@ button {
   color: white;
 }
 
+.api-item button:last-child {
+  background: #30141a;
+}
+
 
 /* ==========================================
    MODAL
@@ -330,7 +344,8 @@ button {
   position: fixed;
   inset: 0;
   z-index: 20;
-  background: rgba(0, 4, 10, .78);
+  background:
+    rgba(0,4,10,.80);
   align-items: center;
   justify-content: center;
   padding: 20px;
@@ -344,6 +359,8 @@ button {
   border: 1px solid #173654;
   border-radius: 20px;
   padding: 24px;
+  box-shadow:
+    0 20px 80px rgba(0,0,0,.45);
 }
 
 .modal-head {
@@ -359,6 +376,7 @@ button {
   border-radius: 10px;
   background: #101d2d;
   color: white;
+  font-size: 23px;
 }
 
 .result {
@@ -391,7 +409,7 @@ pre {
    MOBILE
 ========================================== */
 
-@media (max-width: 600px) {
+@media (max-width:600px) {
 
   .app {
     width: 92%;
@@ -413,11 +431,12 @@ pre {
   .card {
     min-height: auto;
   }
+
 }
 
 </style>
-
 </head>
+
 
 <body>
 
@@ -426,7 +445,10 @@ pre {
      BACKGROUND
 ========================================= -->
 
-<div class="code-bg" id="codeBg"></div>
+<div
+  class="code-bg"
+  id="codeBg"
+></div>
 
 
 <!-- ========================================
@@ -493,7 +515,8 @@ pre {
     <div>
 
       <div class="brand">
-        TXG <span>Information Center</span>
+        TXG
+        <span>Information Center</span>
       </div>
 
       <div class="tagline">
@@ -644,6 +667,7 @@ pre {
 
     </div>
 
+
   </div>
 
 
@@ -741,6 +765,7 @@ pre {
       autocomplete="off"
     >
 
+
     <button
       class="primary"
       id="runLookup"
@@ -755,7 +780,9 @@ pre {
       style="display:none"
     >
 
-      <pre id="resultText"></pre>
+      <pre
+        id="resultText"
+      ></pre>
 
     </div>
 
@@ -867,15 +894,13 @@ const apiAddError =
   );
 
 
-// ==========================================
-// CURRENT TYPE
-// ==========================================
-
 let currentType = "";
 
+let currentCustomApi = null;
+
 
 // ==========================================
-// API REQUEST
+// REQUEST
 // ==========================================
 
 async function request(
@@ -910,7 +935,7 @@ async function request(
   } catch {
 
     throw new Error(
-      `Server returned HTTP ${response.status}: ${text.slice(0, 300)}`
+      `Server returned HTTP ${response.status}: ${text.slice(0,300)}`
     );
   }
 
@@ -929,7 +954,7 @@ async function request(
 
 
 // ==========================================
-// SHOW DASHBOARD
+// DASHBOARD
 // ==========================================
 
 function showDashboard() {
@@ -941,10 +966,6 @@ function showDashboard() {
     "block";
 }
 
-
-// ==========================================
-// SHOW LOGIN
-// ==========================================
 
 function showLogin() {
 
@@ -980,9 +1001,10 @@ async function checkLogin() {
     } else {
 
       showLogin();
+
     }
 
-  } catch (error) {
+  } catch {
 
     showLogin();
   }
@@ -997,6 +1019,7 @@ async function login() {
 
   loginError.textContent =
     "";
+
 
   const password =
     passwordInput.value;
@@ -1031,10 +1054,11 @@ async function login() {
               "application/json"
           },
 
-          body: JSON.stringify({
-            action: "login",
-            password
-          })
+          body:
+            JSON.stringify({
+              action: "login",
+              password
+            })
         }
       );
 
@@ -1091,9 +1115,10 @@ async function logout() {
             "application/json"
         },
 
-        body: JSON.stringify({
-          action: "logout"
-        })
+        body:
+          JSON.stringify({
+            action: "logout"
+          })
       }
     );
 
@@ -1112,13 +1137,30 @@ function openLookup(type) {
   currentType =
     type;
 
+  currentCustomApi =
+    null;
+
+
   const titles = {
-    mobile: "Mobile Lookup",
-    pin: "PIN Lookup",
-    ifsc: "IFSC Lookup",
-    ip: "IP Lookup",
-    url: "URL Lookup",
-    upi: "UPI Lookup"
+
+    mobile:
+      "Mobile Lookup",
+
+    pin:
+      "PIN Lookup",
+
+    ifsc:
+      "IFSC Lookup",
+
+    ip:
+      "IP Lookup",
+
+    url:
+      "URL Lookup",
+
+    upi:
+      "UPI Lookup"
+
   };
 
 
@@ -1141,6 +1183,7 @@ function openLookup(type) {
 
     upi:
       "Enter UPI ID"
+
   };
 
 
@@ -1157,14 +1200,19 @@ function openLookup(type) {
   lookupInput.value =
     "";
 
-  resultText.textContent =
-    "";
-
   lookupResult.style.display =
     "none";
 
+  resultText.textContent =
+    "";
+
   modalStatus.textContent =
     "";
+
+
+  runLookup.textContent =
+    "Search";
+
 
   lookupModal.style.display =
     "flex";
@@ -1178,21 +1226,40 @@ function openLookup(type) {
 
 
 // ==========================================
-// CLOSE LOOKUP
+// CLOSE
 // ==========================================
 
 function closeLookup() {
 
   lookupModal.style.display =
     "none";
+
+  currentCustomApi =
+    null;
+
+  runLookup.textContent =
+    "Search";
 }
 
 
 // ==========================================
-// RUN LOOKUP
+// NORMAL LOOKUP
 // ==========================================
 
 async function performLookup() {
+
+  if (currentType === "custom") {
+
+    if (currentCustomApi) {
+
+      await performCustomApi(
+        currentCustomApi
+      );
+    }
+
+    return;
+  }
+
 
   const input =
     lookupInput.value.trim();
@@ -1236,12 +1303,13 @@ async function performLookup() {
               "application/json"
           },
 
-          body: JSON.stringify({
-            type:
-              currentType,
+          body:
+            JSON.stringify({
+              type:
+                currentType,
 
-            input
-          })
+              input
+            })
         }
       );
 
@@ -1297,7 +1365,9 @@ function loadCustomApis() {
 }
 
 
-function saveCustomApis(items) {
+function saveCustomApis(
+  items
+) {
 
   localStorage.setItem(
     "txg_custom_apis",
@@ -1307,7 +1377,7 @@ function saveCustomApis(items) {
 
 
 // ==========================================
-// RENDER CUSTOM APIS
+// RENDER CUSTOM APIs
 // ==========================================
 
 function renderCustomApis() {
@@ -1332,7 +1402,7 @@ function renderCustomApis() {
 
 
   items.forEach(
-    (item, index) => {
+    (item,index) => {
 
       const row =
         document.createElement(
@@ -1370,10 +1440,7 @@ function renderCustomApis() {
       open.addEventListener(
         "click",
         () => {
-
-          openCustomApi(
-            item
-          );
+          openCustomApi(item);
         }
       );
 
@@ -1386,11 +1453,9 @@ function renderCustomApis() {
       remove.textContent =
         "×";
 
+
       remove.style.marginLeft =
         "6px";
-
-      remove.style.background =
-        "#30141a";
 
 
       remove.addEventListener(
@@ -1400,14 +1465,17 @@ function renderCustomApis() {
           const all =
             loadCustomApis();
 
+
           all.splice(
             index,
             1
           );
 
+
           saveCustomApis(
             all
           );
+
 
           renderCustomApis();
         }
@@ -1520,9 +1588,6 @@ function addCustomApi() {
   apiUrl.value =
     "";
 
-  apiAddError.textContent =
-    "";
-
   renderCustomApis();
 }
 
@@ -1531,10 +1596,15 @@ function addCustomApi() {
 // OPEN CUSTOM API
 // ==========================================
 
-function openCustomApi(item) {
+function openCustomApi(
+  item
+) {
 
   currentType =
     "custom";
+
+  currentCustomApi =
+    item;
 
 
   modalTitle.textContent =
@@ -1557,16 +1627,16 @@ function openCustomApi(item) {
     "none";
 
 
+  resultText.textContent =
+    "";
+
+
   runLookup.textContent =
     "Send";
 
 
   lookupModal.style.display =
     "flex";
-
-
-  runLookup.onclick =
-    () => performCustomApi(item);
 
 
   setTimeout(
@@ -1580,7 +1650,9 @@ function openCustomApi(item) {
 // CUSTOM API REQUEST
 // ==========================================
 
-async function performCustomApi(item) {
+async function performCustomApi(
+  item
+) {
 
   const message =
     lookupInput.value;
@@ -1614,25 +1686,34 @@ async function performCustomApi(item) {
               "application/json"
           },
 
-          body: JSON.stringify({
-            url:
-              item.url,
+          body:
+            JSON.stringify({
+              url:
+                item.url,
 
-            message
-          })
+              message
+            })
         }
       );
 
 
-    resultText.textContent =
+    if (
       typeof data.response ===
       "string"
-        ? data.response
-        : JSON.stringify(
-            data.response,
-            null,
-            2
-          );
+    ) {
+
+      resultText.textContent =
+        data.response;
+
+    } else {
+
+      resultText.textContent =
+        JSON.stringify(
+          data.response,
+          null,
+          2
+        );
+    }
 
 
     lookupResult.style.display =
@@ -1659,7 +1740,7 @@ async function performCustomApi(item) {
 
 
 // ==========================================
-// SEARCH BUTTONS
+// LOOKUP BUTTONS
 // ==========================================
 
 document
@@ -1676,8 +1757,10 @@ document
           openLookup(
             button.dataset.type
           );
+
         }
       );
+
     }
   );
 
@@ -1691,29 +1774,24 @@ loginBtn.addEventListener(
   login
 );
 
+
 logoutBtn.addEventListener(
   "click",
   logout
 );
 
+
 closeModal.addEventListener(
   "click",
-  () => {
-
-    closeLookup();
-
-    runLookup.onclick =
-      performLookup;
-
-    runLookup.textContent =
-      "Search";
-  }
+  closeLookup
 );
+
 
 runLookup.addEventListener(
   "click",
   performLookup
 );
+
 
 addApiBtn.addEventListener(
   "click",
@@ -1731,6 +1809,7 @@ passwordInput.addEventListener(
 
       login();
     }
+
   }
 );
 
@@ -1743,8 +1822,9 @@ lookupInput.addEventListener(
       event.key === "Enter"
     ) {
 
-      runLookup.click();
+      performLookup();
     }
+
   }
 );
 
@@ -1760,12 +1840,13 @@ lookupModal.addEventListener(
 
       closeLookup();
     }
+
   }
 );
 
 
 // ==========================================
-// CODE BACKGROUND
+// LARGE SLOW CODE BACKGROUND
 // ==========================================
 
 function createCodeBackground() {
@@ -1777,25 +1858,198 @@ function createCodeBackground() {
 
 
   const code = [
+
     "const TXG = await lookup();",
+
     "fetch('/api/information');",
+
     "response.json();",
+
     "validate(input);",
+
     "const result = data;",
+
     "if (authorized) return result;",
+
     "POST /api/lookup",
+
     "GET /api/auth",
+
     "status: 200",
+
     "TXG_INFORMATION_CENTER",
+
     "https://api.service.com",
+
     "JSON.parse(response);",
-    "await fetch(endpoint);"
+
+    "await fetch(endpoint);",
+
+    "const user = request.user;",
+
+    "let response = await fetch(url);",
+
+    "if (!input) return;",
+
+    "async function search() {",
+
+    "const data = await request();",
+
+    "return { ok: true };",
+
+    "Authorization: Bearer ******",
+
+    "Content-Type: application/json",
+
+    "method: POST",
+
+    "statusCode = 200;",
+
+    "const apiResponse = result;",
+
+    "lookup.mobile(input);",
+
+    "lookup.pin(input);",
+
+    "lookup.ifsc(input);",
+
+    "lookup.ip(input);",
+
+    "lookup.url(input);",
+
+    "lookup.upi(input);",
+
+    "TXG // INFORMATION",
+
+    "SYSTEM ONLINE",
+
+    "DATABASE CONNECTED",
+
+    "REQUEST RECEIVED",
+
+    "PROCESSING...",
+
+    "VALIDATING DATA...",
+
+    "RESPONSE READY",
+
+    "SECURE CONNECTION",
+
+    "SERVER STATUS: ONLINE",
+
+    "API STATUS: 200",
+
+    "const session = auth();",
+
+    "if (session.valid) {",
+
+    "return dashboard;",
+
+    "}",
+
+    "await fetch('/api/custom');",
+
+    "customAPI(message);",
+
+    "JSON.stringify(data);",
+
+    "JSON.parse(response);",
+
+    "new URL(input);",
+
+    "dns.lookup(hostname);",
+
+    "const result = await lookup;",
+
+    "console.log('TXG');",
+
+    "/* TXG INFORMATION CENTER */",
+
+    "/* SYSTEM RUNNING */",
+
+    "function authenticate() {",
+
+    "return session === valid;",
+
+    "}",
+
+    "const endpoint = '/api/lookup';",
+
+    "request.method = 'POST';",
+
+    "response.status = 200;",
+
+    "server.ready = true;",
+
+    "client.connected = true;",
+
+    "information.lookup();",
+
+    "TXG_GATEWAY",
+
+    "TXG_SYSTEM",
+
+    "TXG_SECURITY",
+
+    "TXG_API",
+
+    "TXG_SERVER",
+
+    "TXG_CORE",
+
+    "TXG_DATABASE",
+
+    "connection.established();",
+
+    "request.completed();",
+
+    "system.initialized();",
+
+    "security.check();",
+
+    "authentication.valid();",
+
+    "data.processing();",
+
+    "server.response();",
+
+    "API_CONNECTION_ACTIVE",
+
+    "REQUEST_ID: TXG",
+
+    "NODE_RUNTIME_ACTIVE",
+
+    "FUNCTION_READY",
+
+    "CACHE_CONTROL: NO_STORE",
+
+    "HTTP STATUS 200",
+
+    "ENCRYPTED SESSION",
+
+    "SECURE REQUEST",
+
+    "DATA VALIDATED",
+
+    "LOOKUP ENGINE READY",
+
+    "TXG CORE ONLINE"
+
   ];
+
+
+  /*
+    180 lines means the screen
+    stays heavily filled with code.
+  */
+
+  const totalLines =
+    180;
 
 
   for (
     let i = 0;
-    i < 25;
+    i < totalLines;
     i++
   ) {
 
@@ -1809,7 +2063,7 @@ function createCodeBackground() {
       "code-line";
 
 
-    line.textContent =
+    let text =
       code[
         Math.floor(
           Math.random() *
@@ -1818,27 +2072,84 @@ function createCodeBackground() {
       ];
 
 
+    if (
+      Math.random() > .55
+    ) {
+
+      text +=
+        "  " +
+        Math.floor(
+          Math.random() *
+          999999
+        );
+
+    }
+
+
+    line.textContent =
+      text;
+
+
+    /*
+      Spread vertically
+    */
+
     line.style.top =
       `${Math.random() * 100}%`;
 
 
-    line.style.animationDuration =
-      `${12 + Math.random() * 20}s`;
+    /*
+      Random horizontal start
+    */
 
+    line.style.left =
+      `${Math.random() * 100}%`;
+
+
+    /*
+      VERY SLOW:
+      45–100 seconds
+    */
+
+    line.style.animationDuration =
+      `${45 + Math.random() * 55}s`;
+
+
+    /*
+      Different starting positions
+    */
 
     line.style.animationDelay =
-      `${-Math.random() * 20}s`;
+      `${-Math.random() * 100}s`;
+
+
+    /*
+      Random opacity
+    */
+
+    line.style.opacity =
+      `${0.16 + Math.random() * 0.48}`;
+
+
+    /*
+      Small size variation
+    */
+
+    line.style.fontSize =
+      `${9 + Math.random() * 4}px`;
 
 
     bg.appendChild(
       line
     );
+
   }
+
 }
 
 
 // ==========================================
-// INIT
+// START
 // ==========================================
 
 createCodeBackground();
