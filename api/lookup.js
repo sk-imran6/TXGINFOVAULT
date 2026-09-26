@@ -1,311 +1,596 @@
-const { parsePhoneNumberFromString } = require("libphonenumber-js");
+const {
+  parsePhoneNumberFromString
+} = require("libphonenumber-js");
+
 const dns = require("dns").promises;
-const { authenticated } = require("./auth");
+
+const {
+  authenticated
+} = require("./auth");
+
+
+// ==========================================
+// JSON RESPONSE
+// ==========================================
 
 function send(res, status, data) {
-  res.status(status).json(data);
+
+  return res
+    .status(status)
+    .json(data);
 }
 
-function clean(value, max = 500) {
-  return String(value || "").trim().slice(0, max);
-}
 
-async function getJSON(url, options = {}) {
-  const controller = new AbortController();
+// ==========================================
+// FETCH JSON
+// ==========================================
 
-  const timer = setTimeout(() => {
-    controller.abort();
-  }, 10000);
+async function fetchJSON(url, options = {}) {
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      "User-Agent":
+        "TXG-Information-Center/4.0",
+      "Accept":
+        "application/json",
+      ...(options.headers || {})
+    }
+  });
+
+
+  const text =
+    await response.text();
+
+
+  let data;
 
   try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal
-    });
-
-    const text = await response.text();
-
-    let data;
-
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = text;
-    }
-
-    return {
-      status: response.status,
-      ok: response.ok,
-      data
-    };
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-function normalizeIP(ip) {
-  return ip
-    .trim()
-    .replace(/^\[/, "")
-    .replace(/\]$/, "");
-}
-
-function isIPv4(ip) {
-  return /^(\d{1,3}\.){3}\d{1,3}$/.test(ip);
-}
-
-function isPrivateIPv4(ip) {
-  if (!isIPv4(ip)) return false;
-
-  const p = ip.split(".").map(Number);
-
-  if (p.some(x => x < 0 || x > 255)) return true;
-
-  const [a, b] = p;
-
-  if (a === 10) return true;
-  if (a === 127) return true;
-  if (a === 169 && b === 254) return true;
-  if (a === 172 && b >= 16 && b <= 31) return true;
-  if (a === 192 && b === 168) return true;
-
-  return false;
-}
-
-function isPrivateIPv6(ip) {
-  const x = ip.toLowerCase();
-
-  return (
-    x === "::1" ||
-    x.startsWith("fc") ||
-    x.startsWith("fd") ||
-    x.startsWith("fe80:")
-  );
-}
-
-async function mobileLookup(value) {
-  let phone = parsePhoneNumberFromString(value, "IN");
-
-  if (!phone) {
-    phone = parsePhoneNumberFromString(value);
+    data = JSON.parse(text);
+  } catch {
+    data = text;
   }
 
-  if (!phone) {
-    return {
-      type: "Mobile",
-      valid: false,
-      possible: false,
-      message: "Invalid phone number format"
-    };
-  }
 
   return {
-    type: "Mobile",
-    input: value,
-    valid: phone.isValid(),
-    possible: phone.isPossible(),
-    country: phone.country || null,
-    countryCallingCode: phone.countryCallingCode || null,
-    nationalNumber: phone.nationalNumber || null,
-    internationalFormat: phone.formatInternational(),
-    nationalFormat: phone.formatNational(),
-    uri: phone.getURI()
+    ok: response.ok,
+    status: response.status,
+    data
   };
 }
 
-async function pinLookup(pin) {
-  if (!/^\d{6}$/.test(pin)) {
-    throw new Error("Enter a valid 6-digit PIN code");
+
+// ==========================================
+// MOBILE
+// ==========================================
+
+async function mobileLookup(input) {
+
+  const raw =
+    String(input || "").trim();
+
+  if (!raw) {
+    throw new Error(
+      "Mobile number required"
+    );
   }
 
-  const result = await getJSON(
-    `https://api.postalpincode.in/pincode/${encodeURIComponent(pin)}`
-  );
 
-  if (!result.ok || !Array.isArray(result.data)) {
-    throw new Error("PIN service unavailable");
+  let phone =
+    parsePhoneNumberFromString(
+      raw,
+      "IN"
+    );
+
+
+  if (!phone) {
+
+    phone =
+      parsePhoneNumberFromString(
+        "+" + raw
+      );
   }
+
+
+  if (!phone) {
+
+    return {
+      type: "mobile",
+      valid: false,
+      message:
+        "Could not parse this number."
+    };
+  }
+
 
   return {
-    type: "PIN",
-    pincode: pin,
+    type: "mobile",
+
+    input: raw,
+
+    valid:
+      phone.isValid(),
+
+    possible:
+      phone.isPossible(),
+
+    country:
+      phone.country || null,
+
+    callingCode:
+      phone.countryCallingCode || null,
+
+    international:
+      phone.formatInternational(),
+
+    national:
+      phone.formatNational(),
+
+    e164:
+      phone.number,
+
+    uri:
+      phone.getURI(),
+
+    countryCallingCode:
+      phone.countryCallingCode
+  };
+}
+
+
+// ==========================================
+// PIN
+// ==========================================
+
+async function pinLookup(input) {
+
+  const pin =
+    String(input || "")
+      .replace(/\D/g, "");
+
+  if (!/^\d{6}$/.test(pin)) {
+
+    throw new Error(
+      "Enter a valid 6 digit PIN code."
+    );
+  }
+
+
+  const result =
+    await fetchJSON(
+      `https://api.postalpincode.in/pincode/${pin}`
+    );
+
+
+  if (
+    !result.ok ||
+    !Array.isArray(result.data)
+  ) {
+
+    throw new Error(
+      "PIN service unavailable."
+    );
+  }
+
+
+  return {
+    type: "pin",
+    pin,
     response: result.data
   };
 }
 
-async function ifscLookup(ifsc) {
-  if (!/^[A-Z]{4}0[A-Z0-9]{6}$/i.test(ifsc)) {
-    throw new Error("Invalid IFSC format");
+
+// ==========================================
+// IFSC
+// ==========================================
+
+async function ifscLookup(input) {
+
+  const ifsc =
+    String(input || "")
+      .trim()
+      .toUpperCase();
+
+
+  if (
+    !/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc)
+  ) {
+
+    throw new Error(
+      "Enter a valid IFSC code."
+    );
   }
 
-  const result = await getJSON(
-    `https://ifsc.razorpay.com/${encodeURIComponent(ifsc.toUpperCase())}`
-  );
+
+  const result =
+    await fetchJSON(
+      `https://ifsc.razorpay.com/${encodeURIComponent(ifsc)}`
+    );
+
 
   if (!result.ok) {
-    throw new Error("IFSC not found");
+
+    throw new Error(
+      "IFSC code not found."
+    );
   }
 
+
   return {
-    type: "IFSC",
+    type: "ifsc",
+    ifsc,
     response: result.data
   };
 }
+
+
+// ==========================================
+// IP
+// ==========================================
 
 async function ipLookup(input) {
-  let ip = normalizeIP(input);
+
+  let ip =
+    String(input || "").trim();
+
 
   if (!ip) {
-    const publicIP = await getJSON("https://api.ipify.org?format=json");
 
-    if (!publicIP.ok || !publicIP.data?.ip) {
-      throw new Error("Could not detect public IP");
-    }
+    const result =
+      await fetchJSON(
+        "https://ipwho.is/"
+      );
 
-    ip = publicIP.data.ip;
+    return {
+      type: "ip",
+      response: result.data
+    };
   }
 
-  if (isPrivateIPv4(ip) || isPrivateIPv6(ip)) {
-    throw new Error("Private/local IP lookup is not supported");
-  }
 
-  const result = await getJSON(
-    `https://ipwho.is/${encodeURIComponent(ip)}`
-  );
+  const result =
+    await fetchJSON(
+      `https://ipwho.is/${encodeURIComponent(ip)}`
+    );
+
 
   if (!result.ok) {
-    throw new Error("IP lookup failed");
+
+    throw new Error(
+      "IP lookup failed."
+    );
   }
 
+
   return {
-    type: "IP",
+    type: "ip",
+    ip,
     response: result.data
   };
 }
 
-async function urlLookup(input) {
-  let value = input;
 
-  if (!/^https?:\/\//i.test(value)) {
-    value = "https://" + value;
+// ==========================================
+// URL
+// ==========================================
+
+async function urlLookup(input) {
+
+  const value =
+    String(input || "").trim();
+
+
+  if (!value) {
+
+    throw new Error(
+      "URL required."
+    );
   }
+
+
+  let urlString = value;
+
+  if (
+    !/^https?:\/\//i.test(urlString)
+  ) {
+    urlString =
+      "https://" + urlString;
+  }
+
 
   let parsed;
 
   try {
-    parsed = new URL(value);
+    parsed =
+      new URL(urlString);
   } catch {
-    throw new Error("Invalid URL");
+
+    throw new Error(
+      "Invalid URL."
+    );
   }
 
-  if (!["http:", "https:"].includes(parsed.protocol)) {
-    throw new Error("Only HTTP/HTTPS URLs are supported");
-  }
 
-  let dnsResult = null;
+  const hostname =
+    parsed.hostname;
+
+
+  let dnsRecords = {};
 
   try {
-    dnsResult = await dns.lookup(parsed.hostname, {
-      all: true
-    });
+
+    const [
+      ipv4,
+      ipv6,
+      mx,
+      ns
+    ] = await Promise.allSettled([
+      dns.resolve4(hostname),
+      dns.resolve6(hostname),
+      dns.resolveMx(hostname),
+      dns.resolveNs(hostname)
+    ]);
+
+
+    dnsRecords = {
+      A:
+        ipv4.status === "fulfilled"
+          ? ipv4.value
+          : [],
+
+      AAAA:
+        ipv6.status === "fulfilled"
+          ? ipv6.value
+          : [],
+
+      MX:
+        mx.status === "fulfilled"
+          ? mx.value
+          : [],
+
+      NS:
+        ns.status === "fulfilled"
+          ? ns.value
+          : []
+    };
+
   } catch {
-    dnsResult = [];
+    dnsRecords = {};
   }
+
 
   return {
-    type: "URL",
-    protocol: parsed.protocol,
-    hostname: parsed.hostname,
-    port: parsed.port || null,
-    pathname: parsed.pathname,
-    query: parsed.search || null,
-    hash: parsed.hash || null,
-    origin: parsed.origin,
-    dns: dnsResult
+    type: "url",
+
+    original:
+      value,
+
+    protocol:
+      parsed.protocol,
+
+    hostname:
+      parsed.hostname,
+
+    port:
+      parsed.port ||
+      (
+        parsed.protocol ===
+        "https:"
+          ? "443"
+          : "80"
+      ),
+
+    pathname:
+      parsed.pathname,
+
+    query:
+      parsed.search,
+
+    hash:
+      parsed.hash,
+
+    origin:
+      parsed.origin,
+
+    dns:
+      dnsRecords
   };
 }
 
-async function upiLookup(upi) {
-  const value = upi.trim();
 
-  if (!/^[A-Za-z0-9._-]{2,256}@[A-Za-z0-9.-]{2,64}$/.test(value)) {
-    throw new Error("Invalid UPI ID format");
+// ==========================================
+// UPI
+// ==========================================
+
+async function upiLookup(input) {
+
+  const upi =
+    String(input || "")
+      .trim()
+      .toLowerCase();
+
+
+  if (
+    !/^[a-z0-9._-]{2,256}@[a-z0-9.-]{2,64}$/.test(
+      upi
+    )
+  ) {
+
+    throw new Error(
+      "Enter a valid UPI ID."
+    );
   }
 
-  const result = {
-    type: "UPI",
-    upiId: value,
-    handle: value.split("@")[1],
-    verified: false,
-    providerResponse: null,
-    message:
-      "Format is valid. Beneficiary verification requires an authorized UPI verification provider."
+
+  const parts =
+    upi.split("@");
+
+
+  return {
+    type: "upi",
+
+    upi,
+
+    validFormat: true,
+
+    username:
+      parts[0],
+
+    handle:
+      parts[1],
+
+    note:
+      "Format validated. Beneficiary name or account details require an authorized UPI verification provider."
   };
-
-  // Optional authorized provider.
-  // No environment variables are required for this project.
-  // If you later add your own server-side provider, it can be connected here.
-
-  return result;
 }
 
-module.exports = async function handler(req, res) {
-  res.setHeader("Cache-Control", "no-store");
 
-  if (req.method !== "POST") {
-    return send(res, 405, {
-      ok: false,
-      error: "Method not allowed"
-    });
-  }
+// ==========================================
+// MAIN
+// ==========================================
 
-  if (!authenticated(req)) {
-    return send(res, 401, {
-      ok: false,
-      error: "Authentication required"
-    });
-  }
-
-  const type = String(req.body?.type || "").toLowerCase();
-  const input = clean(req.body?.input, 1000);
-
-  if (!input && type !== "ip") {
-    return send(res, 400, {
-      ok: false,
-      error: "Input required"
-    });
-  }
+async function handler(req, res) {
 
   try {
-    let result;
 
-    if (type === "mobile") {
-      result = await mobileLookup(input);
-    } else if (type === "pin") {
-      result = await pinLookup(input);
-    } else if (type === "ifsc") {
-      result = await ifscLookup(input);
-    } else if (type === "ip") {
-      result = await ipLookup(input);
-    } else if (type === "url") {
-      result = await urlLookup(input);
-    } else if (type === "upi") {
-      result = await upiLookup(input);
-    } else {
-      return send(res, 400, {
-        ok: false,
-        error: "Unknown lookup type"
-      });
+    if (
+      !authenticated(req)
+    ) {
+
+      return send(
+        res,
+        401,
+        {
+          ok: false,
+          error:
+            "Authentication required"
+        }
+      );
     }
 
-    return send(res, 200, {
-      ok: true,
-      result
-    });
+
+    if (
+      req.method !== "POST"
+    ) {
+
+      return send(
+        res,
+        405,
+        {
+          ok: false,
+          error:
+            "Method not allowed"
+        }
+      );
+    }
+
+
+    const body =
+      req.body &&
+      typeof req.body === "object"
+        ? req.body
+        : {};
+
+
+    const type =
+      String(body.type || "")
+        .toLowerCase();
+
+    const input =
+      String(body.input || "")
+        .trim();
+
+
+    if (!type) {
+
+      return send(
+        res,
+        400,
+        {
+          ok: false,
+          error:
+            "Lookup type required"
+        }
+      );
+    }
+
+
+    let result;
+
+
+    if (type === "mobile") {
+
+      result =
+        await mobileLookup(input);
+
+    } else if (type === "pin") {
+
+      result =
+        await pinLookup(input);
+
+    } else if (type === "ifsc") {
+
+      result =
+        await ifscLookup(input);
+
+    } else if (type === "ip") {
+
+      result =
+        await ipLookup(input);
+
+    } else if (type === "url") {
+
+      result =
+        await urlLookup(input);
+
+    } else if (type === "upi") {
+
+      result =
+        await upiLookup(input);
+
+    } else {
+
+      return send(
+        res,
+        400,
+        {
+          ok: false,
+          error:
+            "Unknown lookup type"
+        }
+      );
+    }
+
+
+    return send(
+      res,
+      200,
+      {
+        ok: true,
+        result
+      }
+    );
+
   } catch (error) {
-    return send(res, 400, {
-      ok: false,
-      error: error.message || "Lookup failed"
-    });
+
+    console.error(
+      "LOOKUP ERROR:",
+      error
+    );
+
+    return send(
+      res,
+      500,
+      {
+        ok: false,
+        error:
+          error?.message ||
+          "Lookup failed"
+      }
+    );
   }
-};
+}
+
+
+module.exports = handler;
