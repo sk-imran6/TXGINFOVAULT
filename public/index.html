@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
 <title>TXG Information Center</title>
 
 <style>
+
 *{
   box-sizing:border-box;
   margin:0;
   padding:0;
 }
 
-html,body{
+html,
+body{
   width:100%;
   min-height:100%;
 }
@@ -24,115 +32,69 @@ body{
   overflow-x:hidden;
 }
 
+
+/* =========================================
+   CODE BACKGROUND
+========================================= */
+
 .code-bg{
   position:fixed;
   inset:0;
   overflow:hidden;
   pointer-events:none;
   z-index:0;
-  opacity:.28;
+  opacity:.30;
 }
 
 .code-line{
   position:absolute;
   white-space:nowrap;
+
   color:#168cff;
-  font-family:"Courier New",monospace;
+
+  font-family:
+    "Courier New",
+    monospace;
+
   font-size:10px;
+
   opacity:.45;
-  animation:moveCode linear infinite;
-  text-shadow:0 0 5px rgba(22,140,255,.25);
+
+  animation:
+    moveCode
+    linear
+    infinite;
+
+  will-change:transform;
+
+  text-shadow:
+    0 0 5px
+    rgba(22,140,255,.25);
 }
 
 @keyframes moveCode{
-  from{transform:translateX(120vw);}
-  to{transform:translateX(-140vw);}
+
+  from{
+    transform:translateX(120vw);
+  }
+
+  to{
+    transform:translateX(-140vw);
+  }
+
 }
+
+
+/* =========================================
+   APP
+========================================= */
 
 .app{
   position:relative;
   z-index:2;
+
   width:100%;
   min-height:100vh;
-}
-
-.login-screen{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-
-.login-box{
-  width:min(430px,100%);
-  padding:32px;
-  border:1px solid rgba(30,145,255,.35);
-  border-radius:22px;
-  background:rgba(3,15,29,.94);
-  box-shadow:0 0 50px rgba(0,110,255,.10);
-  backdrop-filter:blur(14px);
-}
-
-.logo{
-  font-size:30px;
-  font-weight:900;
-  letter-spacing:1px;
-  color:#35a1ff;
-  text-align:center;
-}
-
-.subtitle{
-  text-align:center;
-  color:#7e9ab7;
-  margin:8px 0 28px;
-  font-size:14px;
-}
-
-.input{
-  width:100%;
-  padding:14px 15px;
-  border-radius:12px;
-  border:1px solid #163a5c;
-  background:#061423;
-  color:#fff;
-  outline:none;
-  font-size:15px;
-  margin-bottom:12px;
-}
-
-.input:focus{
-  border-color:#168cff;
-  box-shadow:0 0 0 3px rgba(22,140,255,.10);
-}
-
-.btn{
-  width:100%;
-  border:0;
-  border-radius:12px;
-  padding:14px;
-  cursor:pointer;
-  background:#168cff;
-  color:#fff;
-  font-weight:800;
-  font-size:15px;
-}
-
-.btn:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.error{
-  color:#ff7272;
-  margin-top:12px;
-  text-align:center;
-  font-size:13px;
-}
-
-.dashboard{
-  display:none;
-  padding:25px 0 60px;
 }
 
 .container{
@@ -140,752 +102,1662 @@ body{
   margin:auto;
 }
 
-.header{
+
+/* =========================================
+   LOGIN
+========================================= */
+
+.login-screen{
+
+  min-height:100vh;
+
   display:flex;
+
   align-items:center;
+  justify-content:center;
+
+  padding:20px;
+}
+
+.login-box{
+
+  width:min(430px,100%);
+
+  padding:32px;
+
+  border:
+    1px solid
+    rgba(30,145,255,.35);
+
+  border-radius:22px;
+
+  background:
+    rgba(3,15,29,.90);
+
+  box-shadow:
+    0 0 50px
+    rgba(0,110,255,.10),
+
+    inset 0 0 30px
+    rgba(0,110,255,.03);
+
+  backdrop-filter:blur(14px);
+}
+
+.logo{
+
+  font-size:30px;
+
+  font-weight:900;
+
+  letter-spacing:1px;
+
+  color:#35a1ff;
+
+  text-align:center;
+}
+
+.subtitle{
+
+  text-align:center;
+
+  color:#7e9ab7;
+
+  margin-top:8px;
+  margin-bottom:28px;
+
+  font-size:14px;
+}
+
+
+/* =========================================
+   INPUT
+========================================= */
+
+.input{
+
+  width:100%;
+
+  padding:14px 15px;
+
+  border-radius:12px;
+
+  border:
+    1px solid
+    #163a5c;
+
+  background:#061423;
+
+  color:#fff;
+
+  outline:none;
+
+  font-size:15px;
+
+  margin-bottom:12px;
+}
+
+.input:focus{
+
+  border-color:#168cff;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(22,140,255,.10);
+}
+
+
+/* =========================================
+   BUTTON
+========================================= */
+
+.btn{
+
+  width:100%;
+
+  border:0;
+
+  border-radius:12px;
+
+  padding:14px;
+
+  cursor:pointer;
+
+  background:#168cff;
+
+  color:#fff;
+
+  font-weight:800;
+
+  font-size:15px;
+
+  transition:.2s;
+}
+
+.btn:hover{
+
+  background:#319bff;
+
+  transform:translateY(-1px);
+}
+
+.btn:disabled{
+
+  opacity:.55;
+
+  cursor:not-allowed;
+
+  transform:none;
+}
+
+.error{
+
+  color:#ff7272;
+
+  margin-top:12px;
+
+  text-align:center;
+
+  font-size:13px;
+}
+
+
+/* =========================================
+   DASHBOARD
+========================================= */
+
+.dashboard{
+
+  display:none;
+
+  padding:
+    25px 0
+    60px;
+}
+
+.header{
+
+  display:flex;
+
+  align-items:center;
+
   justify-content:space-between;
+
   gap:15px;
+
   margin-bottom:25px;
 }
 
 .header-left h1{
+
   font-size:28px;
+
   font-weight:900;
 }
 
 .header-left p{
+
   color:#7591ad;
+
   margin-top:5px;
+
   font-size:13px;
 }
 
 .logout{
+
   width:auto;
+
   padding:10px 15px;
+
   background:#071727;
-  border:1px solid #173a59;
+
+  border:
+    1px solid
+    #173a59;
 }
 
+
+/* =========================================
+   MAIN GRID
+========================================= */
+
 .grid{
+
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(220px,1fr)
+    );
+
   gap:15px;
 }
 
+
+/* =========================================
+   CARD
+========================================= */
+
 .card{
+
   position:relative;
+
   overflow:hidden;
+
   min-height:145px;
+
   padding:20px;
-  border:1px solid rgba(30,145,255,.22);
+
+  border:
+    1px solid
+    rgba(30,145,255,.22);
+
   border-radius:18px;
-  background:linear-gradient(
-    145deg,
-    rgba(7,26,47,.94),
-    rgba(3,14,27,.92)
-  );
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(7,26,47,.94),
+      rgba(3,14,27,.92)
+    );
+
   cursor:pointer;
+
   transition:.22s;
 }
 
 .card:hover{
+
   transform:translateY(-3px);
-  border-color:rgba(35,155,255,.65);
+
+  border-color:
+    rgba(35,155,255,.65);
+
+  box-shadow:
+    0 12px 35px
+    rgba(0,105,255,.10);
 }
 
 .card-icon{
+
   width:43px;
   height:43px;
+
   border-radius:13px;
+
   display:flex;
+
   align-items:center;
   justify-content:center;
-  background:rgba(22,140,255,.12);
+
+  background:
+    rgba(22,140,255,.12);
+
   color:#35a1ff;
-  font-size:18px;
+
+  font-size:20px;
+
   font-weight:800;
+
   margin-bottom:15px;
 }
 
 .card h3{
+
   font-size:17px;
+
   margin-bottom:7px;
 }
 
 .card p{
+
   color:#7894af;
+
   font-size:12px;
+
   line-height:1.5;
 }
 
+
+/* =========================================
+   CUSTOM API
+========================================= */
+
 .custom-badge{
+
   position:absolute;
+
   top:13px;
   right:13px;
+
   padding:4px 7px;
+
   border-radius:6px;
-  background:rgba(22,140,255,.12);
-  border:1px solid rgba(22,140,255,.25);
+
+  background:
+    rgba(22,140,255,.12);
+
+  border:
+    1px solid
+    rgba(22,140,255,.25);
+
   color:#42a8ff;
+
   font-size:9px;
+
   font-weight:800;
+
   text-transform:uppercase;
 }
 
+
+/* =========================================
+   ADD API
+========================================= */
+
 .add-api{
+
   margin-top:25px;
+
   padding:22px;
-  border:1px solid rgba(30,145,255,.22);
+
+  border:
+    1px solid
+    rgba(30,145,255,.22);
+
   border-radius:18px;
-  background:rgba(4,18,33,.86);
+
+  background:
+    rgba(4,18,33,.86);
 }
 
 .section-title{
+
   font-size:18px;
+
   font-weight:800;
+
   margin-bottom:6px;
 }
 
 .section-subtitle{
+
   color:#718ca7;
+
   font-size:12px;
+
   margin-bottom:18px;
+
   line-height:1.5;
 }
 
 .form-grid{
+
   display:grid;
-  grid-template-columns:1fr 1fr auto;
+
+  grid-template-columns:
+    1fr
+    1fr
+    auto;
+
   gap:10px;
 }
 
 .form-grid .input{
+
   margin:0;
 }
 
 .add-btn{
+
   width:auto;
+
   padding:0 20px;
 }
 
+
+/* =========================================
+   MODAL
+========================================= */
+
 .modal{
+
   display:none;
+
   position:fixed;
+
   inset:0;
+
   z-index:20;
-  background:rgba(0,0,0,.72);
+
+  background:
+    rgba(0,0,0,.72);
+
   padding:20px;
+
   align-items:center;
+
   justify-content:center;
 }
 
 .modal.show{
+
   display:flex;
 }
 
 .modal-box{
+
   width:min(720px,100%);
+
   max-height:90vh;
+
   overflow:auto;
+
   padding:22px;
+
   border-radius:20px;
+
   background:#041321;
-  border:1px solid #1a4d75;
+
+  border:
+    1px solid
+    #1a4d75;
+
+  box-shadow:
+    0 20px 80px
+    rgba(0,0,0,.5);
 }
 
 .modal-header{
+
   display:flex;
+
   align-items:center;
+
   justify-content:space-between;
+
   gap:15px;
+
   margin-bottom:18px;
 }
 
 .modal-header h2{
+
   font-size:19px;
 }
 
 .close{
+
   width:38px;
   height:38px;
+
   border-radius:10px;
-  border:1px solid #1a3d5d;
+
+  border:
+    1px solid
+    #1a3d5d;
+
   background:#081a2b;
+
   color:#fff;
+
   cursor:pointer;
+
   font-size:18px;
 }
 
+
+/* =========================================
+   RESULTS
+========================================= */
+
 .result-section{
+
   padding:16px;
+
   border-radius:13px;
+
   background:#061727;
-  border:1px solid #123652;
+
+  border:
+    1px solid
+    #123652;
+
   margin-bottom:10px;
 }
 
 .result-section h3{
+
   margin-bottom:12px;
+
   font-size:15px;
 }
 
 .result-row{
+
   display:flex;
+
   justify-content:space-between;
+
   gap:15px;
+
   padding:8px 0;
-  border-bottom:1px solid rgba(255,255,255,.05);
+
+  border-bottom:
+    1px solid
+    rgba(255,255,255,.05);
+
   font-size:13px;
 }
 
 .result-row:last-child{
+
   border-bottom:0;
 }
 
 .result-key{
+
   color:#7893ad;
 }
 
 .result-value{
+
   text-align:right;
+
   word-break:break-word;
 }
 
 pre{
+
   margin-top:12px;
+
   padding:13px;
+
   border-radius:10px;
+
   background:#020b14;
+
   color:#a9d8ff;
+
   white-space:pre-wrap;
+
   word-break:break-word;
+
   overflow:auto;
+
   font-size:12px;
+
   line-height:1.55;
 }
 
 .fail{
+
   color:#ff8181;
 }
 
+
+/* =========================================
+   MOBILE
+========================================= */
+
 @media(max-width:700px){
+
   .dashboard{
+
     padding-top:17px;
   }
 
   .header{
+
     align-items:flex-start;
   }
 
   .header-left h1{
+
     font-size:23px;
   }
 
   .form-grid{
+
     grid-template-columns:1fr;
   }
 
   .add-btn{
+
     width:100%;
+
     padding:13px;
   }
+
 }
+
 </style>
+
 </head>
+
 
 <body>
 
-<div id="codeBg" class="code-bg"></div>
+
+<!-- =========================================
+     BACKGROUND
+========================================= -->
+
+<div
+  id="codeBg"
+  class="code-bg"
+></div>
+
 
 <div class="app">
 
-<section id="loginScreen" class="login-screen">
 
-<div class="login-box">
+<!-- =========================================
+     LOGIN
+========================================= -->
 
-<div class="logo">
-TXG INFORMATION
-</div>
-
-<div class="subtitle">
-Secure Information Center
-</div>
-
-<input
-id="password"
-class="input"
-type="password"
-placeholder="Admin password"
-autocomplete="current-password"
+<section
+  id="loginScreen"
+  class="login-screen"
 >
 
-<button
-id="loginBtn"
-class="btn"
-type="button"
->
-Login
-</button>
+  <div class="login-box">
 
-<div id="loginError" class="error"></div>
+    <div class="logo">
+      TXG INFORMATION
+    </div>
 
-</div>
+    <div class="subtitle">
+      Secure Information Center
+    </div>
+
+    <input
+      id="password"
+      class="input"
+      type="password"
+      placeholder="Admin password"
+      autocomplete="current-password"
+    >
+
+    <button
+      id="loginBtn"
+      class="btn"
+      type="button"
+    >
+      Login
+    </button>
+
+    <div
+      id="loginError"
+      class="error"
+    ></div>
+
+  </div>
 
 </section>
 
 
-<section id="dashboard" class="dashboard">
+<!-- =========================================
+     DASHBOARD
+========================================= -->
 
-<div class="container">
-
-<header class="header">
-
-<div class="header-left">
-<h1>TXG Information</h1>
-<p>Public & authorized information lookup center</p>
-</div>
-
-<button
-id="logoutBtn"
-class="btn logout"
-type="button"
->
-Logout
-</button>
-
-</header>
-
-
-<div id="lookupGrid" class="grid">
-
-<div class="card" data-type="mobile">
-<div class="card-icon">M</div>
-<h3>Mobile</h3>
-<p>Check number validity, country, calling code and number type.</p>
-</div>
-
-<div class="card" data-type="pin">
-<div class="card-icon">P</div>
-<h3>PIN Code</h3>
-<p>Find post office, district, state and PIN information.</p>
-</div>
-
-<div class="card" data-type="ifsc">
-<div class="card-icon">I</div>
-<h3>IFSC</h3>
-<p>Bank, branch, city, state and IFSC details.</p>
-</div>
-
-<div class="card" data-type="ip">
-<div class="card-icon">IP</div>
-<h3>IP Address</h3>
-<p>Public IP, approximate location, ISP, ASN and network information.</p>
-</div>
-
-<div class="card" data-type="url">
-<div class="card-icon">U</div>
-<h3>URL</h3>
-<p>Website reachability, domain age, registrar, HTTPS and public checks.</p>
-</div>
-
-<div class="card" data-type="upi">
-<div class="card-icon">₹</div>
-<h3>UPI</h3>
-<p>Check UPI ID format and supported public information.</p>
-</div>
-
-</div>
-
-
-<div class="add-api">
-
-<div class="section-title">
-Add Custom API
-</div>
-
-<div class="section-subtitle">
-Add your own API. Use <b>{message}</b> where the user input should be inserted.
-</div>
-
-<div class="form-grid">
-
-<input
-id="apiName"
-class="input"
-type="text"
-maxlength="80"
-placeholder="API button name"
+<section
+  id="dashboard"
+  class="dashboard"
 >
 
-<input
-id="apiUrl"
-class="input"
-type="url"
-maxlength="1000"
-placeholder="https://example.com/api?message={message}"
->
+  <div class="container">
 
-<button
-id="addApiBtn"
-class="btn add-btn"
-type="button"
->
-Add API
-</button>
 
-</div>
+    <!-- HEADER -->
 
-</div>
+    <header class="header">
 
-</div>
+      <div class="header-left">
+
+        <h1>
+          TXG Information
+        </h1>
+
+        <p>
+          Public & authorized information lookup center
+        </p>
+
+      </div>
+
+
+      <button
+        id="logoutBtn"
+        class="btn logout"
+        type="button"
+      >
+        Logout
+      </button>
+
+    </header>
+
+
+    <!-- =====================================
+         MAIN CARDS
+    ====================================== -->
+
+    <div
+      id="lookupGrid"
+      class="grid"
+    >
+
+
+      <!-- MOBILE -->
+
+      <div
+        class="card"
+        data-type="mobile"
+      >
+
+        <div class="card-icon">
+          M
+        </div>
+
+        <h3>
+          Mobile
+        </h3>
+
+        <p>
+          Check number validity,
+          country, calling code and
+          number type.
+        </p>
+
+      </div>
+
+
+      <!-- PIN -->
+
+      <div
+        class="card"
+        data-type="pin"
+      >
+
+        <div class="card-icon">
+          P
+        </div>
+
+        <h3>
+          PIN Code
+        </h3>
+
+        <p>
+          Find post office,
+          district, state and
+          PIN information.
+        </p>
+
+      </div>
+
+
+      <!-- IFSC -->
+
+      <div
+        class="card"
+        data-type="ifsc"
+      >
+
+        <div class="card-icon">
+          I
+        </div>
+
+        <h3>
+          IFSC
+        </h3>
+
+        <p>
+          Bank, branch, city,
+          state and IFSC details.
+        </p>
+
+      </div>
+
+
+      <!-- IP -->
+
+      <div
+        class="card"
+        data-type="ip"
+      >
+
+        <div class="card-icon">
+          IP
+        </div>
+
+        <h3>
+          IP Address
+        </h3>
+
+        <p>
+          Public IP, approximate
+          location, ISP, ASN and
+          network information.
+        </p>
+
+      </div>
+
+
+      <!-- URL -->
+
+      <div
+        class="card"
+        data-type="url"
+      >
+
+        <div class="card-icon">
+          U
+        </div>
+
+        <h3>
+          URL
+        </h3>
+
+        <p>
+          Website reachability,
+          domain age, registrar,
+          HTTPS and public checks.
+        </p>
+
+      </div>
+
+
+      <!-- UPI -->
+
+      <div
+        class="card"
+        data-type="upi"
+      >
+
+        <div class="card-icon">
+          ₹
+        </div>
+
+        <h3>
+          UPI
+        </h3>
+
+        <p>
+          Check UPI ID format and
+          supported public information.
+        </p>
+
+      </div>
+
+
+      <!--
+        CUSTOM API CARDS WILL BE
+        INSERTED HERE.
+      -->
+
+
+    </div>
+
+
+    <!-- =====================================
+         ADD CUSTOM API
+    ====================================== -->
+
+    <div class="add-api">
+
+      <div class="section-title">
+        Add Custom API
+      </div>
+
+      <div class="section-subtitle">
+
+        Add your own API.
+        Use <b>{message}</b> where
+        the user input should be inserted.
+
+      </div>
+
+
+      <div class="form-grid">
+
+
+        <input
+          id="apiName"
+          class="input"
+          type="text"
+          maxlength="80"
+          placeholder="API button name"
+        >
+
+
+        <input
+          id="apiUrl"
+          class="input"
+          type="url"
+          maxlength="1000"
+          placeholder="https://example.com/api?message={message}"
+        >
+
+
+        <button
+          id="addApiBtn"
+          class="btn add-btn"
+          type="button"
+        >
+          Add API
+        </button>
+
+
+      </div>
+
+    </div>
+
+
+  </div>
 
 </section>
 
 </div>
 
 
-<div id="modal" class="modal">
+<!-- =========================================
+     MODAL
+========================================= -->
 
-<div class="modal-box">
-
-<div class="modal-header">
-
-<h2 id="modalTitle">
-Result
-</h2>
-
-<button
-id="closeModal"
-class="close"
-type="button"
+<div
+  id="modal"
+  class="modal"
 >
-×
-</button>
 
-</div>
+  <div class="modal-box">
 
-<div id="result"></div>
 
-</div>
+    <div class="modal-header">
+
+      <h2 id="modalTitle">
+        Result
+      </h2>
+
+
+      <button
+        id="closeModal"
+        class="close"
+        type="button"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div
+      id="result"
+    ></div>
+
+
+  </div>
 
 </div>
 
 
 <script>
 
-const $ = id => document.getElementById(id);
+
+/* =========================================
+   HELPERS
+========================================= */
+
+const $ =
+  id =>
+    document.getElementById(id);
+
 
 function escapeHTML(value){
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+
+  return String(
+    value ?? ""
+  )
+
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+
+  .replace(
+    /</g,
+    "&lt;"
+  )
+
+  .replace(
+    />/g,
+    "&gt;"
+  )
+
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+
+  .replace(
+    /'/g,
+    "&#039;"
+  );
+
 }
 
-function row(key,value){
+
+function row(
+  key,
+  value
+){
+
   return `
+
     <div class="result-row">
-      <div class="result-key">${escapeHTML(key)}</div>
-      <div class="result-value">${escapeHTML(value)}</div>
+
+      <div class="result-key">
+        ${escapeHTML(key)}
+      </div>
+
+      <div class="result-value">
+        ${escapeHTML(value)}
+      </div>
+
     </div>
+
   `;
+
 }
 
-async function request(url,options={}){
-  const response = await fetch(url,{
-    credentials:"include",
-    ...options
-  });
 
-  const text = await response.text();
+/* =========================================
+   REQUEST
+========================================= */
 
-  let data = {};
+async function request(
+  url,
+  options={}
+){
+
+  const response =
+    await fetch(
+      url,
+      {
+        credentials:"include",
+        ...options
+      }
+    );
+
+
+  const text =
+    await response.text();
+
+
+  let data;
+
 
   try{
-    data = text ? JSON.parse(text) : {};
-  }catch{
+
+    data =
+      text
+        ? JSON.parse(text)
+        : {};
+
+  }
+
+  catch{
+
     if(!response.ok){
+
       throw new Error(
-        text || `Server error (${response.status})`
+        text ||
+        `Server error (${response.status})`
       );
+
     }
+
 
     throw new Error(
       "Server returned invalid response"
     );
+
   }
 
+
   if(!response.ok){
+
     throw new Error(
       data.error ||
       `Request failed (${response.status})`
     );
+
   }
 
+
   return data;
+
 }
 
 
-function showLogin(){
-  $("loginScreen").style.display = "flex";
-  $("dashboard").style.display = "none";
-}
-
-function showDashboard(){
-  $("loginScreen").style.display = "none";
-  $("dashboard").style.display = "block";
-  loadCustomApis();
-}
-
+/* =========================================
+   LOGIN
+========================================= */
 
 async function login(){
 
-  const password = $("password").value;
+  const password =
+    $("password")
+      .value;
+
 
   if(!password){
-    $("loginError").textContent =
-      "Enter your password.";
+
+    $("loginError")
+      .textContent =
+        "Enter your password.";
+
     return;
+
   }
 
-  $("loginBtn").disabled = true;
-  $("loginBtn").textContent = "Checking...";
-  $("loginError").textContent = "";
+
+  $("loginBtn")
+    .disabled = true;
+
+
+  $("loginBtn")
+    .textContent =
+      "Checking...";
+
+
+  $("loginError")
+    .textContent = "";
+
 
   try{
 
-    await request("/api/auth",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        password
-      })
-    });
-
-    $("password").value = "";
-
-    showDashboard();
-
-  }catch(error){
-
-    $("loginError").textContent =
-      error.message || "Login failed.";
-
-    showLogin();
-
-  }finally{
-
-    $("loginBtn").disabled = false;
-    $("loginBtn").textContent = "Login";
-
-  }
-}
-
-
-async function checkAuth(){
-
-  showLogin();
-
-  try{
-
-    const data = await request(
+    await request(
       "/api/auth",
       {
-        method:"GET",
-        cache:"no-store"
+
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+
+        body:
+          JSON.stringify({
+            password
+          })
+
       }
     );
 
-    if(
-      data &&
-      data.ok === true &&
-      data.authenticated === true
-    ){
-      showDashboard();
-    }else{
-      showLogin();
-    }
 
-  }catch{
-    showLogin();
+    showDashboard();
+
   }
+
+  catch(error){
+
+    $("loginError")
+      .textContent =
+        error.message;
+
+  }
+
+  finally{
+
+    $("loginBtn")
+      .disabled = false;
+
+    $("loginBtn")
+      .textContent =
+        "Login";
+
+  }
+
 }
 
+
+/* =========================================
+   AUTH CHECK
+========================================= */
+
+async function checkAuth(){
+
+  try{
+
+    await request(
+      "/api/auth",
+      {
+        method:"GET"
+      }
+    );
+
+
+    showDashboard();
+
+  }
+
+  catch{
+
+    showLogin();
+
+  }
+
+}
+
+
+/* =========================================
+   LOGIN SCREEN
+========================================= */
+
+function showLogin(){
+
+  $("loginScreen")
+    .style.display =
+      "flex";
+
+
+  $("dashboard")
+    .style.display =
+      "none";
+
+}
+
+
+/* =========================================
+   DASHBOARD
+========================================= */
+
+async function showDashboard(){
+
+  $("loginScreen")
+    .style.display =
+      "none";
+
+
+  $("dashboard")
+    .style.display =
+      "block";
+
+
+  /*
+   * OLD WORKING STORAGE METHOD
+   */
+
+  loadCustomApis();
+
+}
+
+
+/* =========================================
+   LOGOUT
+========================================= */
 
 async function logout(){
 
   try{
+
     await request(
       "/api/auth",
       {
         method:"DELETE"
       }
     );
-  }catch{}
+
+  }
+
+  catch(error){
+
+    console.error(error);
+
+  }
+
 
   showLogin();
+
 }
 
 
-async function openLookup(type){
+/* =========================================
+   BUILT-IN LOOKUP
+========================================= */
 
-  let title = type.toUpperCase();
-  let placeholder = "Enter value";
+async function openLookup(
+  type
+){
 
-  if(type==="mobile"){
-    title="Mobile Lookup";
-    placeholder="Enter mobile number";
+  let title =
+    type.toUpperCase();
+
+
+  let placeholder =
+    "Enter value";
+
+
+  if(type === "mobile"){
+
+    title =
+      "Mobile Lookup";
+
+    placeholder =
+      "Enter mobile number";
+
   }
 
-  if(type==="pin"){
-    title="PIN Lookup";
-    placeholder="Enter PIN code";
+
+  if(type === "pin"){
+
+    title =
+      "PIN Lookup";
+
+    placeholder =
+      "Enter PIN code";
+
   }
 
-  if(type==="ifsc"){
-    title="IFSC Lookup";
-    placeholder="Enter IFSC";
+
+  if(type === "ifsc"){
+
+    title =
+      "IFSC Lookup";
+
+    placeholder =
+      "Enter IFSC";
+
   }
 
-  if(type==="ip"){
-    title="IP Lookup";
-    placeholder="Enter IP address (leave empty for your public IP)";
+
+  if(type === "ip"){
+
+    title =
+      "IP Lookup";
+
+    placeholder =
+      "Enter IP address";
+
   }
 
-  if(type==="url"){
-    title="URL Verification";
-    placeholder="https://example.com";
+
+  if(type === "url"){
+
+    title =
+      "URL Verification";
+
+    placeholder =
+      "https://example.com";
+
   }
 
-  if(type==="upi"){
-    title="UPI Lookup";
-    placeholder="example@upi";
+
+  if(type === "upi"){
+
+    title =
+      "UPI Lookup";
+
+    placeholder =
+      "example@upi";
+
   }
 
-  const value = prompt(placeholder);
 
-  if(
-    value === null ||
-    (!value.trim() && type !== "ip")
-  ){
+  const value =
+    prompt(
+      placeholder
+    );
+
+
+  if(value === null){
+
     return;
+
   }
 
-  $("modalTitle").textContent = title;
 
-  $("result").innerHTML =
-    `<div class="result-section">Checking...</div>`;
+  if(!value.trim()){
 
-  $("modal").classList.add("show");
+    return;
+
+  }
+
+
+  $("modalTitle")
+    .textContent =
+      title;
+
+
+  $("result")
+    .innerHTML = `
+
+      <div class="result-section">
+
+        Checking...
+
+      </div>
+
+    `;
+
+
+  $("modal")
+    .classList
+    .add("show");
+
 
   try{
 
-    const data = await request(
-      `/api/lookup?type=${encodeURIComponent(type)}&value=${encodeURIComponent(value.trim())}`,
-      {
-        method:"GET",
-        cache:"no-store"
-      }
+    const data =
+      await request(
+
+        `/api/lookup?type=${encodeURIComponent(type)}&value=${encodeURIComponent(value.trim())}`,
+
+        {
+          method:"GET"
+        }
+
+      );
+
+
+    renderLookupResult(
+      data
     );
 
-    renderLookupResult(data);
+  }
 
-  }catch(error){
+  catch(error){
 
-    $("result").innerHTML =
-      `<div class="result-section fail">
-        ${escapeHTML(error.message)}
-      </div>`;
+    $("result")
+      .innerHTML = `
+
+        <div
+          class="result-section fail"
+        >
+
+          ${escapeHTML(
+            error.message
+          )}
+
+        </div>
+
+      `;
 
   }
+
 }
 
 
-function renderLookupResult(data){
+/* =========================================
+   LOOKUP RESULT
+========================================= */
 
-  const result = $("result");
+function renderLookupResult(
+  data
+){
 
-  result.innerHTML = "";
+  const result =
+    $("result");
+
+
+  result.innerHTML =
+    "";
+
 
   if(
+
     data &&
+
     data.result &&
-    typeof data.result === "object"
+
+    typeof data.result ===
+      "object"
+
   ){
 
     const section =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     section.className =
       "result-section";
 
-    let html = "<h3>Result</h3>";
 
-    Object.entries(data.result)
-      .forEach(([key,value])=>{
+    let html =
+      "<h3>Result</h3>";
+
+
+    Object.entries(
+      data.result
+    )
+
+    .forEach(
+      ([key,value]) => {
 
         if(
+
           value !== null &&
+
           value !== undefined &&
-          typeof value !== "object"
+
+          typeof value !==
+            "object"
+
         ){
-          html += row(key,value);
+
+          html +=
+            row(
+              key,
+              value
+            );
+
         }
 
-      });
-
-    section.innerHTML = html;
-
-    result.appendChild(section);
+      }
+    );
 
 
-    Object.entries(data.result)
-      .filter(
-        ([,value]) =>
-          value &&
-          typeof value === "object"
-      )
-      .forEach(([key,value])=>{
+    section.innerHTML =
+      html;
+
+
+    result.appendChild(
+      section
+    );
+
+
+    Object.entries(
+      data.result
+    )
+
+    .filter(
+      ([,value]) =>
+        value &&
+        typeof value ===
+          "object"
+    )
+
+    .forEach(
+      ([key,value]) => {
 
         const section =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
+
 
         section.className =
           "result-section";
 
+
         section.innerHTML = `
-          <h3>${escapeHTML(key)}</h3>
+
+          <h3>
+            ${escapeHTML(key)}
+          </h3>
+
           <pre>${escapeHTML(
-            JSON.stringify(value,null,2)
+            JSON.stringify(
+              value,
+              null,
+              2
+            )
           )}</pre>
+
         `;
 
-        result.appendChild(section);
 
-      });
+        result.appendChild(
+          section
+        );
 
-  }else{
+      }
+    );
+
+  }
+
+  else{
 
     const section =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     section.className =
       "result-section";
 
-    section.innerHTML =
-      `<pre>${escapeHTML(
-        JSON.stringify(data,null,2)
-      )}</pre>`;
 
-    result.appendChild(section);
+    section.innerHTML = `
+
+      <pre>${escapeHTML(
+        JSON.stringify(
+          data,
+          null,
+          2
+        )
+      )}</pre>
+
+    `;
+
+
+    result.appendChild(
+      section
+    );
 
   }
+
 }
 
+
+/* =========================================
+   CUSTOM API STORAGE
+   OLD LOCAL STORAGE METHOD
+========================================= */
 
 const CUSTOM_API_STORAGE =
   "TXG_CUSTOM_APIS";
@@ -900,26 +1772,36 @@ function getCustomApis(){
         CUSTOM_API_STORAGE
       );
 
+
     if(!saved){
+
       return [];
+
     }
+
 
     const data =
       JSON.parse(saved);
+
 
     return Array.isArray(data)
       ? data
       : [];
 
-  }catch{
+  }
+
+  catch{
 
     return [];
 
   }
+
 }
 
 
-function saveCustomApis(apis){
+function saveCustomApis(
+  apis
+){
 
   localStorage.setItem(
     CUSTOM_API_STORAGE,
@@ -929,130 +1811,283 @@ function saveCustomApis(apis){
 }
 
 
+/* =========================================
+   LOAD CUSTOM API CARDS
+========================================= */
+
 function loadCustomApis(){
 
+  const apis =
+    getCustomApis();
+
+
   renderCustomApis(
-    getCustomApis()
+    apis
   );
 
 }
 
 
-function renderCustomApis(apis){
+/* =========================================
+   RENDER CUSTOM API CARDS
+========================================= */
+
+function renderCustomApis(
+  apis
+){
 
   const grid =
     $("lookupGrid");
 
+
+  /*
+   * Remove old custom cards.
+   */
+
   grid
-    .querySelectorAll(".custom-api-card")
-    .forEach(card => card.remove());
-
-
-  apis.forEach(api => {
-
-    const card =
-      document.createElement("div");
-
-    card.className =
-      "card custom-api-card";
-
-    card.innerHTML = `
-      <span class="custom-badge">Custom</span>
-
-      <div class="card-icon">
-        API
-      </div>
-
-      <h3>
-        ${escapeHTML(api.name)}
-      </h3>
-
-      <p>
-        Custom API lookup. Tap to enter a value and view the response.
-      </p>
-    `;
-
-    card.addEventListener(
-      "click",
-      () => openCustomApi(api)
+    .querySelectorAll(
+      ".custom-api-card"
+    )
+    .forEach(
+      card =>
+        card.remove()
     );
 
-    grid.appendChild(card);
 
-  });
+  /*
+   * Add them directly into
+   * the normal card grid.
+   */
+
+  apis.forEach(
+    api => {
+
+      const card =
+        document.createElement(
+          "div"
+        );
+
+
+      card.className =
+        "card custom-api-card";
+
+
+      card.innerHTML = `
+
+        <span class="custom-badge">
+          Custom
+        </span>
+
+
+        <div class="card-icon">
+          API
+        </div>
+
+
+        <h3>
+          ${escapeHTML(
+            api.name
+          )}
+        </h3>
+
+
+        <p>
+          Custom API lookup.
+          Tap to enter a value
+          and view the response.
+        </p>
+
+      `;
+
+
+      card.addEventListener(
+        "click",
+        () =>
+          openCustomApi(api)
+      );
+
+
+      grid.appendChild(
+        card
+      );
+
+    }
+  );
 
 }
 
+
+/* =========================================
+   ADD CUSTOM API
+========================================= */
 
 function saveCustomApi(){
 
   const name =
-    $("apiName").value.trim();
+    $("apiName")
+      .value
+      .trim();
+
 
   const url =
-    $("apiUrl").value.trim();
+    $("apiUrl")
+      .value
+      .trim();
+
 
   if(!name){
-    alert("Enter API button name");
+
+    alert(
+      "Enter API button name"
+    );
+
     return;
+
   }
+
 
   if(!url){
-    alert("Enter API URL");
+
+    alert(
+      "Enter API URL"
+    );
+
     return;
+
   }
 
-  if(!/^https:\/\//i.test(url)){
+
+  if(
+    !/^https?:\/\//i.test(
+      url
+    )
+  ){
+
     alert(
-      "API URL must start with https://"
+      "API URL must start with http:// or https://"
     );
+
     return;
+
   }
+
+
+  /*
+   * Get old APIs.
+   */
 
   const apis =
     getCustomApis();
 
-  apis.push({
+
+  /*
+   * Create new API.
+   */
+
+  const api = {
+
     id:
-      Date.now().toString(36) +
+      Date.now()
+      .toString(36) +
       Math.random()
-        .toString(36)
-        .slice(2,8),
+      .toString(36)
+      .slice(2,8),
 
-    name,
-    url
-  });
+    name:
+      name,
 
-  saveCustomApis(apis);
+    url:
+      url
 
-  $("apiName").value = "";
-  $("apiUrl").value = "";
+  };
 
-  renderCustomApis(apis);
+
+  /*
+   * Add new API.
+   */
+
+  apis.push(
+    api
+  );
+
+
+  /*
+   * Save locally.
+   */
+
+  saveCustomApis(
+    apis
+  );
+
+
+  /*
+   * Clear form.
+   */
+
+  $("apiName")
+    .value = "";
+
+
+  $("apiUrl")
+    .value = "";
+
+
+  /*
+   * Immediately show it
+   * with normal cards.
+   */
+
+  renderCustomApis(
+    apis
+  );
 
 }
 
 
-async function openCustomApi(api){
+/* =========================================
+   OPEN CUSTOM API
+========================================= */
+
+async function openCustomApi(
+  api
+){
 
   const message =
     prompt(
       `Enter value for ${api.name}`
     );
 
-  if(message === null){
+
+  if(
+    message === null
+  ){
+
     return;
+
   }
 
-  $("modalTitle").textContent =
-    api.name;
 
-  $("result").innerHTML =
-    `<div class="result-section">
-      Calling API...
-    </div>`;
+  $("modalTitle")
+    .textContent =
+      api.name;
 
-  $("modal").classList.add("show");
+
+  $("result")
+    .innerHTML = `
+
+      <div class="result-section">
+
+        Calling API...
+
+      </div>
+
+    `;
+
+
+  $("modal")
+    .classList
+    .add("show");
+
 
   try{
 
@@ -1060,75 +2095,122 @@ async function openCustomApi(api){
       await request(
         "/api/custom",
         {
+
           method:"POST",
+
           headers:{
             "Content-Type":
               "application/json"
           },
-          body:JSON.stringify({
-            url:api.url,
-            message
-          })
+
+          body:
+            JSON.stringify({
+
+              url:
+                api.url,
+
+              message:
+                message
+
+            })
+
         }
       );
 
-    $("result").innerHTML = `
-      <div class="result-section">
 
-        <h3>API Response</h3>
+    $("result")
+      .innerHTML = `
 
-        ${row(
-          "HTTP Status",
-          data.status
-        )}
+        <div
+          class="result-section"
+        >
 
-        ${row(
-          "Content-Type",
-          data.contentType
-        )}
+          <h3>
+            API Response
+          </h3>
 
-        <pre>${escapeHTML(
-          typeof data.data === "string"
-            ? data.data
-            : JSON.stringify(
-                data.data,
-                null,
-                2
-              )
-        )}</pre>
 
-      </div>
-    `;
+          ${row(
+            "HTTP Status",
+            data.status
+          )}
 
-  }catch(error){
 
-    $("result").innerHTML =
-      `<div class="result-section fail">
-        ${escapeHTML(
-          error.message
-        )}
-      </div>`;
+          ${row(
+            "Content-Type",
+            data.contentType
+          )}
+
+
+          <pre>${escapeHTML(
+
+            typeof data.data ===
+              "string"
+
+              ? data.data
+
+              : JSON.stringify(
+                  data.data,
+                  null,
+                  2
+                )
+
+          )}</pre>
+
+        </div>
+
+      `;
+
+  }
+
+  catch(error){
+
+    $("result")
+      .innerHTML = `
+
+        <div
+          class="result-section fail"
+        >
+
+          ${escapeHTML(
+            error.message
+          )}
+
+        </div>
+
+      `;
 
   }
 
 }
 
 
+/* =========================================
+   BUILT-IN CARD EVENTS
+========================================= */
+
 document
   .querySelectorAll(
     ".card[data-type]"
   )
-  .forEach(card => {
+  .forEach(
+    card => {
 
-    card.addEventListener(
-      "click",
-      () => openLookup(
-        card.dataset.type
-      )
-    );
+      card.addEventListener(
+        "click",
+        () =>
+          openLookup(
+            card.dataset.type
+          )
+      );
 
-  });
+    }
+  );
 
+
+/* =========================================
+   LOGIN BUTTON
+========================================= */
 
 $("loginBtn")
   .addEventListener(
@@ -1141,12 +2223,23 @@ $("password")
   .addEventListener(
     "keydown",
     event => {
-      if(event.key === "Enter"){
+
+      if(
+        event.key ===
+          "Enter"
+      ){
+
         login();
+
       }
+
     }
   );
 
+
+/* =========================================
+   LOGOUT
+========================================= */
 
 $("logoutBtn")
   .addEventListener(
@@ -1155,6 +2248,10 @@ $("logoutBtn")
   );
 
 
+/* =========================================
+   ADD API BUTTON
+========================================= */
+
 $("addApiBtn")
   .addEventListener(
     "click",
@@ -1162,13 +2259,19 @@ $("addApiBtn")
   );
 
 
+/* =========================================
+   CLOSE MODAL
+========================================= */
+
 $("closeModal")
   .addEventListener(
     "click",
     () => {
+
       $("modal")
         .classList
         .remove("show");
+
     }
   );
 
@@ -1180,57 +2283,105 @@ $("modal")
 
       if(
         event.target ===
-        $("modal")
+          $("modal")
       ){
+
         $("modal")
           .classList
           .remove("show");
+
       }
 
     }
   );
 
 
+/* =========================================
+   CODE BACKGROUND
+========================================= */
+
 function createCodeBackground(){
 
   const bg =
     $("codeBg");
 
+
   const code = [
+
     "const TXG = await lookup();",
+
     "fetch('/api/information');",
+
     "TXG_INFORMATION_CENTER",
+
     "verifyPublicData();",
+
     "response.status === 200",
+
     "JSON.parse(response)",
+
     "const result = await api();",
+
+    "if (result.ok) return result;",
+
     "GET /api/lookup",
+
     "POST /api/custom",
+
     "CUSTOM API",
+
     "PUBLIC INFORMATION",
+
     "IFSC LOOKUP",
+
     "PIN CODE LOOKUP",
+
     "MOBILE VALIDATION",
+
     "IP INFORMATION",
+
     "URL VERIFICATION",
+
     "UPI FORMAT CHECK",
+
     "HTTPS REQUEST",
+
     "DNS RESOLUTION",
+
     "RDAP LOOKUP",
+
     "DOMAIN STATUS",
+
     "REGISTRAR CHECK",
+
     "TXG CORE ONLINE",
+
     "SECURE REQUEST",
+
     "AUTHORIZED LOOKUP",
+
     "API RESPONSE",
+
     "STATUS 200",
+
     "STATUS 404",
+
     "STATUS 500",
+
     "serverless function",
+
+    "custom_api.save()",
+
+    "custom_api.load()",
+
     "TXG SYSTEM READY"
+
   ];
 
-  const totalLines = 180;
+
+  const totalLines =
+    180;
+
 
   for(
     let i=0;
@@ -1243,8 +2394,10 @@ function createCodeBackground(){
         "div"
       );
 
+
     line.className =
       "code-line";
+
 
     let text =
       code[
@@ -1254,47 +2407,77 @@ function createCodeBackground(){
         )
       ];
 
+
     if(
       Math.random() > .55
     ){
+
       text +=
-        " " +
+        "  " +
         Math.floor(
           Math.random() *
           999999
         );
+
     }
+
 
     line.textContent =
       text;
 
+
     line.style.top =
       `${Math.random()*100}%`;
+
 
     line.style.left =
       `${Math.random()*100}%`;
 
+
     line.style.animationDuration =
-      `${45 + Math.random()*55}s`;
+      `${
+        45 +
+        Math.random()*55
+      }s`;
+
 
     line.style.animationDelay =
-      `${-Math.random()*100}s`;
+      `${
+        -Math.random()*100
+      }s`;
+
 
     line.style.opacity =
-      `${.16 + Math.random()*.48}`;
+      `${
+        .16 +
+        Math.random()*.48
+      }`;
+
 
     line.style.fontSize =
-      `${9 + Math.random()*4}px`;
+      `${
+        9 +
+        Math.random()*4
+      }px`;
 
-    bg.appendChild(line);
+
+    bg.appendChild(
+      line
+    );
 
   }
+
 }
 
+
+/* =========================================
+   START
+========================================= */
 
 createCodeBackground();
 
 checkAuth();
+
 
 </script>
 
