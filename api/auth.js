@@ -3,107 +3,190 @@ const crypto = require("crypto");
 const ADMIN_PASSWORD = "TXG@Admin#2026!Secure";
 
 const COOKIE_NAME = "txg_admin_session";
-const SESSION_SECRET = "TXG_SESSION_SECRET_2026_CHANGE_THIS";
-const SESSION_MAX_AGE = 60 * 60 * 12; // 12 hours
+
+const SESSION_SECRET =
+  "TXG_INFORMATION_CENTER_SESSION_SECRET_2026_9F7A3B2C";
+
+const SESSION_MAX_AGE = 60 * 60 * 12;
 
 
-// ================================
+// ==========================================
 // HASH
-// ================================
-function hash(value) {
+// ==========================================
+
+function sha256(value) {
   return crypto
     .createHash("sha256")
-    .update(String(value) + SESSION_SECRET)
+    .update(String(value))
     .digest("hex");
 }
 
 
-// ================================
-// COOKIE PARSER
-// ================================
-function getCookies(req) {
-  const header = req.headers.cookie || "";
-  const cookies = {};
+// ==========================================
+// HMAC
+// ==========================================
 
-  header.split(";").forEach(part => {
+function sign(value) {
+  return crypto
+    .createHmac("sha256", SESSION_SECRET)
+    .update(value)
+    .digest("hex");
+}
+
+
+// ==========================================
+// CREATE SESSION
+// ==========================================
+
+function createSession() {
+  const payload = {
+    iat: Date.now(),
+    exp: Date.now() + SESSION_MAX_AGE * 1000,
+    random: crypto.randomBytes(24).toString("hex")
+  };
+
+  const encoded = Buffer
+    .from(JSON.stringify(payload))
+    .toString("base64url");
+
+  const signature = sign(encoded);
+
+  return `${encoded}.${signature}`;
+}
+
+
+// ==========================================
+// GET COOKIE
+// ==========================================
+
+function getCookie(req, name) {
+  const cookieHeader = req.headers.cookie || "";
+
+  const parts = cookieHeader.split(";");
+
+  for (const part of parts) {
     const index = part.indexOf("=");
 
-    if (index === -1) return;
+    if (index === -1) continue;
 
-    const key = part.slice(0, index).trim();
-    const value = part.slice(index + 1).trim();
+    const key = part
+      .slice(0, index)
+      .trim();
 
-    cookies[key] = decodeURIComponent(value);
-  });
+    const value = part
+      .slice(index + 1)
+      .trim();
 
-  return cookies;
+    if (key === name) {
+      return decodeURIComponent(value);
+    }
+  }
+
+  return null;
 }
 
 
-// ================================
-// CREATE SESSION
-// ================================
-function createSession() {
-  const random = crypto.randomBytes(32).toString("hex");
-  const timestamp = Date.now().toString();
+// ==========================================
+// VERIFY SESSION
+// ==========================================
 
-  return hash(random + timestamp);
+function isAuthenticated(req) {
+  try {
+    const token = getCookie(
+      req,
+      COOKIE_NAME
+    );
+
+    if (!token) {
+      return false;
+    }
+
+    const parts = token.split(".");
+
+    if (parts.length !== 2) {
+      return false;
+    }
+
+    const encoded = parts[0];
+    const receivedSignature = parts[1];
+
+    const expectedSignature = sign(encoded);
+
+    if (
+      receivedSignature.length !==
+      expectedSignature.length
+    ) {
+      return false;
+    }
+
+    if (
+      !crypto.timingSafeEqual(
+        Buffer.from(receivedSignature),
+        Buffer.from(expectedSignature)
+      )
+    ) {
+      return false;
+    }
+
+    const payload = JSON.parse(
+      Buffer
+        .from(encoded, "base64url")
+        .toString("utf8")
+    );
+
+    if (!payload.exp) {
+      return false;
+    }
+
+    if (Date.now() > Number(payload.exp)) {
+      return false;
+    }
+
+    return true;
+
+  } catch (error) {
+    console.error(
+      "SESSION VERIFY ERROR:",
+      error
+    );
+
+    return false;
+  }
 }
 
 
-// ================================
-// SET COOKIE
-// ================================
+// ==========================================
+// SET SESSION COOKIE
+// ==========================================
+
 function setSessionCookie(res, token) {
   res.setHeader(
     "Set-Cookie",
-    `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; Max-Age=${SESSION_MAX_AGE}; HttpOnly; Secure; SameSite=Strict`
+    `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; Max-Age=${SESSION_MAX_AGE}; HttpOnly; Secure; SameSite=Lax`
   );
 }
 
 
-// ================================
-// CLEAR COOKIE
-// ================================
+// ==========================================
+// CLEAR SESSION COOKIE
+// ==========================================
+
 function clearSessionCookie(res) {
   res.setHeader(
     "Set-Cookie",
-    `${COOKIE_NAME}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict`
+    `${COOKIE_NAME}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`
   );
 }
 
 
-// ================================
-// AUTH CHECK
-// ================================
-function isAuthenticated(req) {
-  const cookies = getCookies(req);
-  const token = cookies[COOKIE_NAME];
+// ==========================================
+// MAIN API
+// ==========================================
 
-  if (!token) {
-    return false;
-  }
-
-  /*
-    Redis-free version:
-    The session token is validated using
-    a signed deterministic value.
-
-    This keeps the project setup-free.
-  */
-
-  return (
-    typeof token === "string" &&
-    token.length === 64
-  );
-}
-
-
-// ================================
-// MAIN HANDLER
-// ================================
 async function handler(req, res) {
+
   try {
+
     res.setHeader(
       "Content-Type",
       "application/json; charset=utf-8"
@@ -115,14 +198,16 @@ async function handler(req, res) {
     );
 
 
-    // ============================
-    // GET /api/auth?action=status
-    // ============================
+    // ========================================
+    // STATUS
+    // ========================================
+
     if (req.method === "GET") {
 
-      const action = String(
-        req.query?.action || "status"
-      );
+      const action =
+        String(
+          req.query?.action || "status"
+        );
 
       if (action === "status") {
 
@@ -130,6 +215,7 @@ async function handler(req, res) {
           ok: true,
           loggedIn: isAuthenticated(req)
         });
+
       }
 
       return res.status(400).json({
@@ -139,9 +225,10 @@ async function handler(req, res) {
     }
 
 
-    // ============================
-    // ONLY POST BELOW
-    // ============================
+    // ========================================
+    // METHOD
+    // ========================================
+
     if (req.method !== "POST") {
 
       return res.status(405).json({
@@ -151,25 +238,32 @@ async function handler(req, res) {
     }
 
 
-    const body =
-      req.body &&
-      typeof req.body === "object"
-        ? req.body
-        : {};
+    // ========================================
+    // BODY
+    // ========================================
 
-    const action = String(
-      body.action || ""
-    );
+    let body = req.body;
+
+    if (
+      !body ||
+      typeof body !== "object"
+    ) {
+      body = {};
+    }
 
 
-    // ============================
+    const action =
+      String(body.action || "");
+
+
+    // ========================================
     // LOGIN
-    // ============================
+    // ========================================
+
     if (action === "login") {
 
-      const password = String(
-        body.password || ""
-      );
+      const password =
+        String(body.password || "");
 
       if (!password) {
 
@@ -180,12 +274,16 @@ async function handler(req, res) {
       }
 
 
-      const enteredHash = hash(password);
-      const correctHash = hash(ADMIN_PASSWORD);
+      const enteredHash =
+        sha256(password);
+
+      const correctHash =
+        sha256(ADMIN_PASSWORD);
 
 
       const valid =
-        enteredHash.length === correctHash.length &&
+        enteredHash.length ===
+          correctHash.length &&
         crypto.timingSafeEqual(
           Buffer.from(enteredHash),
           Buffer.from(correctHash)
@@ -201,9 +299,14 @@ async function handler(req, res) {
       }
 
 
-      const token = createSession();
+      const token =
+        createSession();
 
-      setSessionCookie(res, token);
+
+      setSessionCookie(
+        res,
+        token
+      );
 
 
       return res.status(200).json({
@@ -213,9 +316,10 @@ async function handler(req, res) {
     }
 
 
-    // ============================
+    // ========================================
     // LOGOUT
-    // ============================
+    // ========================================
+
     if (action === "logout") {
 
       clearSessionCookie(res);
@@ -227,39 +331,24 @@ async function handler(req, res) {
     }
 
 
-    // ============================
-    // CHANGE PASSWORD
-    // ============================
-    if (action === "change-password") {
+    // ========================================
+    // AUTH CHECK
+    // ========================================
 
-      if (!isAuthenticated(req)) {
+    if (action === "check") {
 
-        return res.status(401).json({
-          ok: false,
-          error: "Not authenticated"
-        });
-      }
-
-
-      /*
-        Redis-free mode cannot permanently
-        store a changed password.
-
-        Therefore this action is disabled
-        instead of pretending it was saved.
-      */
-
-      return res.status(400).json({
-        ok: false,
-        error:
-          "Password change requires persistent storage."
+      return res.status(200).json({
+        ok: true,
+        loggedIn:
+          isAuthenticated(req)
       });
     }
 
 
-    // ============================
-    // UNKNOWN ACTION
-    // ============================
+    // ========================================
+    // UNKNOWN
+    // ========================================
+
     return res.status(400).json({
       ok: false,
       error: "Unknown action"
@@ -283,10 +372,11 @@ async function handler(req, res) {
 }
 
 
-// ==================================================
-// IMPORTANT:
-// Export handler + authenticated function together
-// ==================================================
-handler.authenticated = isAuthenticated;
+// ==========================================
+// IMPORTANT EXPORT
+// ==========================================
+
+handler.authenticated =
+  isAuthenticated;
 
 module.exports = handler;
