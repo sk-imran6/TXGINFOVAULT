@@ -3,474 +3,546 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>TXG Information Center</title>
 
 <style>
-
-* {
-  box-sizing: border-box;
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-  font-family: Inter, Arial, sans-serif;
-  background: #020712;
-  color: #eaf4ff;
+html,body{
+  width:100%;
+  min-height:100%;
+  font-family:Inter,Arial,sans-serif;
+  background:#020914;
+  color:#eaf4ff;
 }
 
-body {
-  overflow-x: hidden;
+body{
+  overflow-x:hidden;
 }
 
-
-/* ==========================================
+/* =========================
    CODE BACKGROUND
-========================================== */
+========================= */
 
-.code-bg {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 0;
-  opacity: .30;
+.code-bg{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  z-index:0;
+  opacity:.30;
 }
 
-.code-line {
-  position: absolute;
-  white-space: nowrap;
-  color: #168cff;
-  font-family: "Courier New", monospace;
-  font-size: 10px;
-  opacity: .45;
-  animation: moveCode linear infinite;
-  will-change: transform;
-  text-shadow: 0 0 5px rgba(22,140,255,.25);
+.code-line{
+  position:absolute;
+  white-space:nowrap;
+  color:#168cff;
+  font-family:"Courier New",monospace;
+  font-size:10px;
+  opacity:.45;
+  animation:moveCode linear infinite;
+  will-change:transform;
+  text-shadow:0 0 5px rgba(22,140,255,.25);
 }
 
-@keyframes moveCode {
-
-  from {
-    transform: translateX(120vw);
+@keyframes moveCode{
+  from{
+    transform:translateX(120vw);
   }
-
-  to {
-    transform: translateX(-140vw);
+  to{
+    transform:translateX(-140vw);
   }
-
 }
 
-
-/* ==========================================
+/* =========================
    APP
-========================================== */
+========================= */
 
-.app {
-  position: relative;
-  z-index: 2;
-  width: min(1100px, 94%);
-  margin: auto;
-  padding: 35px 0 70px;
+.app{
+  position:relative;
+  z-index:2;
+  width:100%;
+  min-height:100vh;
 }
 
+.container{
+  width:min(1180px,94%);
+  margin:auto;
+}
 
-/* ==========================================
+/* =========================
    LOGIN
-========================================== */
+========================= */
 
-.login-screen {
-  min-height: 85vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.login-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
 }
 
-.login-box {
-  width: min(430px, 100%);
-  background: rgba(5,14,29,.93);
-  border: 1px solid rgba(0,132,255,.30);
-  border-radius: 22px;
-  padding: 32px;
+.login-box{
+  width:min(430px,100%);
+  padding:32px;
+  border:1px solid rgba(30,145,255,.35);
+  border-radius:22px;
+  background:rgba(3,15,29,.88);
   box-shadow:
-    0 0 60px rgba(0,100,255,.14);
-  backdrop-filter: blur(18px);
+    0 0 50px rgba(0,110,255,.10),
+    inset 0 0 30px rgba(0,110,255,.03);
+  backdrop-filter:blur(14px);
 }
 
-.logo {
-  font-size: 29px;
-  font-weight: 900;
-  letter-spacing: 1px;
+.logo{
+  font-size:30px;
+  font-weight:900;
+  letter-spacing:1px;
+  color:#35a1ff;
+  text-align:center;
 }
 
-.logo span {
-  color: #1694ff;
+.subtitle{
+  text-align:center;
+  color:#7e9ab7;
+  margin-top:8px;
+  margin-bottom:28px;
+  font-size:14px;
 }
 
-.subtitle {
-  margin-top: 8px;
-  color: #7890aa;
-  font-size: 14px;
+.input{
+  width:100%;
+  padding:14px 15px;
+  border-radius:12px;
+  border:1px solid #163a5c;
+  background:#061423;
+  color:#fff;
+  outline:none;
+  font-size:15px;
+  margin-bottom:12px;
 }
 
-
-/* ==========================================
-   INPUT
-========================================== */
-
-input,
-button {
-  font: inherit;
+.input:focus{
+  border-color:#168cff;
+  box-shadow:0 0 0 3px rgba(22,140,255,.10);
 }
 
-input {
-  width: 100%;
-  margin-top: 18px;
-  padding: 15px 16px;
-  border-radius: 13px;
-  border: 1px solid #193450;
-  background: #06101f;
-  color: white;
-  outline: none;
+.btn{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:14px;
+  cursor:pointer;
+  background:#168cff;
+  color:#fff;
+  font-weight:800;
+  font-size:15px;
+  transition:.2s;
 }
 
-input:focus {
-  border-color: #148cff;
-  box-shadow:
-    0 0 0 3px rgba(20,140,255,.12);
+.btn:hover{
+  background:#319bff;
+  transform:translateY(-1px);
 }
 
-
-/* ==========================================
-   BUTTONS
-========================================== */
-
-button {
-  border: 0;
-  cursor: pointer;
+.btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  transform:none;
 }
 
-button:disabled {
-  opacity: .55;
-  cursor: not-allowed;
+.error{
+  color:#ff7272;
+  margin-top:12px;
+  text-align:center;
+  font-size:13px;
 }
 
-.primary {
-  width: 100%;
-  margin-top: 14px;
-  padding: 15px;
-  border-radius: 13px;
-  color: white;
-  font-weight: 800;
+/* =========================
+   DASHBOARD
+========================= */
+
+.dashboard{
+  display:none;
+  padding:25px 0 60px;
+}
+
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.header-left h1{
+  font-size:28px;
+  font-weight:900;
+}
+
+.header-left p{
+  color:#7591ad;
+  margin-top:5px;
+  font-size:13px;
+}
+
+.logout{
+  width:auto;
+  padding:10px 15px;
+  background:#071727;
+  border:1px solid #173a59;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.grid{
+  display:grid;
+  grid-template-columns:
+    repeat(auto-fit,minmax(220px,1fr));
+  gap:15px;
+}
+
+.card{
+  position:relative;
+  overflow:hidden;
+  min-height:145px;
+  padding:20px;
+  border-radius:18px;
+  border:1px solid rgba(30,145,255,.22);
   background:
     linear-gradient(
-      135deg,
-      #087cff,
-      #0051bb
+      145deg,
+      rgba(7,26,47,.94),
+      rgba(3,14,27,.92)
     );
+  cursor:pointer;
+  transition:.22s;
 }
 
-.primary:hover {
-  filter: brightness(1.12);
+.card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(35,155,255,.65);
+  box-shadow:0 12px 35px rgba(0,105,255,.10);
 }
 
-.logout {
-  padding: 10px 15px;
-  border-radius: 11px;
-  background: #101d2d;
-  color: #b8c9dc;
+.card-icon{
+  width:43px;
+  height:43px;
+  border-radius:13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(22,140,255,.12);
+  color:#35a1ff;
+  font-size:21px;
+  margin-bottom:15px;
 }
 
-
-/* ==========================================
-   ERROR
-========================================== */
-
-.error {
-  margin-top: 13px;
-  color: #ff7180;
-  font-size: 13px;
-  min-height: 18px;
+.card h3{
+  font-size:17px;
+  margin-bottom:7px;
 }
 
-
-/* ==========================================
-   DASHBOARD
-========================================== */
-
-.dashboard {
-  display: none;
+.card p{
+  color:#7894af;
+  font-size:12px;
+  line-height:1.5;
 }
 
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 28px;
+.custom-badge{
+  position:absolute;
+  top:13px;
+  right:13px;
+  padding:4px 7px;
+  border-radius:6px;
+  background:rgba(22,140,255,.12);
+  border:1px solid rgba(22,140,255,.25);
+  color:#42a8ff;
+  font-size:9px;
+  font-weight:800;
+  text-transform:uppercase;
 }
 
-.brand {
-  font-size: 25px;
-  font-weight: 900;
+/* =========================
+   ADD API
+========================= */
+
+.add-api{
+  margin-top:25px;
+  padding:22px;
+  border-radius:18px;
+  border:1px solid rgba(30,145,255,.22);
+  background:rgba(4,18,33,.86);
 }
 
-.brand span {
-  color: #148cff;
+.section-title{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:6px;
 }
 
-.tagline {
-  margin-top: 5px;
-  color: #688099;
-  font-size: 13px;
+.section-subtitle{
+  color:#718ca7;
+  font-size:12px;
+  margin-bottom:18px;
 }
 
-
-/* ==========================================
-   GRID
-========================================== */
-
-.grid {
-  display: grid;
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(220px, 1fr)
-    );
-  gap: 16px;
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr auto;
+  gap:10px;
 }
 
-
-/* ==========================================
-   CARDS
-========================================== */
-
-.card {
-  min-height: 145px;
-  padding: 22px;
-  border-radius: 18px;
-  border: 1px solid rgba(35,93,145,.35);
-  background:
-    rgba(5,15,29,.88);
-  backdrop-filter: blur(15px);
-  transition: .2s;
+.form-grid .input{
+  margin:0;
 }
 
-.card:hover {
-  transform: translateY(-2px);
-  border-color:
-    rgba(20,140,255,.7);
-  box-shadow:
-    0 8px 30px rgba(0,80,180,.10);
+.add-btn{
+  width:auto;
+  padding:0 20px;
 }
 
-.card-title {
-  font-size: 18px;
-  font-weight: 800;
+/* =========================
+   SAVED API LIST
+========================= */
+
+.api-list{
+  margin-top:15px;
+  display:grid;
+  gap:9px;
 }
 
-.card-desc {
-  margin-top: 7px;
-  color: #70859d;
-  font-size: 13px;
-  line-height: 1.5;
+.api-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:13px;
+  border-radius:12px;
+  background:#061525;
+  border:1px solid #123553;
 }
 
-.search-btn {
-  margin-top: 18px;
-  padding: 10px 16px;
-  border-radius: 10px;
-  background: #0c7cff;
-  color: white;
-  font-weight: 700;
+.api-item b{
+  font-size:13px;
 }
 
-.search-btn:hover {
-  background: #168cff;
+.api-item .muted{
+  color:#637f9a;
+  font-size:11px;
 }
 
-
-/* ==========================================
-   CUSTOM API
-========================================== */
-
-.custom-card {
-  margin-top: 18px;
-  padding: 23px;
-  border-radius: 18px;
-  border: 1px solid rgba(35,93,145,.35);
-  background:
-    rgba(5,15,29,.88);
-  backdrop-filter: blur(15px);
+.api-item button{
+  border:1px solid #1d4c72;
+  background:#092037;
+  color:#bfe2ff;
+  border-radius:8px;
+  padding:7px 10px;
+  cursor:pointer;
+  font-size:11px;
+  font-weight:700;
 }
 
-.custom-list {
-  margin-top: 15px;
-  display: grid;
-  gap: 10px;
+.api-item button:hover{
+  border-color:#168cff;
 }
 
-.api-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 12px 14px;
-  background: #071425;
-  border-radius: 12px;
+.api-item .delete-custom-api{
+  color:#ff8585;
+  border-color:#5b2525;
+  background:#241010;
 }
 
-.api-item button {
-  padding: 8px 12px;
-  border-radius: 9px;
-  background: #0c7cff;
-  color: white;
-}
-
-.api-item button:last-child {
-  background: #30141a;
-}
-
-
-/* ==========================================
+/* =========================
    MODAL
-========================================== */
+========================= */
 
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  background:
-    rgba(0,4,10,.80);
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:20;
+  background:rgba(0,0,0,.72);
+  padding:20px;
+  align-items:center;
+  justify-content:center;
 }
 
-.modal-box {
-  width: min(650px, 100%);
-  max-height: 90vh;
-  overflow: auto;
-  background: #06101f;
-  border: 1px solid #173654;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow:
-    0 20px 80px rgba(0,0,0,.45);
+.modal.show{
+  display:flex;
 }
 
-.modal-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
+.modal-box{
+  width:min(720px,100%);
+  max-height:90vh;
+  overflow:auto;
+  padding:22px;
+  border-radius:20px;
+  background:#041321;
+  border:1px solid #1a4d75;
+  box-shadow:0 20px 80px rgba(0,0,0,.5);
 }
 
-.close {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: #101d2d;
-  color: white;
-  font-size: 23px;
+.modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:18px;
 }
 
-.result {
-  margin-top: 18px;
-  padding: 17px;
-  background: #020a14;
-  border: 1px solid #122941;
-  border-radius: 13px;
-  overflow: auto;
+.modal-header h2{
+  font-size:19px;
 }
 
-pre {
-  margin: 0;
-  white-space: pre-wrap;
-  word-break: break-word;
-  color: #a9d5ff;
-  font-family: monospace;
-  font-size: 13px;
-  line-height: 1.6;
+.close{
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  border:1px solid #1a3d5d;
+  background:#081a2b;
+  color:#fff;
+  cursor:pointer;
+  font-size:18px;
 }
 
-.status {
-  margin-top: 10px;
-  color: #6d87a0;
-  font-size: 13px;
+.result-section{
+  padding:16px;
+  border-radius:13px;
+  background:#061727;
+  border:1px solid #123652;
+  margin-bottom:10px;
 }
 
+.result-section h3{
+  margin-bottom:12px;
+  font-size:15px;
+}
 
-/* ==========================================
+.result-row{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  font-size:13px;
+}
+
+.result-row:last-child{
+  border-bottom:0;
+}
+
+.result-key{
+  color:#7893ad;
+}
+
+.result-value{
+  text-align:right;
+  word-break:break-word;
+}
+
+pre{
+  margin-top:12px;
+  padding:13px;
+  border-radius:10px;
+  background:#020b14;
+  color:#a9d8ff;
+  white-space:pre-wrap;
+  word-break:break-word;
+  overflow:auto;
+  font-size:12px;
+  line-height:1.55;
+}
+
+.fail{
+  color:#ff8181;
+}
+
+.success{
+  color:#57df9b;
+}
+
+.muted{
+  color:#718da7;
+  font-size:13px;
+}
+
+/* =========================
    MOBILE
-========================================== */
+========================= */
 
-@media (max-width:600px) {
+@media(max-width:700px){
 
-  .app {
-    width: 92%;
-    padding-top: 22px;
+  .dashboard{
+    padding-top:17px;
   }
 
-  .topbar {
-    align-items: flex-start;
+  .header{
+    align-items:flex-start;
   }
 
-  .brand {
-    font-size: 21px;
+  .header-left h1{
+    font-size:23px;
   }
 
-  .login-box {
-    padding: 24px;
+  .form-grid{
+    grid-template-columns:1fr;
   }
 
-  .card {
-    min-height: auto;
+  .add-btn{
+    width:100%;
+    padding:13px;
   }
 
+  .api-item{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .api-item > div:last-child{
+    width:100%;
+  }
+
+  .api-item button{
+    flex:1;
+  }
 }
-
 </style>
 </head>
 
-
 <body>
 
-
-<!-- ========================================
+<!-- =========================
      BACKGROUND
-========================================= -->
+========================= -->
 
 <div
-  class="code-bg"
   id="codeBg"
+  class="code-bg"
 ></div>
 
 
-<!-- ========================================
-     APP
-========================================= -->
-
 <div class="app">
 
-
-<!-- ========================================
+<!-- =========================
      LOGIN
-========================================= -->
+========================= -->
 
 <section
-  class="login-screen"
   id="loginScreen"
+  class="login-screen"
 >
 
   <div class="login-box">
 
     <div class="logo">
-      TXG <span>Information</span>
+      TXG INFORMATION
     </div>
 
     <div class="subtitle">
@@ -479,21 +551,23 @@ pre {
 
     <input
       id="password"
+      class="input"
       type="password"
       placeholder="Admin password"
       autocomplete="current-password"
     >
 
     <button
-      class="primary"
       id="loginBtn"
+      class="btn"
+      type="button"
     >
       Login
     </button>
 
     <div
-      class="error"
       id="loginError"
+      class="error"
     ></div>
 
   </div>
@@ -501,217 +575,241 @@ pre {
 </section>
 
 
-<!-- ========================================
+<!-- =========================
      DASHBOARD
-========================================= -->
+========================= -->
 
 <section
-  class="dashboard"
   id="dashboard"
+  class="dashboard"
 >
 
-  <div class="topbar">
+  <div class="container">
 
-    <div>
+    <header class="header">
 
-      <div class="brand">
-        TXG
-        <span>Information Center</span>
-      </div>
+      <div class="header-left">
 
-      <div class="tagline">
-        Public & authorized information lookup tools
-      </div>
+        <h1>
+          TXG Information
+        </h1>
 
-    </div>
+        <p>
+          Public & authorized information lookup center
+        </p>
 
-    <button
-      class="logout"
-      id="logoutBtn"
-    >
-      Logout
-    </button>
-
-  </div>
-
-
-  <!-- ======================================
-       LOOKUP GRID
-  ======================================= -->
-
-  <div class="grid">
-
-
-    <div class="card">
-
-      <div class="card-title">
-        📱 Mobile
-      </div>
-
-      <div class="card-desc">
-        Validate and format an international
-        phone number.
       </div>
 
       <button
-        class="search-btn"
+        id="logoutBtn"
+        class="btn logout"
+        type="button"
+      >
+        Logout
+      </button>
+
+    </header>
+
+
+    <!-- =========================
+         LOOKUP CARDS
+    ========================= -->
+
+    <div
+      id="lookupGrid"
+      class="grid"
+    >
+
+      <div
+        class="card"
         data-type="mobile"
       >
-        Search
-      </button>
 
-    </div>
+        <div class="card-icon">
+          M
+        </div>
 
+        <h3>
+          Mobile
+        </h3>
 
-    <div class="card">
+        <p>
+          Check number validity,
+          country, calling code and
+          number type.
+        </p>
 
-      <div class="card-title">
-        📍 PIN
       </div>
 
-      <div class="card-desc">
-        Find postal information from an
-        Indian PIN code.
-      </div>
 
-      <button
-        class="search-btn"
+      <div
+        class="card"
         data-type="pin"
       >
-        Search
-      </button>
 
-    </div>
+        <div class="card-icon">
+          P
+        </div>
 
+        <h3>
+          PIN Code
+        </h3>
 
-    <div class="card">
+        <p>
+          Find post office,
+          district, state and
+          PIN information.
+        </p>
 
-      <div class="card-title">
-        🏦 IFSC
       </div>
 
-      <div class="card-desc">
-        Find bank and branch information
-        from an IFSC code.
-      </div>
 
-      <button
-        class="search-btn"
+      <div
+        class="card"
         data-type="ifsc"
       >
-        Search
-      </button>
 
-    </div>
+        <div class="card-icon">
+          I
+        </div>
 
+        <h3>
+          IFSC
+        </h3>
 
-    <div class="card">
+        <p>
+          Bank, branch, city,
+          state and IFSC details.
+        </p>
 
-      <div class="card-title">
-        🌐 IP
       </div>
 
-      <div class="card-desc">
-        Check public IP and approximate
-        network information.
-      </div>
 
-      <button
-        class="search-btn"
+      <div
+        class="card"
         data-type="ip"
       >
-        Search
-      </button>
 
-    </div>
+        <div class="card-icon">
+          IP
+        </div>
 
+        <h3>
+          IP Address
+        </h3>
 
-    <div class="card">
+        <p>
+          Public IP, approximate
+          location, ISP, ASN and
+          network information.
+        </p>
 
-      <div class="card-title">
-        🔗 URL
       </div>
 
-      <div class="card-desc">
-        Inspect URL structure and basic
-        DNS information.
-      </div>
 
-      <button
-        class="search-btn"
+      <div
+        class="card"
         data-type="url"
       >
-        Search
-      </button>
 
-    </div>
+        <div class="card-icon">
+          U
+        </div>
 
+        <h3>
+          URL
+        </h3>
 
-    <div class="card">
+        <p>
+          Website reachability,
+          domain age, registrar,
+          HTTPS and public checks.
+        </p>
 
-      <div class="card-title">
-        💳 UPI
       </div>
 
-      <div class="card-desc">
-        Validate the basic structure of
-        a UPI ID.
-      </div>
 
-      <button
-        class="search-btn"
+      <div
+        class="card"
         data-type="upi"
       >
-        Search
-      </button>
+
+        <div class="card-icon">
+          ₹
+        </div>
+
+        <h3>
+          UPI
+        </h3>
+
+        <p>
+          Check UPI ID format and
+          supported public information.
+        </p>
+
+      </div>
 
     </div>
 
 
-  </div>
+    <!-- =========================
+         CUSTOM API
+    ========================= -->
+
+    <div class="add-api">
+
+      <div class="section-title">
+        Add Custom API
+      </div>
+
+      <div class="section-subtitle">
+        Add your own HTTPS API.
+        Use <b>{message}</b> where the
+        user input should be inserted.
+      </div>
 
 
-  <!-- ======================================
-       CUSTOM API
-  ======================================= -->
+      <div class="form-grid">
 
-  <div class="custom-card">
+        <input
+          id="apiName"
+          class="input"
+          type="text"
+          maxlength="80"
+          placeholder="API button name"
+        >
 
-    <div class="card-title">
-      Add Custom API
+        <input
+          id="apiUrl"
+          class="input"
+          type="url"
+          maxlength="1000"
+          placeholder="https://example.com/api?message={message}"
+        >
+
+        <button
+          id="addApiBtn"
+          class="btn add-btn"
+          type="button"
+        >
+          Add API
+        </button>
+
+      </div>
+
+
+      <div
+        id="apiList"
+        class="api-list"
+      >
+
+        <div class="muted">
+          Loading saved APIs...
+        </div>
+
+      </div>
+
     </div>
-
-    <div class="card-desc">
-      Add your own HTTPS API using
-      <b>{message}</b> as the input placeholder.
-    </div>
-
-    <input
-      id="apiName"
-      placeholder="Button name"
-    >
-
-    <input
-      id="apiUrl"
-      placeholder="https://example.com/api?message={message}"
-    >
-
-    <button
-      class="primary"
-      id="addApiBtn"
-    >
-      Add API
-    </button>
-
-    <div
-      class="error"
-      id="apiAddError"
-    ></div>
-
-    <div
-      class="custom-list"
-      id="customList"
-    ></div>
 
   </div>
 
@@ -720,38 +818,27 @@ pre {
 </div>
 
 
-<!-- ========================================
-     LOOKUP MODAL
-========================================= -->
+<!-- =========================
+     MODAL
+========================= -->
 
 <div
+  id="modal"
   class="modal"
-  id="lookupModal"
 >
 
   <div class="modal-box">
 
-    <div class="modal-head">
+    <div class="modal-header">
 
-      <div>
-
-        <div
-          class="card-title"
-          id="modalTitle"
-        >
-          Search
-        </div>
-
-        <div
-          class="status"
-          id="modalStatus"
-        ></div>
-
-      </div>
+      <h2 id="modalTitle">
+        Result
+      </h2>
 
       <button
-        class="close"
         id="closeModal"
+        class="close"
+        type="button"
       >
         ×
       </button>
@@ -759,32 +846,9 @@ pre {
     </div>
 
 
-    <input
-      id="lookupInput"
-      placeholder="Enter value"
-      autocomplete="off"
-    >
-
-
-    <button
-      class="primary"
-      id="runLookup"
-    >
-      Search
-    </button>
-
-
     <div
-      class="result"
-      id="lookupResult"
-      style="display:none"
-    >
-
-      <pre
-        id="resultText"
-      ></pre>
-
-    </div>
+      id="result"
+    ></div>
 
   </div>
 
@@ -793,126 +857,57 @@ pre {
 
 <script>
 
+/* =====================================================
+   HELPERS
+===================================================== */
 
-// ==========================================
-// ELEMENTS
-// ==========================================
-
-const loginScreen =
-  document.getElementById(
-    "loginScreen"
-  );
-
-const dashboard =
-  document.getElementById(
-    "dashboard"
-  );
-
-const passwordInput =
-  document.getElementById(
-    "password"
-  );
-
-const loginBtn =
-  document.getElementById(
-    "loginBtn"
-  );
-
-const loginError =
-  document.getElementById(
-    "loginError"
-  );
-
-const logoutBtn =
-  document.getElementById(
-    "logoutBtn"
-  );
-
-const lookupModal =
-  document.getElementById(
-    "lookupModal"
-  );
-
-const modalTitle =
-  document.getElementById(
-    "modalTitle"
-  );
-
-const modalStatus =
-  document.getElementById(
-    "modalStatus"
-  );
-
-const lookupInput =
-  document.getElementById(
-    "lookupInput"
-  );
-
-const runLookup =
-  document.getElementById(
-    "runLookup"
-  );
-
-const closeModal =
-  document.getElementById(
-    "closeModal"
-  );
-
-const lookupResult =
-  document.getElementById(
-    "lookupResult"
-  );
-
-const resultText =
-  document.getElementById(
-    "resultText"
-  );
-
-const apiName =
-  document.getElementById(
-    "apiName"
-  );
-
-const apiUrl =
-  document.getElementById(
-    "apiUrl"
-  );
-
-const addApiBtn =
-  document.getElementById(
-    "addApiBtn"
-  );
-
-const customList =
-  document.getElementById(
-    "customList"
-  );
-
-const apiAddError =
-  document.getElementById(
-    "apiAddError"
-  );
+const $ = id =>
+  document.getElementById(id);
 
 
-let currentType = "";
+function escapeHTML(value){
 
-let currentCustomApi = null;
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
 
 
-// ==========================================
-// REQUEST
-// ==========================================
+function row(key,value){
+
+  return `
+    <div class="result-row">
+
+      <div class="result-key">
+        ${escapeHTML(key)}
+      </div>
+
+      <div class="result-value">
+        ${escapeHTML(value)}
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* =====================================================
+   SAFE REQUEST
+===================================================== */
 
 async function request(
   url,
-  options = {}
-) {
+  options={}
+){
 
   const response =
     await fetch(
       url,
       {
-        credentials: "same-origin",
+        credentials:"include",
         ...options
       }
     );
@@ -922,29 +917,37 @@ async function request(
     await response.text();
 
 
-  let data;
+  let data = null;
 
 
-  try {
+  try{
 
     data =
       text
         ? JSON.parse(text)
         : {};
 
-  } catch {
+  }catch{
+
+    if(!response.ok){
+
+      throw new Error(
+        text ||
+        `Server error (${response.status})`
+      );
+    }
 
     throw new Error(
-      `Server returned HTTP ${response.status}: ${text.slice(0,300)}`
+      "Server returned invalid response"
     );
   }
 
 
-  if (!response.ok) {
+  if(!response.ok){
 
     throw new Error(
-      data?.error ||
-      `Request failed with HTTP ${response.status}`
+      data.error ||
+      `Request failed (${response.status})`
     );
   }
 
@@ -953,1105 +956,1010 @@ async function request(
 }
 
 
-// ==========================================
-// DASHBOARD
-// ==========================================
+/* =====================================================
+   LOGIN
+===================================================== */
 
-function showDashboard() {
+async function login(){
 
-  loginScreen.style.display =
-    "none";
+  const password =
+    $("password").value;
 
-  dashboard.style.display =
-    "block";
+
+  if(!password){
+
+    $("loginError").textContent =
+      "Enter your password.";
+
+    return;
+  }
+
+
+  $("loginBtn").disabled =
+    true;
+
+  $("loginBtn").textContent =
+    "Checking...";
+
+
+  $("loginError").textContent =
+    "";
+
+
+  try{
+
+    await request(
+      "/api/auth",
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "application/json"
+        },
+
+        body:JSON.stringify({
+          password
+        })
+      }
+    );
+
+
+    showDashboard();
+
+
+  }catch(error){
+
+    $("loginError").textContent =
+      error.message;
+
+  }finally{
+
+    $("loginBtn").disabled =
+      false;
+
+    $("loginBtn").textContent =
+      "Login";
+  }
 }
 
 
-function showLogin() {
+/* =====================================================
+   AUTH CHECK
+===================================================== */
 
-  dashboard.style.display =
-    "none";
+async function checkAuth(){
 
-  loginScreen.style.display =
-    "flex";
-}
+  try{
 
+    await request(
+      "/api/auth",
+      {
+        method:"GET"
+      }
+    );
 
-// ==========================================
-// CHECK LOGIN
-// ==========================================
+    showDashboard();
 
-async function checkLogin() {
-
-  try {
-
-    const data =
-      await request(
-        "/api/auth?action=status"
-      );
-
-
-    if (
-      data.ok &&
-      data.loggedIn
-    ) {
-
-      showDashboard();
-
-    } else {
-
-      showLogin();
-
-    }
-
-  } catch {
+  }catch{
 
     showLogin();
   }
 }
 
 
-// ==========================================
-// LOGIN
-// ==========================================
+/* =====================================================
+   SCREEN
+===================================================== */
 
-async function login() {
+function showLogin(){
 
-  loginError.textContent =
-    "";
+  $("loginScreen").style.display =
+    "flex";
 
-
-  const password =
-    passwordInput.value;
-
-
-  if (!password) {
-
-    loginError.textContent =
-      "Enter password.";
-
-    return;
-  }
-
-
-  loginBtn.disabled =
-    true;
-
-  loginBtn.textContent =
-    "Logging in...";
-
-
-  try {
-
-    const data =
-      await request(
-        "/api/auth",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body:
-            JSON.stringify({
-              action: "login",
-              password
-            })
-        }
-      );
-
-
-    if (
-      data.ok &&
-      data.loggedIn
-    ) {
-
-      passwordInput.value =
-        "";
-
-      showDashboard();
-
-    } else {
-
-      throw new Error(
-        data.error ||
-        "Login failed"
-      );
-    }
-
-  } catch (error) {
-
-    loginError.textContent =
-      error.message;
-
-  } finally {
-
-    loginBtn.disabled =
-      false;
-
-    loginBtn.textContent =
-      "Login";
-  }
+  $("dashboard").style.display =
+    "none";
 }
 
 
-// ==========================================
-// LOGOUT
-// ==========================================
+async function showDashboard(){
 
-async function logout() {
+  $("loginScreen").style.display =
+    "none";
 
-  try {
+  $("dashboard").style.display =
+    "block";
+
+
+  await loadCustomApis();
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logout(){
+
+  try{
 
     await request(
       "/api/auth",
       {
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-
-        body:
-          JSON.stringify({
-            action: "logout"
-          })
+        method:"DELETE"
       }
     );
 
-  } catch {}
+  }catch{}
 
   showLogin();
 }
 
 
-// ==========================================
-// OPEN LOOKUP
-// ==========================================
+/* =====================================================
+   BUILT-IN LOOKUP
+===================================================== */
 
-function openLookup(type) {
+async function openLookup(type){
 
-  currentType =
-    type;
+  let title =
+    type.toUpperCase();
 
-  currentCustomApi =
-    null;
-
-
-  const titles = {
-
-    mobile:
-      "Mobile Lookup",
-
-    pin:
-      "PIN Lookup",
-
-    ifsc:
-      "IFSC Lookup",
-
-    ip:
-      "IP Lookup",
-
-    url:
-      "URL Lookup",
-
-    upi:
-      "UPI Lookup"
-
-  };
-
-
-  const placeholders = {
-
-    mobile:
-      "Enter mobile number",
-
-    pin:
-      "Enter 6 digit PIN",
-
-    ifsc:
-      "Enter IFSC code",
-
-    ip:
-      "Enter IP or leave empty for your public IP",
-
-    url:
-      "Enter URL",
-
-    upi:
-      "Enter UPI ID"
-
-  };
-
-
-  modalTitle.textContent =
-    titles[type] ||
-    "Lookup";
-
-
-  lookupInput.placeholder =
-    placeholders[type] ||
+  let placeholder =
     "Enter value";
 
 
-  lookupInput.value =
-    "";
+  if(type==="mobile"){
+    title="Mobile Lookup";
+    placeholder="Enter mobile number";
+  }
 
-  lookupResult.style.display =
-    "none";
+  if(type==="pin"){
+    title="PIN Lookup";
+    placeholder="Enter PIN code";
+  }
 
-  resultText.textContent =
-    "";
+  if(type==="ifsc"){
+    title="IFSC Lookup";
+    placeholder="Enter IFSC";
+  }
 
-  modalStatus.textContent =
-    "";
+  if(type==="ip"){
+    title="IP Lookup";
+    placeholder="Enter IP address";
+  }
 
+  if(type==="url"){
+    title="URL Verification";
+    placeholder="https://example.com";
+  }
 
-  runLookup.textContent =
-    "Search";
-
-
-  lookupModal.style.display =
-    "flex";
-
-
-  setTimeout(
-    () => lookupInput.focus(),
-    50
-  );
-}
-
-
-// ==========================================
-// CLOSE
-// ==========================================
-
-function closeLookup() {
-
-  lookupModal.style.display =
-    "none";
-
-  currentCustomApi =
-    null;
-
-  runLookup.textContent =
-    "Search";
-}
+  if(type==="upi"){
+    title="UPI Lookup";
+    placeholder="example@upi";
+  }
 
 
-// ==========================================
-// NORMAL LOOKUP
-// ==========================================
+  const value =
+    prompt(placeholder);
 
-async function performLookup() {
 
-  if (currentType === "custom") {
-
-    if (currentCustomApi) {
-
-      await performCustomApi(
-        currentCustomApi
-      );
-    }
-
+  if(value === null){
     return;
   }
 
 
-  const input =
-    lookupInput.value.trim();
-
-
-  if (
-    currentType !== "ip" &&
-    !input
-  ) {
-
-    modalStatus.textContent =
-      "Enter a value first.";
-
+  if(!value.trim()){
     return;
   }
 
 
-  runLookup.disabled =
-    true;
+  $("modalTitle").textContent =
+    title;
 
-  runLookup.textContent =
-    "Searching...";
+  $("result").innerHTML =
+    `
+    <div class="result-section">
+      Checking...
+    </div>
+    `;
 
-  modalStatus.textContent =
-    "Connecting to lookup service...";
-
-  lookupResult.style.display =
-    "none";
+  $("modal").classList.add("show");
 
 
-  try {
+  try{
 
     const data =
       await request(
-        "/api/lookup",
+        `/api/lookup?type=${encodeURIComponent(type)}&value=${encodeURIComponent(value.trim())}`,
         {
-          method: "POST",
+          method:"GET"
+        }
+      );
 
-          headers: {
+
+    renderLookupResult(
+      data
+    );
+
+
+  }catch(error){
+
+    $("result").innerHTML =
+      `
+      <div class="result-section fail">
+        ${escapeHTML(
+          error.message
+        )}
+      </div>
+      `;
+  }
+}
+
+
+/* =====================================================
+   LOOKUP RESULT
+===================================================== */
+
+function renderLookupResult(data){
+
+  const result =
+    $("result");
+
+  result.innerHTML = "";
+
+
+  if(
+    data &&
+    data.result &&
+    typeof data.result === "object"
+  ){
+
+    const section =
+      document.createElement("div");
+
+    section.className =
+      "result-section";
+
+
+    let html =
+      "<h3>Result</h3>";
+
+
+    Object.entries(
+      data.result
+    ).forEach(
+      ([key,value]) => {
+
+        if(
+          value !== null &&
+          value !== undefined &&
+          typeof value !== "object"
+        ){
+
+          html += row(
+            key,
+            value
+          );
+        }
+      }
+    );
+
+
+    section.innerHTML =
+      html;
+
+    result.appendChild(
+      section
+    );
+
+
+    const objects =
+      Object.entries(
+        data.result
+      ).filter(
+        ([,value]) =>
+          value &&
+          typeof value === "object"
+      );
+
+
+    objects.forEach(
+      ([key,value]) => {
+
+        const section =
+          document.createElement("div");
+
+        section.className =
+          "result-section";
+
+
+        section.innerHTML = `
+          <h3>
+            ${escapeHTML(key)}
+          </h3>
+
+          <pre>${escapeHTML(
+            JSON.stringify(
+              value,
+              null,
+              2
+            )
+          )}</pre>
+        `;
+
+
+        result.appendChild(
+          section
+        );
+      }
+    );
+
+
+  }else{
+
+    const section =
+      document.createElement("div");
+
+    section.className =
+      "result-section";
+
+
+    section.innerHTML = `
+      <pre>${escapeHTML(
+        JSON.stringify(
+          data,
+          null,
+          2
+        )
+      )}</pre>
+    `;
+
+
+    result.appendChild(
+      section
+    );
+  }
+}
+
+
+/* =====================================================
+   CUSTOM API LOAD
+===================================================== */
+
+async function loadCustomApis(){
+
+  const list =
+    $("apiList");
+
+
+  list.innerHTML =
+    `
+    <div class="muted">
+      Loading saved APIs...
+    </div>
+    `;
+
+
+  try{
+
+    const data =
+      await request(
+        "/api/custom-apis",
+        {
+          method:"GET"
+        }
+      );
+
+
+    renderCustomApis(
+      data.apis || []
+    );
+
+
+  }catch(error){
+
+    list.innerHTML =
+      `
+      <div class="fail">
+        ${escapeHTML(
+          error.message
+        )}
+      </div>
+      `;
+  }
+}
+
+
+/* =====================================================
+   CUSTOM API CARDS
+===================================================== */
+
+function renderCustomApis(apis){
+
+  const grid =
+    $("lookupGrid");
+
+
+  /*
+   * Remove only previously
+   * generated custom cards.
+   */
+  grid
+    .querySelectorAll(
+      ".custom-api-card"
+    )
+    .forEach(
+      card => card.remove()
+    );
+
+
+  /*
+   * Also update saved API list.
+   */
+
+  const list =
+    $("apiList");
+
+  list.innerHTML = "";
+
+
+  if(!apis.length){
+
+    list.innerHTML =
+      `
+      <div class="muted">
+        No custom APIs added yet.
+      </div>
+      `;
+
+    return;
+  }
+
+
+  /*
+   * Create cards in the
+   * SAME main lookup grid.
+   */
+
+  apis.forEach(api => {
+
+    const card =
+      document.createElement("div");
+
+    card.className =
+      "card custom-api-card";
+
+
+    card.innerHTML = `
+
+      <span class="custom-badge">
+        Custom
+      </span>
+
+      <div class="card-icon">
+        API
+      </div>
+
+      <h3>
+        ${escapeHTML(api.name)}
+      </h3>
+
+      <p>
+        Custom API lookup.
+        Tap to enter a value and
+        view the API response.
+      </p>
+
+    `;
+
+
+    card.addEventListener(
+      "click",
+      () => openCustomApi(api)
+    );
+
+
+    grid.appendChild(
+      card
+    );
+
+
+    /*
+     * Saved API management list
+     */
+
+    const item =
+      document.createElement("div");
+
+    item.className =
+      "api-item";
+
+
+    item.innerHTML = `
+
+      <div style="min-width:0">
+
+        <b>
+          ${escapeHTML(api.name)}
+        </b>
+
+        <div class="muted"
+          style="
+            word-break:break-all;
+            margin-top:4px;
+          "
+        >
+          ${escapeHTML(api.url)}
+        </div>
+
+      </div>
+
+      <div
+        style="
+          display:flex;
+          gap:7px;
+          flex-shrink:0;
+        "
+      >
+
+        <button
+          class="open-custom-api"
+          type="button"
+        >
+          Open
+        </button>
+
+        <button
+          class="delete-custom-api"
+          type="button"
+        >
+          Delete
+        </button>
+
+      </div>
+    `;
+
+
+    item
+      .querySelector(
+        ".open-custom-api"
+      )
+      .addEventListener(
+        "click",
+        () => openCustomApi(api)
+      );
+
+
+    item
+      .querySelector(
+        ".delete-custom-api"
+      )
+      .addEventListener(
+        "click",
+        () =>
+          deleteCustomApi(
+            api.id
+          )
+      );
+
+
+    list.appendChild(
+      item
+    );
+
+  });
+}
+
+
+/* =====================================================
+   ADD CUSTOM API
+===================================================== */
+
+async function saveCustomApi(){
+
+  const name =
+    $("apiName")
+      .value
+      .trim();
+
+  const url =
+    $("apiUrl")
+      .value
+      .trim();
+
+
+  if(!name){
+
+    alert(
+      "Enter API button name"
+    );
+
+    return;
+  }
+
+
+  if(!url){
+
+    alert(
+      "Enter API URL"
+    );
+
+    return;
+  }
+
+
+  if(
+    !/^https?:\/\//i.test(url)
+  ){
+
+    alert(
+      "API URL must start with http:// or https://"
+    );
+
+    return;
+  }
+
+
+  try{
+
+    $("addApiBtn").disabled =
+      true;
+
+    $("addApiBtn").textContent =
+      "Saving...";
+
+
+    const data =
+      await request(
+        "/api/custom-apis",
+        {
+          method:"POST",
+
+          headers:{
             "Content-Type":
               "application/json"
           },
 
-          body:
-            JSON.stringify({
-              type:
-                currentType,
-
-              input
-            })
+          body:JSON.stringify({
+            name,
+            url
+          })
         }
       );
 
 
-    resultText.textContent =
-      JSON.stringify(
-        data.result,
-        null,
-        2
-      );
+    $("apiName").value = "";
+    $("apiUrl").value = "";
 
 
-    lookupResult.style.display =
-      "block";
-
-    modalStatus.textContent =
-      "Lookup completed.";
-
-  } catch (error) {
-
-    modalStatus.textContent =
-      error.message;
-
-  } finally {
-
-    runLookup.disabled =
-      false;
-
-    runLookup.textContent =
-      "Search";
-  }
-}
-
-
-// ==========================================
-// CUSTOM API STORAGE
-// ==========================================
-
-function loadCustomApis() {
-
-  try {
-
-    return JSON.parse(
-      localStorage.getItem(
-        "txg_custom_apis"
-      ) || "[]"
+    renderCustomApis(
+      data.apis || []
     );
 
-  } catch {
 
-    return [];
+  }catch(error){
+
+    alert(
+      error.message
+    );
+
+  }finally{
+
+    $("addApiBtn").disabled =
+      false;
+
+    $("addApiBtn").textContent =
+      "Add API";
   }
 }
 
 
-function saveCustomApis(
-  items
-) {
-
-  localStorage.setItem(
-    "txg_custom_apis",
-    JSON.stringify(items)
-  );
-}
-
-
-// ==========================================
-// RENDER CUSTOM APIs
-// ==========================================
-
-function renderCustomApis() {
-
-  customList.innerHTML =
-    "";
-
-
-  const items =
-    loadCustomApis();
-
-
-  if (!items.length) {
-
-    customList.innerHTML =
-      `<div class="status">
-        No custom APIs added yet.
-      </div>`;
-
-    return;
-  }
-
-
-  items.forEach(
-    (item,index) => {
-
-      const row =
-        document.createElement(
-          "div"
-        );
-
-      row.className =
-        "api-item";
-
-
-      const name =
-        document.createElement(
-          "div"
-        );
-
-      name.textContent =
-        item.name;
-
-
-      const actions =
-        document.createElement(
-          "div"
-        );
-
-
-      const open =
-        document.createElement(
-          "button"
-        );
-
-      open.textContent =
-        "Open";
-
-
-      open.addEventListener(
-        "click",
-        () => {
-          openCustomApi(item);
-        }
-      );
-
-
-      const remove =
-        document.createElement(
-          "button"
-        );
-
-      remove.textContent =
-        "×";
-
-
-      remove.style.marginLeft =
-        "6px";
-
-
-      remove.addEventListener(
-        "click",
-        () => {
-
-          const all =
-            loadCustomApis();
-
-
-          all.splice(
-            index,
-            1
-          );
-
-
-          saveCustomApis(
-            all
-          );
-
-
-          renderCustomApis();
-        }
-      );
-
-
-      actions.appendChild(
-        open
-      );
-
-      actions.appendChild(
-        remove
-      );
-
-
-      row.appendChild(
-        name
-      );
-
-      row.appendChild(
-        actions
-      );
-
-
-      customList.appendChild(
-        row
-      );
-    }
-  );
-}
-
-
-// ==========================================
-// ADD CUSTOM API
-// ==========================================
-
-function addCustomApi() {
-
-  apiAddError.textContent =
-    "";
-
-
-  const name =
-    apiName.value.trim();
-
-  const url =
-    apiUrl.value.trim();
-
-
-  if (!name) {
-
-    apiAddError.textContent =
-      "Enter a button name.";
-
-    return;
-  }
-
-
-  if (!url) {
-
-    apiAddError.textContent =
-      "Enter API URL.";
-
-    return;
-  }
-
-
-  if (
-    !/^https:\/\//i.test(url)
-  ) {
-
-    apiAddError.textContent =
-      "API URL must start with https://";
-
-    return;
-  }
-
-
-  if (
-    !url.includes(
-      "{message}"
-    )
-  ) {
-
-    apiAddError.textContent =
-      "URL must contain {message}.";
-
-    return;
-  }
-
-
-  const items =
-    loadCustomApis();
-
-
-  items.push({
-    name,
-    url
-  });
-
-
-  saveCustomApis(
-    items
-  );
-
-
-  apiName.value =
-    "";
-
-  apiUrl.value =
-    "";
-
-  renderCustomApis();
-}
-
-
-// ==========================================
-// OPEN CUSTOM API
-// ==========================================
-
-function openCustomApi(
-  item
-) {
-
-  currentType =
-    "custom";
-
-  currentCustomApi =
-    item;
-
-
-  modalTitle.textContent =
-    item.name;
-
-
-  modalStatus.textContent =
-    "Enter the message for this API.";
-
-
-  lookupInput.placeholder =
-    "Enter message";
-
-
-  lookupInput.value =
-    "";
-
-
-  lookupResult.style.display =
-    "none";
-
-
-  resultText.textContent =
-    "";
-
-
-  runLookup.textContent =
-    "Send";
-
-
-  lookupModal.style.display =
-    "flex";
-
-
-  setTimeout(
-    () => lookupInput.focus(),
-    50
-  );
-}
-
-
-// ==========================================
-// CUSTOM API REQUEST
-// ==========================================
-
-async function performCustomApi(
-  item
-) {
+/* =====================================================
+   OPEN CUSTOM API
+===================================================== */
+
+async function openCustomApi(api){
 
   const message =
-    lookupInput.value;
+    prompt(
+      `Enter value for ${api.name}`
+    );
 
 
-  runLookup.disabled =
-    true;
-
-  runLookup.textContent =
-    "Sending...";
+  if(message === null){
+    return;
+  }
 
 
-  modalStatus.textContent =
-    "Calling custom API...";
+  $("modalTitle").textContent =
+    api.name;
+
+  $("result").innerHTML =
+    `
+    <div class="result-section">
+      Calling API...
+    </div>
+    `;
+
+  $("modal").classList.add(
+    "show"
+  );
 
 
-  lookupResult.style.display =
-    "none";
-
-
-  try {
+  try{
 
     const data =
       await request(
         "/api/custom",
         {
-          method: "POST",
+          method:"POST",
 
-          headers: {
+          headers:{
             "Content-Type":
               "application/json"
           },
 
-          body:
-            JSON.stringify({
-              url:
-                item.url,
-
-              message
-            })
+          body:JSON.stringify({
+            url:api.url,
+            message
+          })
         }
       );
 
 
-    if (
-      typeof data.response ===
-      "string"
-    ) {
+    $("result").innerHTML =
+      `
+      <div class="result-section">
 
-      resultText.textContent =
-        data.response;
+        <h3>
+          API Response
+        </h3>
 
-    } else {
+        ${row(
+          "HTTP Status",
+          data.status
+        )}
 
-      resultText.textContent =
-        JSON.stringify(
-          data.response,
-          null,
-          2
-        );
-    }
+        ${row(
+          "Content-Type",
+          data.contentType
+        )}
+
+        <pre>${escapeHTML(
+          typeof data.data === "string"
+            ? data.data
+            : JSON.stringify(
+                data.data,
+                null,
+                2
+              )
+        )}</pre>
+
+      </div>
+      `;
 
 
-    lookupResult.style.display =
-      "block";
+  }catch(error){
 
-
-    modalStatus.textContent =
-      `HTTP ${data.httpStatus || "OK"}`;
-
-  } catch (error) {
-
-    modalStatus.textContent =
-      error.message;
-
-  } finally {
-
-    runLookup.disabled =
-      false;
-
-    runLookup.textContent =
-      "Send";
+    $("result").innerHTML =
+      `
+      <div class="result-section fail">
+        ${escapeHTML(
+          error.message
+        )}
+      </div>
+      `;
   }
 }
 
 
-// ==========================================
-// LOOKUP BUTTONS
-// ==========================================
+/* =====================================================
+   DELETE CUSTOM API
+===================================================== */
+
+async function deleteCustomApi(id){
+
+  if(
+    !confirm(
+      "Delete this custom API?"
+    )
+  ){
+
+    return;
+  }
+
+
+  try{
+
+    const data =
+      await request(
+        "/api/custom-apis",
+        {
+          method:"DELETE",
+
+          headers:{
+            "Content-Type":
+              "application/json"
+          },
+
+          body:JSON.stringify({
+            id
+          })
+        }
+      );
+
+
+    renderCustomApis(
+      data.apis || []
+    );
+
+
+  }catch(error){
+
+    alert(
+      error.message
+    );
+  }
+}
+
+
+/* =====================================================
+   CARD EVENTS
+===================================================== */
 
 document
   .querySelectorAll(
-    ".search-btn"
+    ".card[data-type]"
   )
-  .forEach(
-    button => {
+  .forEach(card => {
 
-      button.addEventListener(
-        "click",
-        () => {
+    card.addEventListener(
+      "click",
+      () =>
+        openLookup(
+          card.dataset.type
+        )
+    );
 
-          openLookup(
-            button.dataset.type
-          );
+  });
 
-        }
-      );
+
+/* =====================================================
+   BUTTON EVENTS
+===================================================== */
+
+$("loginBtn")
+  .addEventListener(
+    "click",
+    login
+  );
+
+
+$("password")
+  .addEventListener(
+    "keydown",
+    event => {
+
+      if(
+        event.key === "Enter"
+      ){
+
+        login();
+      }
 
     }
   );
 
 
-// ==========================================
-// EVENTS
-// ==========================================
-
-loginBtn.addEventListener(
-  "click",
-  login
-);
+$("logoutBtn")
+  .addEventListener(
+    "click",
+    logout
+  );
 
 
-logoutBtn.addEventListener(
-  "click",
-  logout
-);
+$("addApiBtn")
+  .addEventListener(
+    "click",
+    saveCustomApi
+  );
 
 
-closeModal.addEventListener(
-  "click",
-  closeLookup
-);
+$("closeModal")
+  .addEventListener(
+    "click",
+    () =>
+      $("modal")
+        .classList
+        .remove("show")
+  );
 
 
-runLookup.addEventListener(
-  "click",
-  performLookup
-);
+$("modal")
+  .addEventListener(
+    "click",
+    event => {
 
+      if(
+        event.target ===
+        $("modal")
+      ){
 
-addApiBtn.addEventListener(
-  "click",
-  addCustomApi
-);
+        $("modal")
+          .classList
+          .remove("show");
+      }
 
-
-passwordInput.addEventListener(
-  "keydown",
-  event => {
-
-    if (
-      event.key === "Enter"
-    ) {
-
-      login();
     }
-
-  }
-);
+  );
 
 
-lookupInput.addEventListener(
-  "keydown",
-  event => {
+/* =====================================================
+   CODE BACKGROUND
+===================================================== */
 
-    if (
-      event.key === "Enter"
-    ) {
-
-      performLookup();
-    }
-
-  }
-);
-
-
-lookupModal.addEventListener(
-  "click",
-  event => {
-
-    if (
-      event.target ===
-      lookupModal
-    ) {
-
-      closeLookup();
-    }
-
-  }
-);
-
-
-// ==========================================
-// LARGE SLOW CODE BACKGROUND
-// ==========================================
-
-function createCodeBackground() {
+function createCodeBackground(){
 
   const bg =
-    document.getElementById(
-      "codeBg"
-    );
+    $("codeBg");
 
 
   const code = [
 
     "const TXG = await lookup();",
-
     "fetch('/api/information');",
-
-    "response.json();",
-
-    "validate(input);",
-
-    "const result = data;",
-
-    "if (authorized) return result;",
-
-    "POST /api/lookup",
-
-    "GET /api/auth",
-
-    "status: 200",
-
     "TXG_INFORMATION_CENTER",
-
-    "https://api.service.com",
-
-    "JSON.parse(response);",
-
-    "await fetch(endpoint);",
-
-    "const user = request.user;",
-
-    "let response = await fetch(url);",
-
-    "if (!input) return;",
-
-    "async function search() {",
-
-    "const data = await request();",
-
-    "return { ok: true };",
-
-    "Authorization: Bearer ******",
-
-    "Content-Type: application/json",
-
-    "method: POST",
-
-    "statusCode = 200;",
-
-    "const apiResponse = result;",
-
-    "lookup.mobile(input);",
-
-    "lookup.pin(input);",
-
-    "lookup.ifsc(input);",
-
-    "lookup.ip(input);",
-
-    "lookup.url(input);",
-
-    "lookup.upi(input);",
-
-    "TXG // INFORMATION",
-
-    "SYSTEM ONLINE",
-
-    "DATABASE CONNECTED",
-
-    "REQUEST RECEIVED",
-
-    "PROCESSING...",
-
-    "VALIDATING DATA...",
-
-    "RESPONSE READY",
-
-    "SECURE CONNECTION",
-
-    "SERVER STATUS: ONLINE",
-
-    "API STATUS: 200",
-
-    "const session = auth();",
-
-    "if (session.valid) {",
-
-    "return dashboard;",
-
-    "}",
-
-    "await fetch('/api/custom');",
-
-    "customAPI(message);",
-
-    "JSON.stringify(data);",
-
-    "JSON.parse(response);",
-
-    "new URL(input);",
-
-    "dns.lookup(hostname);",
-
-    "const result = await lookup;",
-
-    "console.log('TXG');",
-
-    "/* TXG INFORMATION CENTER */",
-
-    "/* SYSTEM RUNNING */",
-
-    "function authenticate() {",
-
-    "return session === valid;",
-
-    "}",
-
-    "const endpoint = '/api/lookup';",
-
-    "request.method = 'POST';",
-
-    "response.status = 200;",
-
-    "server.ready = true;",
-
-    "client.connected = true;",
-
-    "information.lookup();",
-
-    "TXG_GATEWAY",
-
-    "TXG_SYSTEM",
-
-    "TXG_SECURITY",
-
-    "TXG_API",
-
-    "TXG_SERVER",
-
-    "TXG_CORE",
-
-    "TXG_DATABASE",
-
-    "connection.established();",
-
-    "request.completed();",
-
-    "system.initialized();",
-
-    "security.check();",
-
-    "authentication.valid();",
-
-    "data.processing();",
-
-    "server.response();",
-
-    "API_CONNECTION_ACTIVE",
-
-    "REQUEST_ID: TXG",
-
-    "NODE_RUNTIME_ACTIVE",
-
-    "FUNCTION_READY",
-
-    "CACHE_CONTROL: NO_STORE",
-
-    "HTTP STATUS 200",
-
-    "ENCRYPTED SESSION",
-
+    "verifyPublicData();",
+    "response.status === 200",
+    "JSON.parse(response)",
+    "const result = await api();",
+    "if (result.ok) return result;",
+    "GET /api/lookup",
+    "POST /api/custom",
+    "GET /api/custom-apis",
+    "REDIS CONNECTED",
+    "DATABASE ONLINE",
+    "CUSTOM API STORAGE",
+    "PUBLIC INFORMATION",
+    "IFSC LOOKUP",
+    "PIN CODE LOOKUP",
+    "MOBILE VALIDATION",
+    "IP INFORMATION",
+    "URL VERIFICATION",
+    "UPI FORMAT CHECK",
+    "HTTPS REQUEST",
+    "DNS RESOLUTION",
+    "RDAP LOOKUP",
+    "DOMAIN STATUS",
+    "REGISTRAR CHECK",
+    "TXG CORE ONLINE",
     "SECURE REQUEST",
-
-    "DATA VALIDATED",
-
-    "LOOKUP ENGINE READY",
-
-    "TXG CORE ONLINE"
+    "AUTHORIZED LOOKUP",
+    "API RESPONSE",
+    "STATUS 200",
+    "STATUS 404",
+    "STATUS 500",
+    "serverless function",
+    "process.env.REDIS_URL",
+    "await redis.get()",
+    "await redis.set()",
+    "custom_api.save()",
+    "custom_api.load()",
+    "TXG SYSTEM READY"
 
   ];
 
-
-  /*
-    180 lines means the screen
-    stays heavily filled with code.
-  */
 
   const totalLines =
     180;
 
 
-  for (
-    let i = 0;
-    i < totalLines;
+  for(
+    let i=0;
+    i<totalLines;
     i++
-  ) {
+  ){
 
     const line =
       document.createElement(
@@ -2072,9 +1980,9 @@ function createCodeBackground() {
       ];
 
 
-    if (
+    if(
       Math.random() > .55
-    ) {
+    ){
 
       text +=
         "  " +
@@ -2082,7 +1990,6 @@ function createCodeBackground() {
           Math.random() *
           999999
         );
-
     }
 
 
@@ -2090,75 +1997,47 @@ function createCodeBackground() {
       text;
 
 
-    /*
-      Spread vertically
-    */
-
     line.style.top =
-      `${Math.random() * 100}%`;
+      `${Math.random()*100}%`;
 
-
-    /*
-      Random horizontal start
-    */
 
     line.style.left =
-      `${Math.random() * 100}%`;
+      `${Math.random()*100}%`;
 
-
-    /*
-      VERY SLOW:
-      45–100 seconds
-    */
 
     line.style.animationDuration =
-      `${45 + Math.random() * 55}s`;
+      `${45 + Math.random()*55}s`;
 
-
-    /*
-      Different starting positions
-    */
 
     line.style.animationDelay =
-      `${-Math.random() * 100}s`;
+      `${-Math.random()*100}s`;
 
-
-    /*
-      Random opacity
-    */
 
     line.style.opacity =
-      `${0.16 + Math.random() * 0.48}`;
+      `${.16 + Math.random()*.48}`;
 
-
-    /*
-      Small size variation
-    */
 
     line.style.fontSize =
-      `${9 + Math.random() * 4}px`;
+      `${9 + Math.random()*4}px`;
 
 
     bg.appendChild(
       line
     );
-
   }
-
 }
 
 
-// ==========================================
-// START
-// ==========================================
-
 createCodeBackground();
 
-renderCustomApis();
 
-checkLogin();
+/* =====================================================
+   START
+===================================================== */
+
+checkAuth();
 
 </script>
 
 </body>
-</html>
+</html> 
