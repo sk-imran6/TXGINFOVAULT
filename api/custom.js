@@ -1,133 +1,40 @@
 const dns = require("dns").promises;
 const net = require("net");
-
-const {
-  authenticated
-} = require("./auth");
-
-
-// ==========================================
-// RESPONSE
-// ==========================================
-
-function send(res, status, data) {
-
-  return res
-    .status(status)
-    .json(data);
-}
-
-
-// ==========================================
-// PRIVATE IP CHECK
-// ==========================================
+const { authenticated } = require("./auth");
 
 function isPrivateIPv4(ip) {
+  const parts = ip.split(".").map(Number);
 
-  const parts =
-    ip.split(".").map(Number);
-
-  if (parts.length !== 4) {
+  if (parts.length !== 4 || parts.some(n => !Number.isInteger(n))) {
     return true;
   }
 
+  const [a, b] = parts;
 
-  const [
-    a,
-    b,
-    c,
-    d
-  ] = parts;
-
-
-  if (
-    a === 10 ||
-    a === 127
-  ) {
-    return true;
-  }
-
-
-  if (
-    a === 192 &&
-    b === 168
-  ) {
-    return true;
-  }
-
-
-  if (
-    a === 172 &&
-    b >= 16 &&
-    b <= 31
-  ) {
-    return true;
-  }
-
-
-  if (
-    a === 169 &&
-    b === 254
-  ) {
-    return true;
-  }
-
-
-  if (
-    a === 0
-  ) {
-    return true;
-  }
-
+  if (a === 10) return true;
+  if (a === 127) return true;
+  if (a === 0) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 192 && b === 168) return true;
 
   return false;
 }
 
+function isPrivateIPv6(ip) {
+  const value = ip.toLowerCase();
 
-// ==========================================
-// PRIVATE IP CHECK
-// ==========================================
-
-function isPrivateIP(ip) {
-
-  const type =
-    net.isIP(ip);
-
-
-  if (type === 4) {
-
-    return isPrivateIPv4(ip);
-  }
-
-
-  if (type === 6) {
-
-    const normalized =
-      ip.toLowerCase();
-
-
-    return (
-      normalized === "::1" ||
-      normalized.startsWith("fc") ||
-      normalized.startsWith("fd") ||
-      normalized.startsWith("fe80:")
-    );
-  }
-
-
-  return false;
+  return (
+    value === "::1" ||
+    value === "::" ||
+    value.startsWith("fc") ||
+    value.startsWith("fd") ||
+    value.startsWith("fe80:")
+  );
 }
 
-
-// ==========================================
-// HOST CHECK
-// ==========================================
-
-async function isSafeHost(hostname) {
-
-  const host =
-    hostname.toLowerCase();
-
+async function hostIsBlocked(hostname) {
+  const host = hostname.toLowerCase();
 
   if (
     host === "localhost" ||
@@ -135,346 +42,188 @@ async function isSafeHost(hostname) {
     host.endsWith(".local") ||
     host.endsWith(".internal")
   ) {
-
-    return false;
+    return true;
   }
 
-
-  if (
-    net.isIP(host)
-  ) {
-
-    return !isPrivateIP(host);
+  if (net.isIP(host) === 4) {
+    return isPrivateIPv4(host);
   }
 
+  if (net.isIP(host) === 6) {
+    return isPrivateIPv6(host);
+  }
 
   try {
+    const addresses = await dns.lookup(host, {
+      all: true,
+      verbatim: true
+    });
 
-    const addresses =
-      await dns.lookup(
-        host,
-        {
-          all: true
-        }
-      );
-
-
-    for (
-      const address
-      of addresses
-    ) {
-
+    for (const item of addresses) {
       if (
-        isPrivateIP(
-          address.address
-        )
+        (item.family === 4 && isPrivateIPv4(item.address)) ||
+        (item.family === 6 && isPrivateIPv6(item.address))
       ) {
-
-        return false;
+        return true;
       }
     }
-
-
-    return true;
-
   } catch {
-
-    return false;
+    return true;
   }
+
+  return false;
 }
 
-
-// ==========================================
-// MAIN
-// ==========================================
-
 async function handler(req, res) {
-
   try {
-
-    if (
-      !authenticated(req)
-    ) {
-
-      return send(
-        res,
-        401,
-        {
-          ok: false,
-          error:
-            "Authentication required"
-        }
-      );
+    if (!authenticated(req)) {
+      return res.status(401).json({
+        ok: false,
+        error: "Unauthorized"
+      });
     }
 
+    if (req.method !== "POST") {
+      res.setHeader("Allow", "POST");
 
-    if (
-      req.method !== "POST"
-    ) {
-
-      return send(
-        res,
-        405,
-        {
-          ok: false,
-          error:
-            "Method not allowed"
-        }
-      );
+      return res.status(405).json({
+        ok: false,
+        error: "Method not allowed"
+      });
     }
-
 
     const body =
-      req.body &&
-      typeof req.body === "object"
+      req.body && typeof req.body === "object"
         ? req.body
         : {};
 
-
-    const rawURL =
-      String(
-        body.url || ""
-      ).trim();
-
-
+    const rawUrl = String(body.url || "").trim();
     const message =
-      String(
-        body.message || ""
-      );
+      body.message === undefined ||
+      body.message === null
+        ? ""
+        : String(body.message);
 
-
-    if (!rawURL) {
-
-      return send(
-        res,
-        400,
-        {
-          ok: false,
-          error:
-            "API URL required"
-        }
-      );
+    if (!rawUrl) {
+      return res.status(400).json({
+        ok: false,
+        error: "API URL is required"
+      });
     }
-
-
-    if (
-      rawURL.length > 2000
-    ) {
-
-      return send(
-        res,
-        400,
-        {
-          ok: false,
-          error:
-            "API URL is too long"
-        }
-      );
-    }
-
-
-    let finalURL =
-      rawURL.replace(
-        /\{message\}/g,
-        encodeURIComponent(message)
-      );
-
 
     let parsed;
 
     try {
-
-      parsed =
-        new URL(finalURL);
-
+      parsed = new URL(rawUrl);
     } catch {
-
-      return send(
-        res,
-        400,
-        {
-          ok: false,
-          error:
-            "Invalid API URL"
-        }
-      );
+      return res.status(400).json({
+        ok: false,
+        error: "Invalid API URL"
+      });
     }
 
-
-    if (
-      parsed.protocol !==
-      "https:"
-    ) {
-
-      return send(
-        res,
-        400,
-        {
-          ok: false,
-          error:
-            "Only HTTPS API URLs are allowed"
-        }
-      );
+    if (parsed.protocol !== "https:") {
+      return res.status(400).json({
+        ok: false,
+        error: "Only HTTPS API URLs are allowed"
+      });
     }
 
-
-    const safe =
-      await isSafeHost(
-        parsed.hostname
-      );
-
-
-    if (!safe) {
-
-      return send(
-        res,
-        400,
-        {
-          ok: false,
-          error:
-            "This API host is not allowed"
-        }
-      );
+    if (await hostIsBlocked(parsed.hostname)) {
+      return res.status(403).json({
+        ok: false,
+        error: "Blocked API host"
+      });
     }
 
+    const finalUrl = rawUrl.replace(
+      /\{message\}/g,
+      encodeURIComponent(message)
+    );
 
-    const controller =
-      new AbortController();
+    let finalParsed;
 
+    try {
+      finalParsed = new URL(finalUrl);
+    } catch {
+      return res.status(400).json({
+        ok: false,
+        error: "Invalid generated API URL"
+      });
+    }
 
-    const timeout =
-      setTimeout(
-        () => controller.abort(),
-        15000
-      );
+    if (finalParsed.protocol !== "https:") {
+      return res.status(400).json({
+        ok: false,
+        error: "Generated URL must use HTTPS"
+      });
+    }
 
+    if (await hostIsBlocked(finalParsed.hostname)) {
+      return res.status(403).json({
+        ok: false,
+        error: "Blocked generated API host"
+      });
+    }
+
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 15000);
 
     let response;
 
     try {
-
-      response =
-        await fetch(
-          parsed.toString(),
-          {
-            method: "GET",
-
-            headers: {
-              "User-Agent":
-                "TXG-Information-Center/4.0",
-              "Accept":
-                "*/*"
-            },
-
-            redirect: "follow",
-
-            signal:
-              controller.signal
-          }
-        );
-
+      response = await fetch(finalUrl, {
+        method: "GET",
+        redirect: "follow",
+        signal: controller.signal,
+        headers: {
+          "User-Agent": "TXG-Information-Center/1.0",
+          "Accept": "*/*"
+        }
+      });
     } finally {
-
       clearTimeout(timeout);
     }
 
-
-    const text =
-      await response.text();
-
-
-    let data =
-      text;
-
-
     const contentType =
-      response.headers.get(
-        "content-type"
-      ) || "";
+      response.headers.get("content-type") || "text/plain";
 
+    const text = await response.text();
 
-    if (
-      contentType
-        .toLowerCase()
-        .includes("json")
-    ) {
+    let data = text;
 
+    if (contentType.includes("application/json")) {
       try {
-
-        data =
-          JSON.parse(text);
-
+        data = JSON.parse(text);
       } catch {
-
-        data = text;
-      }
-
-    } else {
-
-      try {
-
-        data =
-          JSON.parse(text);
-
-      } catch {
-
         data = text;
       }
     }
 
-
-    return send(
-      res,
-      200,
-      {
-        ok: true,
-
-        httpStatus:
-          response.status,
-
-        contentType,
-
-        response: data
-      }
-    );
-
+    return res.status(200).json({
+      ok: response.ok,
+      status: response.status,
+      contentType,
+      data
+    });
   } catch (error) {
+    console.error("CUSTOM API ERROR:", error);
 
-    console.error(
-      "CUSTOM API ERROR:",
-      error
-    );
-
-
-    if (
-      error?.name ===
-      "AbortError"
-    ) {
-
-      return send(
-        res,
-        504,
-        {
-          ok: false,
-          error:
-            "API request timed out"
-        }
-      );
+    if (error && error.name === "AbortError") {
+      return res.status(504).json({
+        ok: false,
+        error: "API request timed out"
+      });
     }
 
-
-    return send(
-      res,
-      500,
-      {
-        ok: false,
-        error:
-          error?.message ||
-          "Custom API request failed"
-      }
-    );
+    return res.status(500).json({
+      ok: false,
+      error: error.message || "Custom API request failed"
+    });
   }
 }
-
 
 module.exports = handler;
