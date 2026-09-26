@@ -1,32 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
 <title>TXG Information Center</title>
 
 <style>
+
+/* =========================================
+   RESET
+========================================= */
+
 *{
   box-sizing:border-box;
   margin:0;
   padding:0;
 }
 
-html,body{
+html,
+body{
   width:100%;
   min-height:100%;
-  font-family:Inter,Arial,sans-serif;
-  background:#020914;
-  color:#eaf4ff;
 }
 
 body{
+  background:#020914;
+  color:#eaf4ff;
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
   overflow-x:hidden;
 }
 
-/* =========================
+
+/* =========================================
    CODE BACKGROUND
-========================= */
+========================================= */
 
 .code-bg{
   position:fixed;
@@ -40,487 +56,730 @@ body{
 .code-line{
   position:absolute;
   white-space:nowrap;
+
   color:#168cff;
-  font-family:"Courier New",monospace;
+
+  font-family:
+    "Courier New",
+    monospace;
+
   font-size:10px;
+
   opacity:.45;
-  animation:moveCode linear infinite;
+
+  animation:
+    moveCode
+    linear
+    infinite;
+
   will-change:transform;
-  text-shadow:0 0 5px rgba(22,140,255,.25);
+
+  text-shadow:
+    0 0 5px
+    rgba(22,140,255,.25);
 }
 
 @keyframes moveCode{
+
   from{
-    transform:translateX(120vw);
+    transform:
+      translateX(120vw);
   }
+
   to{
-    transform:translateX(-140vw);
+    transform:
+      translateX(-140vw);
   }
+
 }
 
-/* =========================
+
+/* =========================================
    APP
-========================= */
+========================================= */
 
 .app{
   position:relative;
   z-index:2;
+
   width:100%;
   min-height:100vh;
 }
 
 .container{
-  width:min(1180px,94%);
+  width:min(
+    1180px,
+    94%
+  );
+
   margin:auto;
 }
 
-/* =========================
+
+/* =========================================
    LOGIN
-========================= */
+========================================= */
 
 .login-screen{
+
   min-height:100vh;
+
   display:flex;
+
   align-items:center;
   justify-content:center;
+
   padding:20px;
 }
 
 .login-box{
-  width:min(430px,100%);
+
+  width:min(
+    430px,
+    100%
+  );
+
   padding:32px;
-  border:1px solid rgba(30,145,255,.35);
+
+  border:
+    1px solid
+    rgba(30,145,255,.35);
+
   border-radius:22px;
-  background:rgba(3,15,29,.88);
+
+  background:
+    rgba(3,15,29,.90);
+
   box-shadow:
-    0 0 50px rgba(0,110,255,.10),
-    inset 0 0 30px rgba(0,110,255,.03);
-  backdrop-filter:blur(14px);
+    0 0 50px
+    rgba(0,110,255,.10),
+
+    inset 0 0 30px
+    rgba(0,110,255,.03);
+
+  backdrop-filter:
+    blur(14px);
 }
 
 .logo{
+
   font-size:30px;
+
   font-weight:900;
+
   letter-spacing:1px;
+
   color:#35a1ff;
+
   text-align:center;
 }
 
 .subtitle{
+
   text-align:center;
+
   color:#7e9ab7;
+
   margin-top:8px;
   margin-bottom:28px;
+
   font-size:14px;
 }
 
+
+/* =========================================
+   INPUT
+========================================= */
+
 .input{
+
   width:100%;
+
   padding:14px 15px;
+
   border-radius:12px;
-  border:1px solid #163a5c;
+
+  border:
+    1px solid
+    #163a5c;
+
   background:#061423;
+
   color:#fff;
+
   outline:none;
+
   font-size:15px;
+
   margin-bottom:12px;
 }
 
 .input:focus{
+
   border-color:#168cff;
-  box-shadow:0 0 0 3px rgba(22,140,255,.10);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(22,140,255,.10);
 }
 
+
+/* =========================================
+   BUTTON
+========================================= */
+
 .btn{
+
   width:100%;
+
   border:0;
+
   border-radius:12px;
+
   padding:14px;
+
   cursor:pointer;
+
   background:#168cff;
+
   color:#fff;
+
   font-weight:800;
+
   font-size:15px;
+
   transition:.2s;
 }
 
 .btn:hover{
+
   background:#319bff;
-  transform:translateY(-1px);
+
+  transform:
+    translateY(-1px);
 }
 
 .btn:disabled{
+
   opacity:.55;
+
   cursor:not-allowed;
+
   transform:none;
 }
 
 .error{
+
   color:#ff7272;
+
   margin-top:12px;
+
   text-align:center;
+
   font-size:13px;
 }
 
-/* =========================
+
+/* =========================================
    DASHBOARD
-========================= */
+========================================= */
 
 .dashboard{
+
   display:none;
-  padding:25px 0 60px;
+
+  padding:
+    25px 0
+    60px;
 }
 
 .header{
+
   display:flex;
+
   align-items:center;
+
   justify-content:space-between;
+
   gap:15px;
+
   margin-bottom:25px;
 }
 
 .header-left h1{
+
   font-size:28px;
+
   font-weight:900;
 }
 
 .header-left p{
+
   color:#7591ad;
+
   margin-top:5px;
+
   font-size:13px;
 }
 
 .logout{
+
   width:auto;
-  padding:10px 15px;
+
+  padding:
+    10px 15px;
+
   background:#071727;
-  border:1px solid #173a59;
+
+  border:
+    1px solid
+    #173a59;
 }
 
-/* =========================
-   GRID
-========================= */
+
+/* =========================================
+   MAIN GRID
+========================================= */
 
 .grid{
+
   display:grid;
+
   grid-template-columns:
-    repeat(auto-fit,minmax(220px,1fr));
+    repeat(
+      auto-fit,
+      minmax(220px,1fr)
+    );
+
   gap:15px;
 }
 
+
+/* =========================================
+   NORMAL CARD
+========================================= */
+
 .card{
+
   position:relative;
+
   overflow:hidden;
+
   min-height:145px;
+
   padding:20px;
+
+  border:
+    1px solid
+    rgba(30,145,255,.22);
+
   border-radius:18px;
-  border:1px solid rgba(30,145,255,.22);
+
   background:
     linear-gradient(
       145deg,
       rgba(7,26,47,.94),
       rgba(3,14,27,.92)
     );
+
   cursor:pointer;
+
   transition:.22s;
 }
 
 .card:hover{
-  transform:translateY(-3px);
-  border-color:rgba(35,155,255,.65);
-  box-shadow:0 12px 35px rgba(0,105,255,.10);
+
+  transform:
+    translateY(-3px);
+
+  border-color:
+    rgba(35,155,255,.65);
+
+  box-shadow:
+    0 12px 35px
+    rgba(0,105,255,.10);
 }
 
 .card-icon{
+
   width:43px;
   height:43px;
+
   border-radius:13px;
+
   display:flex;
+
   align-items:center;
   justify-content:center;
-  background:rgba(22,140,255,.12);
+
+  background:
+    rgba(22,140,255,.12);
+
   color:#35a1ff;
+
   font-size:21px;
+
   margin-bottom:15px;
 }
 
 .card h3{
+
   font-size:17px;
+
   margin-bottom:7px;
 }
 
 .card p{
+
   color:#7894af;
+
   font-size:12px;
+
   line-height:1.5;
 }
 
+
+/* =========================================
+   CUSTOM API BADGE
+========================================= */
+
 .custom-badge{
+
   position:absolute;
+
   top:13px;
   right:13px;
-  padding:4px 7px;
+
+  padding:
+    4px 7px;
+
   border-radius:6px;
-  background:rgba(22,140,255,.12);
-  border:1px solid rgba(22,140,255,.25);
+
+  background:
+    rgba(22,140,255,.12);
+
+  border:
+    1px solid
+    rgba(22,140,255,.25);
+
   color:#42a8ff;
+
   font-size:9px;
+
   font-weight:800;
+
   text-transform:uppercase;
 }
 
-/* =========================
-   ADD API
-========================= */
+
+/* =========================================
+   ADD API SECTION
+========================================= */
 
 .add-api{
+
   margin-top:25px;
+
   padding:22px;
+
+  border:
+    1px solid
+    rgba(30,145,255,.22);
+
   border-radius:18px;
-  border:1px solid rgba(30,145,255,.22);
-  background:rgba(4,18,33,.86);
+
+  background:
+    rgba(4,18,33,.86);
 }
 
 .section-title{
+
   font-size:18px;
+
   font-weight:800;
+
   margin-bottom:6px;
 }
 
 .section-subtitle{
+
   color:#718ca7;
+
   font-size:12px;
+
   margin-bottom:18px;
+
+  line-height:1.5;
 }
 
 .form-grid{
+
   display:grid;
-  grid-template-columns:1fr 1fr auto;
+
+  grid-template-columns:
+    1fr
+    1fr
+    auto;
+
   gap:10px;
 }
 
 .form-grid .input{
+
   margin:0;
 }
 
 .add-btn{
+
   width:auto;
-  padding:0 20px;
+
+  padding:
+    0 20px;
 }
 
-/* =========================
-   SAVED API LIST
-========================= */
 
-.api-list{
-  margin-top:15px;
-  display:grid;
-  gap:9px;
-}
-
-.api-item{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:13px;
-  border-radius:12px;
-  background:#061525;
-  border:1px solid #123553;
-}
-
-.api-item b{
-  font-size:13px;
-}
-
-.api-item .muted{
-  color:#637f9a;
-  font-size:11px;
-}
-
-.api-item button{
-  border:1px solid #1d4c72;
-  background:#092037;
-  color:#bfe2ff;
-  border-radius:8px;
-  padding:7px 10px;
-  cursor:pointer;
-  font-size:11px;
-  font-weight:700;
-}
-
-.api-item button:hover{
-  border-color:#168cff;
-}
-
-.api-item .delete-custom-api{
-  color:#ff8585;
-  border-color:#5b2525;
-  background:#241010;
-}
-
-/* =========================
+/* =========================================
    MODAL
-========================= */
+========================================= */
 
 .modal{
+
   display:none;
+
   position:fixed;
+
   inset:0;
+
   z-index:20;
-  background:rgba(0,0,0,.72);
+
+  background:
+    rgba(0,0,0,.72);
+
   padding:20px;
+
   align-items:center;
+
   justify-content:center;
 }
 
 .modal.show{
+
   display:flex;
 }
 
 .modal-box{
-  width:min(720px,100%);
+
+  width:min(
+    720px,
+    100%
+  );
+
   max-height:90vh;
+
   overflow:auto;
+
   padding:22px;
+
   border-radius:20px;
+
   background:#041321;
-  border:1px solid #1a4d75;
-  box-shadow:0 20px 80px rgba(0,0,0,.5);
+
+  border:
+    1px solid
+    #1a4d75;
+
+  box-shadow:
+    0 20px 80px
+    rgba(0,0,0,.5);
 }
 
 .modal-header{
+
   display:flex;
+
   align-items:center;
+
   justify-content:space-between;
+
   gap:15px;
+
   margin-bottom:18px;
 }
 
 .modal-header h2{
+
   font-size:19px;
 }
 
 .close{
+
   width:38px;
   height:38px;
+
   border-radius:10px;
-  border:1px solid #1a3d5d;
+
+  border:
+    1px solid
+    #1a3d5d;
+
   background:#081a2b;
+
   color:#fff;
+
   cursor:pointer;
+
   font-size:18px;
 }
 
+
+/* =========================================
+   RESULT
+========================================= */
+
 .result-section{
+
   padding:16px;
+
   border-radius:13px;
+
   background:#061727;
-  border:1px solid #123652;
+
+  border:
+    1px solid
+    #123652;
+
   margin-bottom:10px;
 }
 
 .result-section h3{
+
   margin-bottom:12px;
+
   font-size:15px;
 }
 
 .result-row{
+
   display:flex;
+
   justify-content:space-between;
+
   gap:15px;
+
   padding:8px 0;
-  border-bottom:1px solid rgba(255,255,255,.05);
+
+  border-bottom:
+    1px solid
+    rgba(255,255,255,.05);
+
   font-size:13px;
 }
 
 .result-row:last-child{
+
   border-bottom:0;
 }
 
 .result-key{
+
   color:#7893ad;
 }
 
 .result-value{
+
   text-align:right;
-  word-break:break-word;
+
+  word-break:
+    break-word;
 }
 
 pre{
+
   margin-top:12px;
+
   padding:13px;
+
   border-radius:10px;
+
   background:#020b14;
+
   color:#a9d8ff;
+
   white-space:pre-wrap;
+
   word-break:break-word;
+
   overflow:auto;
+
   font-size:12px;
+
   line-height:1.55;
 }
 
 .fail{
+
   color:#ff8181;
 }
 
 .success{
+
   color:#57df9b;
 }
 
 .muted{
+
   color:#718da7;
+
   font-size:13px;
 }
 
-/* =========================
+
+/* =========================================
    MOBILE
-========================= */
+========================================= */
 
 @media(max-width:700px){
 
   .dashboard{
+
     padding-top:17px;
   }
 
   .header{
+
     align-items:flex-start;
   }
 
   .header-left h1{
+
     font-size:23px;
   }
 
   .form-grid{
+
     grid-template-columns:1fr;
   }
 
   .add-btn{
+
     width:100%;
+
     padding:13px;
   }
 
-  .api-item{
-    align-items:flex-start;
-    flex-direction:column;
-  }
-
-  .api-item > div:last-child{
-    width:100%;
-  }
-
-  .api-item button{
-    flex:1;
-  }
 }
+
 </style>
+
 </head>
+
 
 <body>
 
-<!-- =========================
-     BACKGROUND
-========================= -->
+
+<!-- =========================================
+     CODE BACKGROUND
+========================================= -->
 
 <div
   id="codeBg"
@@ -530,9 +789,10 @@ pre{
 
 <div class="app">
 
-<!-- =========================
+
+<!-- =========================================
      LOGIN
-========================= -->
+========================================= -->
 
 <section
   id="loginScreen"
@@ -575,9 +835,9 @@ pre{
 </section>
 
 
-<!-- =========================
+<!-- =========================================
      DASHBOARD
-========================= -->
+========================================= -->
 
 <section
   id="dashboard"
@@ -585,6 +845,9 @@ pre{
 >
 
   <div class="container">
+
+
+    <!-- HEADER -->
 
     <header class="header">
 
@@ -611,14 +874,17 @@ pre{
     </header>
 
 
-    <!-- =========================
-         LOOKUP CARDS
-    ========================= -->
+    <!-- =====================================
+         MAIN LOOKUP GRID
+    ====================================== -->
 
     <div
       id="lookupGrid"
       class="grid"
     >
+
+
+      <!-- MOBILE -->
 
       <div
         class="card"
@@ -642,6 +908,8 @@ pre{
       </div>
 
 
+      <!-- PIN -->
+
       <div
         class="card"
         data-type="pin"
@@ -664,6 +932,8 @@ pre{
       </div>
 
 
+      <!-- IFSC -->
+
       <div
         class="card"
         data-type="ifsc"
@@ -684,6 +954,8 @@ pre{
 
       </div>
 
+
+      <!-- IP -->
 
       <div
         class="card"
@@ -707,6 +979,8 @@ pre{
       </div>
 
 
+      <!-- URL -->
+
       <div
         class="card"
         data-type="url"
@@ -729,6 +1003,8 @@ pre{
       </div>
 
 
+      <!-- UPI -->
+
       <div
         class="card"
         data-type="upi"
@@ -749,12 +1025,18 @@ pre{
 
       </div>
 
+
+      <!--
+        CUSTOM API CARDS ARE INSERTED
+        HERE AUTOMATICALLY.
+      -->
+
     </div>
 
 
-    <!-- =========================
-         CUSTOM API
-    ========================= -->
+    <!-- =====================================
+         ADD CUSTOM API
+    ====================================== -->
 
     <div class="add-api">
 
@@ -763,13 +1045,16 @@ pre{
       </div>
 
       <div class="section-subtitle">
+
         Add your own HTTPS API.
-        Use <b>{message}</b> where the
-        user input should be inserted.
+        Use <b>{message}</b> where
+        the user input should be inserted.
+
       </div>
 
 
       <div class="form-grid">
+
 
         <input
           id="apiName"
@@ -779,6 +1064,7 @@ pre{
           placeholder="API button name"
         >
 
+
         <input
           id="apiUrl"
           class="input"
@@ -786,6 +1072,7 @@ pre{
           maxlength="1000"
           placeholder="https://example.com/api?message={message}"
         >
+
 
         <button
           id="addApiBtn"
@@ -795,21 +1082,11 @@ pre{
           Add API
         </button>
 
-      </div>
-
-
-      <div
-        id="apiList"
-        class="api-list"
-      >
-
-        <div class="muted">
-          Loading saved APIs...
-        </div>
 
       </div>
 
     </div>
+
 
   </div>
 
@@ -818,9 +1095,9 @@ pre{
 </div>
 
 
-<!-- =========================
-     MODAL
-========================= -->
+<!-- =========================================
+     RESULT MODAL
+========================================= -->
 
 <div
   id="modal"
@@ -829,11 +1106,13 @@ pre{
 
   <div class="modal-box">
 
+
     <div class="modal-header">
 
       <h2 id="modalTitle">
         Result
       </h2>
+
 
       <button
         id="closeModal"
@@ -850,6 +1129,7 @@ pre{
       id="result"
     ></div>
 
+
   </div>
 
 </div>
@@ -857,28 +1137,56 @@ pre{
 
 <script>
 
-/* =====================================================
-   HELPERS
-===================================================== */
 
-const $ = id =>
-  document.getElementById(id);
+/* =========================================
+   HELPER
+========================================= */
+
+const $ =
+  id =>
+    document.getElementById(id);
 
 
 function escapeHTML(value){
 
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+  return String(
+    value ?? ""
+  )
+
+  .replace(
+    /&/g,
+    "&amp;"
+  )
+
+  .replace(
+    /</g,
+    "&lt;"
+  )
+
+  .replace(
+    />/g,
+    "&gt;"
+  )
+
+  .replace(
+    /"/g,
+    "&quot;"
+  )
+
+  .replace(
+    /'/g,
+    "&#039;"
+  );
 }
 
 
-function row(key,value){
+function row(
+  key,
+  value
+){
 
   return `
+
     <div class="result-row">
 
       <div class="result-key">
@@ -890,13 +1198,14 @@ function row(key,value){
       </div>
 
     </div>
+
   `;
 }
 
 
-/* =====================================================
+/* =========================================
    SAFE REQUEST
-===================================================== */
+========================================= */
 
 async function request(
   url,
@@ -917,7 +1226,7 @@ async function request(
     await response.text();
 
 
-  let data = null;
+  let data;
 
 
   try{
@@ -927,7 +1236,9 @@ async function request(
         ? JSON.parse(text)
         : {};
 
-  }catch{
+  }
+
+  catch{
 
     if(!response.ok){
 
@@ -935,11 +1246,14 @@ async function request(
         text ||
         `Server error (${response.status})`
       );
+
     }
+
 
     throw new Error(
       "Server returned invalid response"
     );
+
   }
 
 
@@ -949,6 +1263,7 @@ async function request(
       data.error ||
       `Request failed (${response.status})`
     );
+
   }
 
 
@@ -956,34 +1271,38 @@ async function request(
 }
 
 
-/* =====================================================
+/* =========================================
    LOGIN
-===================================================== */
+========================================= */
 
 async function login(){
 
   const password =
-    $("password").value;
+    $("password")
+      .value;
 
 
   if(!password){
 
-    $("loginError").textContent =
-      "Enter your password.";
+    $("loginError")
+      .textContent =
+        "Enter your password.";
 
     return;
   }
 
 
-  $("loginBtn").disabled =
-    true;
-
-  $("loginBtn").textContent =
-    "Checking...";
+  $("loginBtn")
+    .disabled = true;
 
 
-  $("loginError").textContent =
-    "";
+  $("loginBtn")
+    .textContent =
+      "Checking...";
+
+
+  $("loginError")
+    .textContent = "";
 
 
   try{
@@ -998,35 +1317,43 @@ async function login(){
             "application/json"
         },
 
-        body:JSON.stringify({
-          password
-        })
+        body:
+          JSON.stringify({
+            password
+          })
       }
     );
 
 
     showDashboard();
 
-
-  }catch(error){
-
-    $("loginError").textContent =
-      error.message;
-
-  }finally{
-
-    $("loginBtn").disabled =
-      false;
-
-    $("loginBtn").textContent =
-      "Login";
   }
+
+  catch(error){
+
+    $("loginError")
+      .textContent =
+        error.message;
+
+  }
+
+  finally{
+
+    $("loginBtn")
+      .disabled = false;
+
+    $("loginBtn")
+      .textContent =
+        "Login";
+
+  }
+
 }
 
 
-/* =====================================================
-   AUTH CHECK
-===================================================== */
+/* =========================================
+   CHECK AUTH
+========================================= */
 
 async function checkAuth(){
 
@@ -1039,45 +1366,62 @@ async function checkAuth(){
       }
     );
 
+
     showDashboard();
 
-  }catch{
+  }
+
+  catch{
 
     showLogin();
+
   }
+
 }
 
 
-/* =====================================================
-   SCREEN
-===================================================== */
+/* =========================================
+   SHOW LOGIN
+========================================= */
 
 function showLogin(){
 
-  $("loginScreen").style.display =
-    "flex";
+  $("loginScreen")
+    .style.display =
+      "flex";
 
-  $("dashboard").style.display =
-    "none";
+
+  $("dashboard")
+    .style.display =
+      "none";
+
 }
 
+
+/* =========================================
+   SHOW DASHBOARD
+========================================= */
 
 async function showDashboard(){
 
-  $("loginScreen").style.display =
-    "none";
+  $("loginScreen")
+    .style.display =
+      "none";
 
-  $("dashboard").style.display =
-    "block";
+
+  $("dashboard")
+    .style.display =
+      "block";
 
 
   await loadCustomApis();
+
 }
 
 
-/* =====================================================
+/* =========================================
    LOGOUT
-===================================================== */
+========================================= */
 
 async function logout(){
 
@@ -1090,91 +1434,169 @@ async function logout(){
       }
     );
 
-  }catch{}
+  }
+
+  catch(error){
+
+    console.error(error);
+
+  }
+
 
   showLogin();
+
 }
 
 
-/* =====================================================
+/* =========================================
    BUILT-IN LOOKUP
-===================================================== */
+========================================= */
 
 async function openLookup(type){
 
   let title =
     type.toUpperCase();
 
+
   let placeholder =
     "Enter value";
 
 
-  if(type==="mobile"){
-    title="Mobile Lookup";
-    placeholder="Enter mobile number";
+  if(
+    type === "mobile"
+  ){
+
+    title =
+      "Mobile Lookup";
+
+    placeholder =
+      "Enter mobile number";
+
   }
 
-  if(type==="pin"){
-    title="PIN Lookup";
-    placeholder="Enter PIN code";
+
+  if(
+    type === "pin"
+  ){
+
+    title =
+      "PIN Lookup";
+
+    placeholder =
+      "Enter PIN code";
+
   }
 
-  if(type==="ifsc"){
-    title="IFSC Lookup";
-    placeholder="Enter IFSC";
+
+  if(
+    type === "ifsc"
+  ){
+
+    title =
+      "IFSC Lookup";
+
+    placeholder =
+      "Enter IFSC";
+
   }
 
-  if(type==="ip"){
-    title="IP Lookup";
-    placeholder="Enter IP address";
+
+  if(
+    type === "ip"
+  ){
+
+    title =
+      "IP Lookup";
+
+    placeholder =
+      "Enter IP address";
+
   }
 
-  if(type==="url"){
-    title="URL Verification";
-    placeholder="https://example.com";
+
+  if(
+    type === "url"
+  ){
+
+    title =
+      "URL Verification";
+
+    placeholder =
+      "https://example.com";
+
   }
 
-  if(type==="upi"){
-    title="UPI Lookup";
-    placeholder="example@upi";
+
+  if(
+    type === "upi"
+  ){
+
+    title =
+      "UPI Lookup";
+
+    placeholder =
+      "example@upi";
+
   }
 
 
   const value =
-    prompt(placeholder);
+    prompt(
+      placeholder
+    );
 
 
-  if(value === null){
+  if(
+    value === null
+  ){
+
     return;
+
   }
 
 
-  if(!value.trim()){
+  if(
+    !value.trim()
+  ){
+
     return;
+
   }
 
 
-  $("modalTitle").textContent =
-    title;
+  $("modalTitle")
+    .textContent =
+      title;
 
-  $("result").innerHTML =
-    `
-    <div class="result-section">
-      Checking...
-    </div>
+
+  $("result")
+    .innerHTML = `
+
+      <div class="result-section">
+
+        Checking...
+
+      </div>
+
     `;
 
-  $("modal").classList.add("show");
+
+  $("modal")
+    .classList
+    .add("show");
 
 
   try{
 
     const data =
       await request(
+
         `/api/lookup?type=${encodeURIComponent(type)}&value=${encodeURIComponent(value.trim())}`,
+
         {
           method:"GET"
         }
+
       );
 
 
@@ -1182,41 +1604,58 @@ async function openLookup(type){
       data
     );
 
-
-  }catch(error){
-
-    $("result").innerHTML =
-      `
-      <div class="result-section fail">
-        ${escapeHTML(
-          error.message
-        )}
-      </div>
-      `;
   }
+
+  catch(error){
+
+    $("result")
+      .innerHTML = `
+
+        <div
+          class="result-section fail"
+        >
+
+          ${escapeHTML(
+            error.message
+          )}
+
+        </div>
+
+      `;
+
+  }
+
 }
 
 
-/* =====================================================
-   LOOKUP RESULT
-===================================================== */
+/* =========================================
+   RENDER LOOKUP RESULT
+========================================= */
 
-function renderLookupResult(data){
+function renderLookupResult(
+  data
+){
 
   const result =
     $("result");
 
-  result.innerHTML = "";
+
+  result.innerHTML =
+    "";
 
 
   if(
     data &&
     data.result &&
-    typeof data.result === "object"
+    typeof data.result ===
+      "object"
   ){
 
     const section =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     section.className =
       "result-section";
@@ -1228,26 +1667,37 @@ function renderLookupResult(data){
 
     Object.entries(
       data.result
-    ).forEach(
+    )
+
+    .forEach(
       ([key,value]) => {
 
         if(
+
           value !== null &&
+
           value !== undefined &&
-          typeof value !== "object"
+
+          typeof value !==
+            "object"
+
         ){
 
-          html += row(
-            key,
-            value
-          );
+          html +=
+            row(
+              key,
+              value
+            );
+
         }
+
       }
     );
 
 
     section.innerHTML =
       html;
+
 
     result.appendChild(
       section
@@ -1257,10 +1707,13 @@ function renderLookupResult(data){
     const objects =
       Object.entries(
         data.result
-      ).filter(
+      )
+
+      .filter(
         ([,value]) =>
           value &&
-          typeof value === "object"
+          typeof value ===
+            "object"
       );
 
 
@@ -1268,13 +1721,17 @@ function renderLookupResult(data){
       ([key,value]) => {
 
         const section =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
+
 
         section.className =
           "result-section";
 
 
         section.innerHTML = `
+
           <h3>
             ${escapeHTML(key)}
           </h3>
@@ -1286,26 +1743,33 @@ function renderLookupResult(data){
               2
             )
           )}</pre>
+
         `;
 
 
         result.appendChild(
           section
         );
+
       }
     );
 
+  }
 
-  }else{
+  else{
 
     const section =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     section.className =
       "result-section";
 
 
     section.innerHTML = `
+
       <pre>${escapeHTML(
         JSON.stringify(
           data,
@@ -1313,33 +1777,24 @@ function renderLookupResult(data){
           2
         )
       )}</pre>
+
     `;
 
 
     result.appendChild(
       section
     );
+
   }
+
 }
 
 
-/* =====================================================
-   CUSTOM API LOAD
-===================================================== */
+/* =========================================
+   LOAD CUSTOM APIs
+========================================= */
 
 async function loadCustomApis(){
-
-  const list =
-    $("apiList");
-
-
-  list.innerHTML =
-    `
-    <div class="muted">
-      Loading saved APIs...
-    </div>
-    `;
-
 
   try{
 
@@ -1356,205 +1811,114 @@ async function loadCustomApis(){
       data.apis || []
     );
 
-
-  }catch(error){
-
-    list.innerHTML =
-      `
-      <div class="fail">
-        ${escapeHTML(
-          error.message
-        )}
-      </div>
-      `;
   }
+
+  catch(error){
+
+    console.error(
+      "Custom API load error:",
+      error
+    );
+
+  }
+
 }
 
 
-/* =====================================================
-   CUSTOM API CARDS
-===================================================== */
+/* =========================================
+   RENDER CUSTOM APIs
+========================================= */
 
-function renderCustomApis(apis){
+function renderCustomApis(
+  apis
+){
 
   const grid =
     $("lookupGrid");
 
 
   /*
-   * Remove only previously
-   * generated custom cards.
+   * Remove old custom cards
+   * before rebuilding them.
    */
+
   grid
     .querySelectorAll(
       ".custom-api-card"
     )
+
     .forEach(
-      card => card.remove()
+      card =>
+        card.remove()
     );
 
 
   /*
-   * Also update saved API list.
+   * Add custom APIs directly
+   * into the SAME main grid.
    */
 
-  const list =
-    $("apiList");
+  apis.forEach(
+    api => {
 
-  list.innerHTML = "";
-
-
-  if(!apis.length){
-
-    list.innerHTML =
-      `
-      <div class="muted">
-        No custom APIs added yet.
-      </div>
-      `;
-
-    return;
-  }
+      const card =
+        document.createElement(
+          "div"
+        );
 
 
-  /*
-   * Create cards in the
-   * SAME main lookup grid.
-   */
-
-  apis.forEach(api => {
-
-    const card =
-      document.createElement("div");
-
-    card.className =
-      "card custom-api-card";
+      card.className =
+        "card custom-api-card";
 
 
-    card.innerHTML = `
+      card.innerHTML = `
 
-      <span class="custom-badge">
-        Custom
-      </span>
-
-      <div class="card-icon">
-        API
-      </div>
-
-      <h3>
-        ${escapeHTML(api.name)}
-      </h3>
-
-      <p>
-        Custom API lookup.
-        Tap to enter a value and
-        view the API response.
-      </p>
-
-    `;
+        <span class="custom-badge">
+          Custom
+        </span>
 
 
-    card.addEventListener(
-      "click",
-      () => openCustomApi(api)
-    );
-
-
-    grid.appendChild(
-      card
-    );
-
-
-    /*
-     * Saved API management list
-     */
-
-    const item =
-      document.createElement("div");
-
-    item.className =
-      "api-item";
-
-
-    item.innerHTML = `
-
-      <div style="min-width:0">
-
-        <b>
-          ${escapeHTML(api.name)}
-        </b>
-
-        <div class="muted"
-          style="
-            word-break:break-all;
-            margin-top:4px;
-          "
-        >
-          ${escapeHTML(api.url)}
+        <div class="card-icon">
+          API
         </div>
 
-      </div>
 
-      <div
-        style="
-          display:flex;
-          gap:7px;
-          flex-shrink:0;
-        "
-      >
-
-        <button
-          class="open-custom-api"
-          type="button"
-        >
-          Open
-        </button>
-
-        <button
-          class="delete-custom-api"
-          type="button"
-        >
-          Delete
-        </button>
-
-      </div>
-    `;
+        <h3>
+          ${escapeHTML(
+            api.name
+          )}
+        </h3>
 
 
-    item
-      .querySelector(
-        ".open-custom-api"
-      )
-      .addEventListener(
-        "click",
-        () => openCustomApi(api)
-      );
+        <p>
+          Custom API lookup.
+          Tap to enter a value
+          and view the response.
+        </p>
+
+      `;
 
 
-    item
-      .querySelector(
-        ".delete-custom-api"
-      )
-      .addEventListener(
+      card.addEventListener(
         "click",
         () =>
-          deleteCustomApi(
-            api.id
-          )
+          openCustomApi(api)
       );
 
 
-    list.appendChild(
-      item
-    );
+      grid.appendChild(
+        card
+      );
 
-  });
+    }
+  );
+
 }
 
 
-/* =====================================================
-   ADD CUSTOM API
-===================================================== */
+/* =========================================
+   SAVE CUSTOM API
+========================================= */
 
 async function saveCustomApi(){
 
@@ -1562,6 +1926,7 @@ async function saveCustomApi(){
     $("apiName")
       .value
       .trim();
+
 
   const url =
     $("apiUrl")
@@ -1576,6 +1941,7 @@ async function saveCustomApi(){
     );
 
     return;
+
   }
 
 
@@ -1586,11 +1952,14 @@ async function saveCustomApi(){
     );
 
     return;
+
   }
 
 
   if(
-    !/^https?:\/\//i.test(url)
+    !/^https?:\/\//i.test(
+      url
+    )
   ){
 
     alert(
@@ -1598,22 +1967,27 @@ async function saveCustomApi(){
     );
 
     return;
+
   }
 
 
   try{
 
-    $("addApiBtn").disabled =
-      true;
+    $("addApiBtn")
+      .disabled =
+        true;
 
-    $("addApiBtn").textContent =
-      "Saving...";
+
+    $("addApiBtn")
+      .textContent =
+        "Saving...";
 
 
     const data =
       await request(
         "/api/custom-apis",
         {
+
           method:"POST",
 
           headers:{
@@ -1621,45 +1995,71 @@ async function saveCustomApi(){
               "application/json"
           },
 
-          body:JSON.stringify({
-            name,
-            url
-          })
+          body:
+            JSON.stringify({
+              name,
+              url
+            })
+
         }
       );
 
 
-    $("apiName").value = "";
-    $("apiUrl").value = "";
+    /*
+     * Clear form.
+     */
 
+    $("apiName")
+      .value = "";
+
+
+    $("apiUrl")
+      .value = "";
+
+
+    /*
+     * Immediately add the
+     * new API as a normal card.
+     */
 
     renderCustomApis(
       data.apis || []
     );
 
 
-  }catch(error){
+  }
+
+  catch(error){
 
     alert(
       error.message
     );
 
-  }finally{
-
-    $("addApiBtn").disabled =
-      false;
-
-    $("addApiBtn").textContent =
-      "Add API";
   }
+
+  finally{
+
+    $("addApiBtn")
+      .disabled =
+        false;
+
+
+    $("addApiBtn")
+      .textContent =
+        "Add API";
+
+  }
+
 }
 
 
-/* =====================================================
+/* =========================================
    OPEN CUSTOM API
-===================================================== */
+========================================= */
 
-async function openCustomApi(api){
+async function openCustomApi(
+  api
+){
 
   const message =
     prompt(
@@ -1667,24 +2067,35 @@ async function openCustomApi(api){
     );
 
 
-  if(message === null){
+  if(
+    message === null
+  ){
+
     return;
+
   }
 
 
-  $("modalTitle").textContent =
-    api.name;
+  $("modalTitle")
+    .textContent =
+      api.name;
 
-  $("result").innerHTML =
-    `
-    <div class="result-section">
-      Calling API...
-    </div>
+
+  $("result")
+    .innerHTML = `
+
+      <div class="result-section">
+
+        Calling API...
+
+      </div>
+
     `;
 
-  $("modal").classList.add(
-    "show"
-  );
+
+  $("modal")
+    .classList
+    .add("show");
 
 
   try{
@@ -1693,6 +2104,7 @@ async function openCustomApi(api){
       await request(
         "/api/custom",
         {
+
           method:"POST",
 
           headers:{
@@ -1700,134 +2112,114 @@ async function openCustomApi(api){
               "application/json"
           },
 
-          body:JSON.stringify({
-            url:api.url,
-            message
-          })
+          body:
+            JSON.stringify({
+              url:
+                api.url,
+
+              message:
+                message
+            })
+
         }
       );
 
 
-    $("result").innerHTML =
-      `
-      <div class="result-section">
+    $("result")
+      .innerHTML = `
 
-        <h3>
-          API Response
-        </h3>
+        <div
+          class="result-section"
+        >
 
-        ${row(
-          "HTTP Status",
-          data.status
-        )}
+          <h3>
+            API Response
+          </h3>
 
-        ${row(
-          "Content-Type",
-          data.contentType
-        )}
 
-        <pre>${escapeHTML(
-          typeof data.data === "string"
-            ? data.data
-            : JSON.stringify(
-                data.data,
-                null,
-                2
-              )
-        )}</pre>
+          ${row(
+            "HTTP Status",
+            data.status
+          )}
 
-      </div>
+
+          ${row(
+            "Content-Type",
+            data.contentType
+          )}
+
+
+          <pre>${escapeHTML(
+
+            typeof data.data ===
+              "string"
+
+              ? data.data
+
+              : JSON.stringify(
+                  data.data,
+                  null,
+                  2
+                )
+
+          )}</pre>
+
+        </div>
+
       `;
 
-
-  }catch(error){
-
-    $("result").innerHTML =
-      `
-      <div class="result-section fail">
-        ${escapeHTML(
-          error.message
-        )}
-      </div>
-      `;
   }
+
+  catch(error){
+
+    $("result")
+      .innerHTML = `
+
+        <div
+          class="result-section fail"
+        >
+
+          ${escapeHTML(
+            error.message
+          )}
+
+        </div>
+
+      `;
+
+  }
+
 }
 
 
-/* =====================================================
-   DELETE CUSTOM API
-===================================================== */
-
-async function deleteCustomApi(id){
-
-  if(
-    !confirm(
-      "Delete this custom API?"
-    )
-  ){
-
-    return;
-  }
-
-
-  try{
-
-    const data =
-      await request(
-        "/api/custom-apis",
-        {
-          method:"DELETE",
-
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-
-          body:JSON.stringify({
-            id
-          })
-        }
-      );
-
-
-    renderCustomApis(
-      data.apis || []
-    );
-
-
-  }catch(error){
-
-    alert(
-      error.message
-    );
-  }
-}
-
-
-/* =====================================================
-   CARD EVENTS
-===================================================== */
+/* =========================================
+   BUILT-IN CARD EVENTS
+========================================= */
 
 document
+
   .querySelectorAll(
     ".card[data-type]"
   )
-  .forEach(card => {
 
-    card.addEventListener(
-      "click",
-      () =>
-        openLookup(
-          card.dataset.type
-        )
-    );
+  .forEach(
+    card => {
 
-  });
+      card.addEventListener(
+        "click",
+        () =>
+          openLookup(
+            card.dataset.type
+          )
+      );
+
+    }
+  );
 
 
-/* =====================================================
-   BUTTON EVENTS
-===================================================== */
+/* =========================================
+   LOGIN EVENTS
+========================================= */
 
 $("loginBtn")
   .addEventListener(
@@ -1842,15 +2234,21 @@ $("password")
     event => {
 
       if(
-        event.key === "Enter"
+        event.key ===
+          "Enter"
       ){
 
         login();
+
       }
 
     }
   );
 
+
+/* =========================================
+   LOGOUT
+========================================= */
 
 $("logoutBtn")
   .addEventListener(
@@ -1859,6 +2257,10 @@ $("logoutBtn")
   );
 
 
+/* =========================================
+   ADD API
+========================================= */
+
 $("addApiBtn")
   .addEventListener(
     "click",
@@ -1866,13 +2268,22 @@ $("addApiBtn")
   );
 
 
+/* =========================================
+   CLOSE MODAL
+========================================= */
+
 $("closeModal")
   .addEventListener(
     "click",
-    () =>
+    () => {
+
       $("modal")
         .classList
-        .remove("show")
+        .remove(
+          "show"
+        );
+
+    }
   );
 
 
@@ -1883,21 +2294,24 @@ $("modal")
 
       if(
         event.target ===
-        $("modal")
+          $("modal")
       ){
 
         $("modal")
           .classList
-          .remove("show");
+          .remove(
+            "show"
+          );
+
       }
 
     }
   );
 
 
-/* =====================================================
+/* =========================================
    CODE BACKGROUND
-===================================================== */
+========================================= */
 
 function createCodeBackground(){
 
@@ -1908,44 +2322,83 @@ function createCodeBackground(){
   const code = [
 
     "const TXG = await lookup();",
+
     "fetch('/api/information');",
+
     "TXG_INFORMATION_CENTER",
+
     "verifyPublicData();",
+
     "response.status === 200",
+
     "JSON.parse(response)",
+
     "const result = await api();",
+
     "if (result.ok) return result;",
+
     "GET /api/lookup",
+
     "POST /api/custom",
+
     "GET /api/custom-apis",
+
     "REDIS CONNECTED",
+
     "DATABASE ONLINE",
+
     "CUSTOM API STORAGE",
+
     "PUBLIC INFORMATION",
+
     "IFSC LOOKUP",
+
     "PIN CODE LOOKUP",
+
     "MOBILE VALIDATION",
+
     "IP INFORMATION",
+
     "URL VERIFICATION",
+
     "UPI FORMAT CHECK",
+
     "HTTPS REQUEST",
+
     "DNS RESOLUTION",
+
     "RDAP LOOKUP",
+
     "DOMAIN STATUS",
+
     "REGISTRAR CHECK",
+
     "TXG CORE ONLINE",
+
     "SECURE REQUEST",
+
     "AUTHORIZED LOOKUP",
+
     "API RESPONSE",
+
     "STATUS 200",
+
     "STATUS 404",
+
     "STATUS 500",
+
     "serverless function",
+
     "process.env.REDIS_URL",
+
     "await redis.get()",
+
     "await redis.set()",
+
     "custom_api.save()",
+
     "custom_api.load()",
+
     "TXG SYSTEM READY"
 
   ];
@@ -1990,6 +2443,7 @@ function createCodeBackground(){
           Math.random() *
           999999
         );
+
     }
 
 
@@ -2006,38 +2460,51 @@ function createCodeBackground(){
 
 
     line.style.animationDuration =
-      `${45 + Math.random()*55}s`;
+      `${
+        45 +
+        Math.random()*55
+      }s`;
 
 
     line.style.animationDelay =
-      `${-Math.random()*100}s`;
+      `${
+        -Math.random()*100
+      }s`;
 
 
     line.style.opacity =
-      `${.16 + Math.random()*.48}`;
+      `${
+        .16 +
+        Math.random()*.48
+      }`;
 
 
     line.style.fontSize =
-      `${9 + Math.random()*4}px`;
+      `${
+        9 +
+        Math.random()*4
+      }px`;
 
 
     bg.appendChild(
       line
     );
+
   }
+
 }
 
 
+/* =========================================
+   START
+========================================= */
+
 createCodeBackground();
 
-
-/* =====================================================
-   START
-===================================================== */
-
 checkAuth();
+
 
 </script>
 
 </body>
-</html> 
+</html>
