@@ -13,10 +13,6 @@
 
 <style>
 
-/* =========================================
-   RESET
-========================================= */
-
 *{
   box-sizing:border-box;
   margin:0;
@@ -32,10 +28,7 @@ body{
 body{
   background:#020914;
   color:#eaf4ff;
-  font-family:
-    Inter,
-    Arial,
-    sans-serif;
+  font-family:Arial,Inter,sans-serif;
   overflow-x:hidden;
 }
 
@@ -82,13 +75,11 @@ body{
 @keyframes moveCode{
 
   from{
-    transform:
-      translateX(120vw);
+    transform:translateX(120vw);
   }
 
   to{
-    transform:
-      translateX(-140vw);
+    transform:translateX(-140vw);
   }
 
 }
@@ -107,11 +98,7 @@ body{
 }
 
 .container{
-  width:min(
-    1180px,
-    94%
-  );
-
+  width:min(1180px,94%);
   margin:auto;
 }
 
@@ -134,10 +121,7 @@ body{
 
 .login-box{
 
-  width:min(
-    430px,
-    100%
-  );
+  width:min(430px,100%);
 
   padding:32px;
 
@@ -157,8 +141,7 @@ body{
     inset 0 0 30px
     rgba(0,110,255,.03);
 
-  backdrop-filter:
-    blur(14px);
+  backdrop-filter:blur(14px);
 }
 
 .logo{
@@ -255,8 +238,7 @@ body{
 
   background:#319bff;
 
-  transform:
-    translateY(-1px);
+  transform:translateY(-1px);
 }
 
 .btn:disabled{
@@ -326,8 +308,7 @@ body{
 
   width:auto;
 
-  padding:
-    10px 15px;
+  padding:10px 15px;
 
   background:#071727;
 
@@ -356,7 +337,7 @@ body{
 
 
 /* =========================================
-   NORMAL CARD
+   CARD
 ========================================= */
 
 .card{
@@ -389,8 +370,7 @@ body{
 
 .card:hover{
 
-  transform:
-    translateY(-3px);
+  transform:translateY(-3px);
 
   border-color:
     rgba(35,155,255,.65);
@@ -417,7 +397,9 @@ body{
 
   color:#35a1ff;
 
-  font-size:21px;
+  font-size:20px;
+
+  font-weight:800;
 
   margin-bottom:15px;
 }
@@ -440,7 +422,7 @@ body{
 
 
 /* =========================================
-   CUSTOM API BADGE
+   CUSTOM API
 ========================================= */
 
 .custom-badge{
@@ -450,8 +432,7 @@ body{
   top:13px;
   right:13px;
 
-  padding:
-    4px 7px;
+  padding:4px 7px;
 
   border-radius:6px;
 
@@ -473,7 +454,7 @@ body{
 
 
 /* =========================================
-   ADD API SECTION
+   ADD API
 ========================================= */
 
 .add-api{
@@ -533,8 +514,7 @@ body{
 
   width:auto;
 
-  padding:
-    0 20px;
+  padding:0 20px;
 }
 
 
@@ -569,10 +549,7 @@ body{
 
 .modal-box{
 
-  width:min(
-    720px,
-    100%
-  );
+  width:min(720px,100%);
 
   max-height:90vh;
 
@@ -633,7 +610,7 @@ body{
 
 
 /* =========================================
-   RESULT
+   RESULTS
 ========================================= */
 
 .result-section{
@@ -689,8 +666,7 @@ body{
 
   text-align:right;
 
-  word-break:
-    break-word;
+  word-break:break-word;
 }
 
 pre{
@@ -719,18 +695,6 @@ pre{
 .fail{
 
   color:#ff8181;
-}
-
-.success{
-
-  color:#57df9b;
-}
-
-.muted{
-
-  color:#718da7;
-
-  font-size:13px;
 }
 
 
@@ -778,7 +742,7 @@ pre{
 
 
 <!-- =========================================
-     CODE BACKGROUND
+     BACKGROUND
 ========================================= -->
 
 <div
@@ -863,6 +827,7 @@ pre{
 
       </div>
 
+
       <button
         id="logoutBtn"
         class="btn logout"
@@ -875,7 +840,7 @@ pre{
 
 
     <!-- =====================================
-         MAIN LOOKUP GRID
+         MAIN CARDS
     ====================================== -->
 
     <div
@@ -1027,9 +992,10 @@ pre{
 
 
       <!--
-        CUSTOM API CARDS ARE INSERTED
-        HERE AUTOMATICALLY.
+        CUSTOM API CARDS WILL BE
+        INSERTED HERE.
       -->
+
 
     </div>
 
@@ -1046,7 +1012,7 @@ pre{
 
       <div class="section-subtitle">
 
-        Add your own HTTPS API.
+        Add your own API.
         Use <b>{message}</b> where
         the user input should be inserted.
 
@@ -1096,7 +1062,7 @@ pre{
 
 
 <!-- =========================================
-     RESULT MODAL
+     MODAL
 ========================================= -->
 
 <div
@@ -1139,7 +1105,7 @@ pre{
 
 
 /* =========================================
-   HELPER
+   HELPERS
 ========================================= */
 
 const $ =
@@ -1177,6 +1143,7 @@ function escapeHTML(value){
     /'/g,
     "&#039;"
   );
+
 }
 
 
@@ -1200,11 +1167,12 @@ function row(
     </div>
 
   `;
+
 }
 
 
 /* =========================================
-   SAFE REQUEST
+   REQUEST
 ========================================= */
 
 async function request(
@@ -1268,6 +1236,7 @@ async function request(
 
 
   return data;
+
 }
 
 
@@ -1289,6 +1258,7 @@ async function login(){
         "Enter your password.";
 
     return;
+
   }
 
 
@@ -1310,6 +1280,7 @@ async function login(){
     await request(
       "/api/auth",
       {
+
         method:"POST",
 
         headers:{
@@ -1321,6 +1292,7 @@ async function login(){
           JSON.stringify({
             password
           })
+
       }
     );
 
@@ -1352,7 +1324,7 @@ async function login(){
 
 
 /* =========================================
-   CHECK AUTH
+   AUTH CHECK
 ========================================= */
 
 async function checkAuth(){
@@ -1381,7 +1353,7 @@ async function checkAuth(){
 
 
 /* =========================================
-   SHOW LOGIN
+   LOGIN SCREEN
 ========================================= */
 
 function showLogin(){
@@ -1399,7 +1371,7 @@ function showLogin(){
 
 
 /* =========================================
-   SHOW DASHBOARD
+   DASHBOARD
 ========================================= */
 
 async function showDashboard(){
@@ -1414,7 +1386,11 @@ async function showDashboard(){
       "block";
 
 
-  await loadCustomApis();
+  /*
+   * OLD WORKING STORAGE METHOD
+   */
+
+  loadCustomApis();
 
 }
 
@@ -1452,7 +1428,9 @@ async function logout(){
    BUILT-IN LOOKUP
 ========================================= */
 
-async function openLookup(type){
+async function openLookup(
+  type
+){
 
   let title =
     type.toUpperCase();
@@ -1462,9 +1440,7 @@ async function openLookup(type){
     "Enter value";
 
 
-  if(
-    type === "mobile"
-  ){
+  if(type === "mobile"){
 
     title =
       "Mobile Lookup";
@@ -1475,9 +1451,7 @@ async function openLookup(type){
   }
 
 
-  if(
-    type === "pin"
-  ){
+  if(type === "pin"){
 
     title =
       "PIN Lookup";
@@ -1488,9 +1462,7 @@ async function openLookup(type){
   }
 
 
-  if(
-    type === "ifsc"
-  ){
+  if(type === "ifsc"){
 
     title =
       "IFSC Lookup";
@@ -1501,9 +1473,7 @@ async function openLookup(type){
   }
 
 
-  if(
-    type === "ip"
-  ){
+  if(type === "ip"){
 
     title =
       "IP Lookup";
@@ -1514,9 +1484,7 @@ async function openLookup(type){
   }
 
 
-  if(
-    type === "url"
-  ){
+  if(type === "url"){
 
     title =
       "URL Verification";
@@ -1527,9 +1495,7 @@ async function openLookup(type){
   }
 
 
-  if(
-    type === "upi"
-  ){
+  if(type === "upi"){
 
     title =
       "UPI Lookup";
@@ -1546,18 +1512,14 @@ async function openLookup(type){
     );
 
 
-  if(
-    value === null
-  ){
+  if(value === null){
 
     return;
 
   }
 
 
-  if(
-    !value.trim()
-  ){
+  if(!value.trim()){
 
     return;
 
@@ -1629,7 +1591,7 @@ async function openLookup(type){
 
 
 /* =========================================
-   RENDER LOOKUP RESULT
+   LOOKUP RESULT
 ========================================= */
 
 function renderLookupResult(
@@ -1645,10 +1607,14 @@ function renderLookupResult(
 
 
   if(
+
     data &&
+
     data.result &&
+
     typeof data.result ===
       "object"
+
   ){
 
     const section =
@@ -1704,20 +1670,18 @@ function renderLookupResult(
     );
 
 
-    const objects =
-      Object.entries(
-        data.result
-      )
+    Object.entries(
+      data.result
+    )
 
-      .filter(
-        ([,value]) =>
-          value &&
-          typeof value ===
-            "object"
-      );
+    .filter(
+      ([,value]) =>
+        value &&
+        typeof value ===
+          "object"
+    )
 
-
-    objects.forEach(
+    .forEach(
       ([key,value]) => {
 
         const section =
@@ -1791,42 +1755,81 @@ function renderLookupResult(
 
 
 /* =========================================
-   LOAD CUSTOM APIs
+   CUSTOM API STORAGE
+   OLD LOCAL STORAGE METHOD
 ========================================= */
 
-async function loadCustomApis(){
+const CUSTOM_API_STORAGE =
+  "TXG_CUSTOM_APIS";
+
+
+function getCustomApis(){
 
   try{
 
-    const data =
-      await request(
-        "/api/custom-apis",
-        {
-          method:"GET"
-        }
+    const saved =
+      localStorage.getItem(
+        CUSTOM_API_STORAGE
       );
 
 
-    renderCustomApis(
-      data.apis || []
-    );
+    if(!saved){
+
+      return [];
+
+    }
+
+
+    const data =
+      JSON.parse(saved);
+
+
+    return Array.isArray(data)
+      ? data
+      : [];
 
   }
 
-  catch(error){
+  catch{
 
-    console.error(
-      "Custom API load error:",
-      error
-    );
+    return [];
 
   }
 
 }
 
 
+function saveCustomApis(
+  apis
+){
+
+  localStorage.setItem(
+    CUSTOM_API_STORAGE,
+    JSON.stringify(apis)
+  );
+
+}
+
+
 /* =========================================
-   RENDER CUSTOM APIs
+   LOAD CUSTOM API CARDS
+========================================= */
+
+function loadCustomApis(){
+
+  const apis =
+    getCustomApis();
+
+
+  renderCustomApis(
+    apis
+  );
+
+}
+
+
+/* =========================================
+   RENDER CUSTOM API CARDS
 ========================================= */
 
 function renderCustomApis(
@@ -1838,15 +1841,13 @@ function renderCustomApis(
 
 
   /*
-   * Remove old custom cards
-   * before rebuilding them.
+   * Remove old custom cards.
    */
 
   grid
     .querySelectorAll(
       ".custom-api-card"
     )
-
     .forEach(
       card =>
         card.remove()
@@ -1854,8 +1855,8 @@ function renderCustomApis(
 
 
   /*
-   * Add custom APIs directly
-   * into the SAME main grid.
+   * Add them directly into
+   * the normal card grid.
    */
 
   apis.forEach(
@@ -1917,10 +1918,10 @@ function renderCustomApis(
 
 
 /* =========================================
-   SAVE CUSTOM API
+   ADD CUSTOM API
 ========================================= */
 
-async function saveCustomApi(){
+function saveCustomApi(){
 
   const name =
     $("apiName")
@@ -1971,84 +1972,74 @@ async function saveCustomApi(){
   }
 
 
-  try{
+  /*
+   * Get old APIs.
+   */
 
-    $("addApiBtn")
-      .disabled =
-        true;
-
-
-    $("addApiBtn")
-      .textContent =
-        "Saving...";
+  const apis =
+    getCustomApis();
 
 
-    const data =
-      await request(
-        "/api/custom-apis",
-        {
+  /*
+   * Create new API.
+   */
 
-          method:"POST",
+  const api = {
 
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
+    id:
+      Date.now()
+      .toString(36) +
+      Math.random()
+      .toString(36)
+      .slice(2,8),
 
-          body:
-            JSON.stringify({
-              name,
-              url
-            })
+    name:
+      name,
 
-        }
-      );
+    url:
+      url
 
-
-    /*
-     * Clear form.
-     */
-
-    $("apiName")
-      .value = "";
+  };
 
 
-    $("apiUrl")
-      .value = "";
+  /*
+   * Add new API.
+   */
+
+  apis.push(
+    api
+  );
 
 
-    /*
-     * Immediately add the
-     * new API as a normal card.
-     */
+  /*
+   * Save locally.
+   */
 
-    renderCustomApis(
-      data.apis || []
-    );
-
-
-  }
-
-  catch(error){
-
-    alert(
-      error.message
-    );
-
-  }
-
-  finally{
-
-    $("addApiBtn")
-      .disabled =
-        false;
+  saveCustomApis(
+    apis
+  );
 
 
-    $("addApiBtn")
-      .textContent =
-        "Add API";
+  /*
+   * Clear form.
+   */
 
-  }
+  $("apiName")
+    .value = "";
+
+
+  $("apiUrl")
+    .value = "";
+
+
+  /*
+   * Immediately show it
+   * with normal cards.
+   */
+
+  renderCustomApis(
+    apis
+  );
 
 }
 
@@ -2114,11 +2105,13 @@ async function openCustomApi(
 
           body:
             JSON.stringify({
+
               url:
                 api.url,
 
               message:
                 message
+
             })
 
         }
@@ -2197,11 +2190,9 @@ async function openCustomApi(
 ========================================= */
 
 document
-
   .querySelectorAll(
     ".card[data-type]"
   )
-
   .forEach(
     card => {
 
@@ -2218,7 +2209,7 @@ document
 
 
 /* =========================================
-   LOGIN EVENTS
+   LOGIN BUTTON
 ========================================= */
 
 $("loginBtn")
@@ -2258,7 +2249,7 @@ $("logoutBtn")
 
 
 /* =========================================
-   ADD API
+   ADD API BUTTON
 ========================================= */
 
 $("addApiBtn")
@@ -2279,9 +2270,7 @@ $("closeModal")
 
       $("modal")
         .classList
-        .remove(
-          "show"
-        );
+        .remove("show");
 
     }
   );
@@ -2299,9 +2288,7 @@ $("modal")
 
         $("modal")
           .classList
-          .remove(
-            "show"
-          );
+          .remove("show");
 
       }
 
@@ -2341,13 +2328,7 @@ function createCodeBackground(){
 
     "POST /api/custom",
 
-    "GET /api/custom-apis",
-
-    "REDIS CONNECTED",
-
-    "DATABASE ONLINE",
-
-    "CUSTOM API STORAGE",
+    "CUSTOM API",
 
     "PUBLIC INFORMATION",
 
@@ -2388,12 +2369,6 @@ function createCodeBackground(){
     "STATUS 500",
 
     "serverless function",
-
-    "process.env.REDIS_URL",
-
-    "await redis.get()",
-
-    "await redis.set()",
 
     "custom_api.save()",
 
