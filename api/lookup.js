@@ -1,359 +1,311 @@
+const { parsePhoneNumberFromString } = require("libphonenumber-js");
 const dns = require("dns").promises;
-const {
-  parsePhoneNumberFromString
-} = require("libphonenumber-js");
+const { authenticated } = require("./auth");
 
-function json(res, status, data) {
-  res.setHeader(
-    "Cache-Control",
-    "no-store"
-  );
-
-  res.setHeader(
-    "X-Content-Type-Options",
-    "nosniff"
-  );
-
-  return res.status(status).json(data);
+function send(res, status, data) {
+  res.status(status).json(data);
 }
 
-function clean(value) {
-  return String(value || "").trim();
+function clean(value, max = 500) {
+  return String(value || "").trim().slice(0, max);
 }
 
-function validPin(pin) {
-  return /^[1-9][0-9]{5}$/.test(pin);
-}
+async function getJSON(url, options = {}) {
+  const controller = new AbortController();
 
-function validIfsc(ifsc) {
-  return /^[A-Z]{4}0[A-Z0-9]{6}$/.test(
-    ifsc.toUpperCase()
-  );
-}
+  const timer = setTimeout(() => {
+    controller.abort();
+  }, 10000);
 
-function validUpi(upi) {
-  return /^[a-zA-Z0-9._-]{2,256}@[a-zA-Z0-9.-]{2,64}$/.test(
-    upi
-  );
-}
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
 
-function mask(value) {
-  const s = String(value || "");
+    const text = await response.text();
 
-  if (s.length <= 2) return s;
+    let data;
 
-  if (s.length <= 4) {
-    return s[0] + "***" + s[s.length - 1];
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = text;
+    }
+
+    return {
+      status: response.status,
+      ok: response.ok,
+      data
+    };
+  } finally {
+    clearTimeout(timer);
   }
+}
+
+function normalizeIP(ip) {
+  return ip
+    .trim()
+    .replace(/^\[/, "")
+    .replace(/\]$/, "");
+}
+
+function isIPv4(ip) {
+  return /^(\d{1,3}\.){3}\d{1,3}$/.test(ip);
+}
+
+function isPrivateIPv4(ip) {
+  if (!isIPv4(ip)) return false;
+
+  const p = ip.split(".").map(Number);
+
+  if (p.some(x => x < 0 || x > 255)) return true;
+
+  const [a, b] = p;
+
+  if (a === 10) return true;
+  if (a === 127) return true;
+  if (a === 169 && b === 254) return true;
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 192 && b === 168) return true;
+
+  return false;
+}
+
+function isPrivateIPv6(ip) {
+  const x = ip.toLowerCase();
 
   return (
-    s.slice(0, 2) +
-    "***" +
-    s.slice(-1)
+    x === "::1" ||
+    x.startsWith("fc") ||
+    x.startsWith("fd") ||
+    x.startsWith("fe80:")
   );
 }
 
-module.exports = async (req, res) => {
+async function mobileLookup(value) {
+  let phone = parsePhoneNumberFromString(value, "IN");
+
+  if (!phone) {
+    phone = parsePhoneNumberFromString(value);
+  }
+
+  if (!phone) {
+    return {
+      type: "Mobile",
+      valid: false,
+      possible: false,
+      message: "Invalid phone number format"
+    };
+  }
+
+  return {
+    type: "Mobile",
+    input: value,
+    valid: phone.isValid(),
+    possible: phone.isPossible(),
+    country: phone.country || null,
+    countryCallingCode: phone.countryCallingCode || null,
+    nationalNumber: phone.nationalNumber || null,
+    internationalFormat: phone.formatInternational(),
+    nationalFormat: phone.formatNational(),
+    uri: phone.getURI()
+  };
+}
+
+async function pinLookup(pin) {
+  if (!/^\d{6}$/.test(pin)) {
+    throw new Error("Enter a valid 6-digit PIN code");
+  }
+
+  const result = await getJSON(
+    `https://api.postalpincode.in/pincode/${encodeURIComponent(pin)}`
+  );
+
+  if (!result.ok || !Array.isArray(result.data)) {
+    throw new Error("PIN service unavailable");
+  }
+
+  return {
+    type: "PIN",
+    pincode: pin,
+    response: result.data
+  };
+}
+
+async function ifscLookup(ifsc) {
+  if (!/^[A-Z]{4}0[A-Z0-9]{6}$/i.test(ifsc)) {
+    throw new Error("Invalid IFSC format");
+  }
+
+  const result = await getJSON(
+    `https://ifsc.razorpay.com/${encodeURIComponent(ifsc.toUpperCase())}`
+  );
+
+  if (!result.ok) {
+    throw new Error("IFSC not found");
+  }
+
+  return {
+    type: "IFSC",
+    response: result.data
+  };
+}
+
+async function ipLookup(input) {
+  let ip = normalizeIP(input);
+
+  if (!ip) {
+    const publicIP = await getJSON("https://api.ipify.org?format=json");
+
+    if (!publicIP.ok || !publicIP.data?.ip) {
+      throw new Error("Could not detect public IP");
+    }
+
+    ip = publicIP.data.ip;
+  }
+
+  if (isPrivateIPv4(ip) || isPrivateIPv6(ip)) {
+    throw new Error("Private/local IP lookup is not supported");
+  }
+
+  const result = await getJSON(
+    `https://ipwho.is/${encodeURIComponent(ip)}`
+  );
+
+  if (!result.ok) {
+    throw new Error("IP lookup failed");
+  }
+
+  return {
+    type: "IP",
+    response: result.data
+  };
+}
+
+async function urlLookup(input) {
+  let value = input;
+
+  if (!/^https?:\/\//i.test(value)) {
+    value = "https://" + value;
+  }
+
+  let parsed;
+
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new Error("Invalid URL");
+  }
+
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    throw new Error("Only HTTP/HTTPS URLs are supported");
+  }
+
+  let dnsResult = null;
+
+  try {
+    dnsResult = await dns.lookup(parsed.hostname, {
+      all: true
+    });
+  } catch {
+    dnsResult = [];
+  }
+
+  return {
+    type: "URL",
+    protocol: parsed.protocol,
+    hostname: parsed.hostname,
+    port: parsed.port || null,
+    pathname: parsed.pathname,
+    query: parsed.search || null,
+    hash: parsed.hash || null,
+    origin: parsed.origin,
+    dns: dnsResult
+  };
+}
+
+async function upiLookup(upi) {
+  const value = upi.trim();
+
+  if (!/^[A-Za-z0-9._-]{2,256}@[A-Za-z0-9.-]{2,64}$/.test(value)) {
+    throw new Error("Invalid UPI ID format");
+  }
+
+  const result = {
+    type: "UPI",
+    upiId: value,
+    handle: value.split("@")[1],
+    verified: false,
+    providerResponse: null,
+    message:
+      "Format is valid. Beneficiary verification requires an authorized UPI verification provider."
+  };
+
+  // Optional authorized provider.
+  // No environment variables are required for this project.
+  // If you later add your own server-side provider, it can be connected here.
+
+  return result;
+}
+
+module.exports = async function handler(req, res) {
+  res.setHeader("Cache-Control", "no-store");
+
   if (req.method !== "POST") {
-    return json(res, 405, {
+    return send(res, 405, {
       ok: false,
-      message: "POST required"
+      error: "Method not allowed"
+    });
+  }
+
+  if (!authenticated(req)) {
+    return send(res, 401, {
+      ok: false,
+      error: "Authentication required"
+    });
+  }
+
+  const type = String(req.body?.type || "").toLowerCase();
+  const input = clean(req.body?.input, 1000);
+
+  if (!input && type !== "ip") {
+    return send(res, 400, {
+      ok: false,
+      error: "Input required"
     });
   }
 
   try {
-    const type = clean(req.body?.type);
-    const value = clean(req.body?.value);
-
-    if (!type || !value) {
-      return json(res, 400, {
-        ok: false,
-        message: "Type and value required"
-      });
-    }
-
-    // ==========================
-    // MOBILE
-    // ==========================
+    let result;
 
     if (type === "mobile") {
-      const phone =
-        parsePhoneNumberFromString(
-          value,
-          "IN"
-        );
-
-      if (!phone) {
-        return json(res, 200, {
-          ok: false,
-          type: "mobile",
-          valid: false,
-          message:
-            "Invalid phone number"
-        });
-      }
-
-      return json(res, 200, {
-        ok: true,
-        type: "mobile",
-        valid: phone.isValid(),
-        possible: phone.isPossible(),
-        country:
-          phone.country || null,
-        callingCode:
-          "+" + phone.countryCallingCode,
-        nationalNumber:
-          phone.nationalNumber,
-        international:
-          phone.formatInternational(),
-        e164:
-          phone.number,
-        type:
-          phone.getType() || "UNKNOWN"
+      result = await mobileLookup(input);
+    } else if (type === "pin") {
+      result = await pinLookup(input);
+    } else if (type === "ifsc") {
+      result = await ifscLookup(input);
+    } else if (type === "ip") {
+      result = await ipLookup(input);
+    } else if (type === "url") {
+      result = await urlLookup(input);
+    } else if (type === "upi") {
+      result = await upiLookup(input);
+    } else {
+      return send(res, 400, {
+        ok: false,
+        error: "Unknown lookup type"
       });
     }
 
-    // ==========================
-    // PIN
-    // ==========================
-
-    if (type === "pin") {
-      if (!validPin(value)) {
-        return json(res, 400, {
-          ok: false,
-          message: "Invalid PIN"
-        });
-      }
-
-      const response = await fetch(
-        `https://api.pincodeapi.in/api/v1/pincode/${value}`
-      );
-
-      const raw =
-        await response.text();
-
-      let data = raw;
-
-      try {
-        data = JSON.parse(raw);
-      } catch (_) {}
-
-      return json(res, 200, {
-        ok: response.ok,
-        type: "pin",
-        input: value,
-        response: data
-      });
-    }
-
-    // ==========================
-    // IFSC
-    // ==========================
-
-    if (type === "ifsc") {
-      const ifsc =
-        value.toUpperCase();
-
-      if (!validIfsc(ifsc)) {
-        return json(res, 400, {
-          ok: false,
-          message: "Invalid IFSC"
-        });
-      }
-
-      const response = await fetch(
-        `https://ifsc.razorpay.com/${encodeURIComponent(ifsc)}`
-      );
-
-      const raw =
-        await response.text();
-
-      let data = raw;
-
-      try {
-        data = JSON.parse(raw);
-      } catch (_) {}
-
-      return json(res, 200, {
-        ok: response.ok,
-        type: "ifsc",
-        input: ifsc,
-        response: data
-      });
-    }
-
-    // ==========================
-    // IP
-    // ==========================
-
-    if (type === "ip") {
-      const response = await fetch(
-        `https://ipwho.is/${encodeURIComponent(value)}`
-      );
-
-      const data =
-        await response.json();
-
-      return json(res, 200, {
-        ok: response.ok,
-        type: "ip",
-        response: data
-      });
-    }
-
-    // ==========================
-    // URL
-    // ==========================
-
-    if (type === "url") {
-      let parsed;
-
-      try {
-        parsed = new URL(value);
-      } catch (_) {
-        return json(res, 400, {
-          ok: false,
-          message: "Invalid URL"
-        });
-      }
-
-      if (
-        parsed.protocol !== "http:" &&
-        parsed.protocol !== "https:"
-      ) {
-        return json(res, 400, {
-          ok: false,
-          message:
-            "Only HTTP/HTTPS URLs are supported"
-        });
-      }
-
-      let addresses = [];
-
-      try {
-        addresses =
-          await dns.lookup(
-            parsed.hostname,
-            { all: true }
-          );
-      } catch (_) {}
-
-      return json(res, 200, {
-        ok: true,
-        type: "url",
-        protocol:
-          parsed.protocol,
-        hostname:
-          parsed.hostname,
-        port:
-          parsed.port ||
-          (parsed.protocol === "https:"
-            ? "443"
-            : "80"),
-        pathname:
-          parsed.pathname,
-        search:
-          parsed.search,
-        hash:
-          parsed.hash,
-        resolvedAddresses:
-          addresses.map(
-            x => x.address
-          )
-      });
-    }
-
-    // ==========================
-    // UPI
-    // ==========================
-
-    if (type === "upi") {
-      if (!validUpi(value)) {
-        return json(res, 200, {
-          ok: false,
-          type: "upi",
-          valid: false,
-          message:
-            "Invalid UPI ID format"
-        });
-      }
-
-      const parts = value.split("@");
-
-      const result = {
-        ok: true,
-        type: "upi",
-        valid: true,
-        upiId: value,
-        handle: "@" + parts[1],
-        userPart: parts[0],
-        verification:
-          "Format validation only"
-      };
-
-      /*
-       * Optional authorized provider.
-       * Configure UPI_VALIDATE_URL and UPI_API_KEY
-       * only if you have an authorized provider.
-       */
-
-      if (
-        process.env.UPI_VALIDATE_URL &&
-        process.env.UPI_API_KEY
-      ) {
-        try {
-          const endpoint =
-            process.env.UPI_VALIDATE_URL;
-
-          const response = await fetch(
-            endpoint,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type":
-                  "application/json",
-                "Authorization":
-                  "Bearer " +
-                  process.env.UPI_API_KEY
-              },
-              body: JSON.stringify({
-                vpa: value
-              })
-            }
-          );
-
-          const raw =
-            await response.text();
-
-          let providerData = raw;
-
-          try {
-            providerData =
-              JSON.parse(raw);
-          } catch (_) {}
-
-          result.provider =
-            providerData;
-        } catch (error) {
-          result.providerError =
-            error.message;
-        }
-      }
-
-      return json(res, 200, result);
-    }
-
-    return json(res, 400, {
-      ok: false,
-      message: "Unknown lookup type"
+    return send(res, 200, {
+      ok: true,
+      result
     });
-
   } catch (error) {
-    console.error(error);
-
-    return json(res, 500, {
+    return send(res, 400, {
       ok: false,
-      message: error.message
+      error: error.message || "Lookup failed"
     });
   }
 };
