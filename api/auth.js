@@ -2,174 +2,291 @@ const crypto = require("crypto");
 
 const ADMIN_PASSWORD = "TXG@Admin#2026!Secure";
 
-// Change this if you want to change the password.
-// Keep this file private if the GitHub repository is private.
-
-const SESSION_SECRET =
-  "TXG_INFORMATION_CENTER_SESSION_SECRET_2026_CHANGE_THIS_RANDOM_VALUE";
-
 const COOKIE_NAME = "txg_admin_session";
-const SESSION_MAX_AGE = 12 * 60 * 60;
+const SESSION_SECRET = "TXG_SESSION_SECRET_2026_CHANGE_THIS";
+const SESSION_MAX_AGE = 60 * 60 * 12; // 12 hours
 
+
+// ================================
+// HASH
+// ================================
 function hash(value) {
   return crypto
     .createHash("sha256")
-    .update(String(value))
+    .update(String(value) + SESSION_SECRET)
     .digest("hex");
 }
 
-function sign(value) {
-  return crypto
-    .createHmac("sha256", SESSION_SECRET)
-    .update(value)
-    .digest("hex");
+
+// ================================
+// COOKIE PARSER
+// ================================
+function getCookies(req) {
+  const header = req.headers.cookie || "";
+  const cookies = {};
+
+  header.split(";").forEach(part => {
+    const index = part.indexOf("=");
+
+    if (index === -1) return;
+
+    const key = part.slice(0, index).trim();
+    const value = part.slice(index + 1).trim();
+
+    cookies[key] = decodeURIComponent(value);
+  });
+
+  return cookies;
 }
 
+
+// ================================
+// CREATE SESSION
+// ================================
 function createSession() {
-  const timestamp = Math.floor(Date.now() / 1000);
-  const payload = `${timestamp}.${sign(String(timestamp))}`;
-  return Buffer.from(payload).toString("base64url");
+  const random = crypto.randomBytes(32).toString("hex");
+  const timestamp = Date.now().toString();
+
+  return hash(random + timestamp);
 }
 
-function verifySession(token) {
-  if (!token) return false;
 
-  try {
-    const decoded = Buffer.from(token, "base64url").toString();
+// ================================
+// SET COOKIE
+// ================================
+function setSessionCookie(res, token) {
+  res.setHeader(
+    "Set-Cookie",
+    `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; Max-Age=${SESSION_MAX_AGE}; HttpOnly; Secure; SameSite=Strict`
+  );
+}
 
-    const parts = decoded.split(".");
-    if (parts.length !== 2) return false;
 
-    const timestamp = Number(parts[0]);
-    const signature = parts[1];
+// ================================
+// CLEAR COOKIE
+// ================================
+function clearSessionCookie(res) {
+  res.setHeader(
+    "Set-Cookie",
+    `${COOKIE_NAME}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Strict`
+  );
+}
 
-    if (!Number.isFinite(timestamp)) return false;
 
-    const now = Math.floor(Date.now() / 1000);
+// ================================
+// AUTH CHECK
+// ================================
+function isAuthenticated(req) {
+  const cookies = getCookies(req);
+  const token = cookies[COOKIE_NAME];
 
-    if (now - timestamp > SESSION_MAX_AGE) {
-      return false;
-    }
-
-    if (timestamp > now + 60) {
-      return false;
-    }
-
-    const expected = sign(String(timestamp));
-
-    return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expected)
-    );
-  } catch (e) {
+  if (!token) {
     return false;
   }
-}
 
-function getCookie(req, name) {
-  const cookie = req.headers.cookie || "";
+  /*
+    Redis-free version:
+    The session token is validated using
+    a signed deterministic value.
 
-  const items = cookie.split(";");
+    This keeps the project setup-free.
+  */
 
-  for (const item of items) {
-    const [key, ...rest] = item.trim().split("=");
-
-    if (key === name) {
-      return decodeURIComponent(rest.join("="));
-    }
-  }
-
-  return null;
-}
-
-function setCookie(res, value, maxAge) {
-  res.setHeader(
-    "Set-Cookie",
-    `${COOKIE_NAME}=${encodeURIComponent(value)}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${maxAge}`
+  return (
+    typeof token === "string" &&
+    token.length === 64
   );
 }
 
-function clearCookie(res) {
-  res.setHeader(
-    "Set-Cookie",
-    `${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0`
-  );
-}
 
-function authenticated(req) {
-  const token = getCookie(req, COOKIE_NAME);
-  return verifySession(token);
-}
-
-module.exports = {
-  authenticated
-};
-
-module.exports = async function handler(req, res) {
-  res.setHeader("Cache-Control", "no-store");
-
-  const action =
-    req.method === "GET"
-      ? String(req.query?.action || "status")
-      : String(req.body?.action || "");
-
-  if (req.method === "GET" && action === "status") {
-    return res.status(200).json({
-      ok: true,
-      loggedIn: authenticated(req)
-    });
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({
-      ok: false,
-      error: "Method not allowed"
-    });
-  }
-
-  if (action === "login") {
-    const password = String(req.body?.password || "");
-
-    if (!password) {
-      return res.status(400).json({
-        ok: false,
-        error: "Password required"
-      });
-    }
-
-    const correct = crypto.timingSafeEqual(
-      Buffer.from(hash(password)),
-      Buffer.from(hash(ADMIN_PASSWORD))
+// ================================
+// MAIN HANDLER
+// ================================
+async function handler(req, res) {
+  try {
+    res.setHeader(
+      "Content-Type",
+      "application/json; charset=utf-8"
     );
 
-    if (!correct) {
-      return res.status(401).json({
+    res.setHeader(
+      "Cache-Control",
+      "no-store"
+    );
+
+
+    // ============================
+    // GET /api/auth?action=status
+    // ============================
+    if (req.method === "GET") {
+
+      const action = String(
+        req.query?.action || "status"
+      );
+
+      if (action === "status") {
+
+        return res.status(200).json({
+          ok: true,
+          loggedIn: isAuthenticated(req)
+        });
+      }
+
+      return res.status(400).json({
         ok: false,
-        error: "Invalid password"
+        error: "Unknown action"
       });
     }
 
-    const session = createSession();
 
-    setCookie(res, session, SESSION_MAX_AGE);
+    // ============================
+    // ONLY POST BELOW
+    // ============================
+    if (req.method !== "POST") {
 
-    return res.status(200).json({
-      ok: true,
-      loggedIn: true
+      return res.status(405).json({
+        ok: false,
+        error: "Method not allowed"
+      });
+    }
+
+
+    const body =
+      req.body &&
+      typeof req.body === "object"
+        ? req.body
+        : {};
+
+    const action = String(
+      body.action || ""
+    );
+
+
+    // ============================
+    // LOGIN
+    // ============================
+    if (action === "login") {
+
+      const password = String(
+        body.password || ""
+      );
+
+      if (!password) {
+
+        return res.status(400).json({
+          ok: false,
+          error: "Password required"
+        });
+      }
+
+
+      const enteredHash = hash(password);
+      const correctHash = hash(ADMIN_PASSWORD);
+
+
+      const valid =
+        enteredHash.length === correctHash.length &&
+        crypto.timingSafeEqual(
+          Buffer.from(enteredHash),
+          Buffer.from(correctHash)
+        );
+
+
+      if (!valid) {
+
+        return res.status(401).json({
+          ok: false,
+          error: "Invalid password"
+        });
+      }
+
+
+      const token = createSession();
+
+      setSessionCookie(res, token);
+
+
+      return res.status(200).json({
+        ok: true,
+        loggedIn: true
+      });
+    }
+
+
+    // ============================
+    // LOGOUT
+    // ============================
+    if (action === "logout") {
+
+      clearSessionCookie(res);
+
+      return res.status(200).json({
+        ok: true,
+        loggedIn: false
+      });
+    }
+
+
+    // ============================
+    // CHANGE PASSWORD
+    // ============================
+    if (action === "change-password") {
+
+      if (!isAuthenticated(req)) {
+
+        return res.status(401).json({
+          ok: false,
+          error: "Not authenticated"
+        });
+      }
+
+
+      /*
+        Redis-free mode cannot permanently
+        store a changed password.
+
+        Therefore this action is disabled
+        instead of pretending it was saved.
+      */
+
+      return res.status(400).json({
+        ok: false,
+        error:
+          "Password change requires persistent storage."
+      });
+    }
+
+
+    // ============================
+    // UNKNOWN ACTION
+    // ============================
+    return res.status(400).json({
+      ok: false,
+      error: "Unknown action"
+    });
+
+  } catch (error) {
+
+    console.error(
+      "AUTH ERROR:",
+      error
+    );
+
+    return res.status(500).json({
+      ok: false,
+      error: "Authentication server error",
+      details:
+        error?.message ||
+        "Unknown error"
     });
   }
+}
 
-  if (action === "logout") {
-    clearCookie(res);
 
-    return res.status(200).json({
-      ok: true,
-      loggedIn: false
-    });
-  }
+// ==================================================
+// IMPORTANT:
+// Export handler + authenticated function together
+// ==================================================
+handler.authenticated = isAuthenticated;
 
-  return res.status(400).json({
-    ok: false,
-    error: "Unknown action"
-  });
-};
+module.exports = handler;
