@@ -2,6 +2,9 @@
   "name": "txg-information-center",
   "version": "4.0.0",
   "private": true,
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
     "libphonenumber-js": "^1.12.31"
   }
