@@ -1,172 +1,198 @@
 const {
-  checkPassword,
-  changePassword,
+  redis,
+  PASSWORD_KEY,
+  hashPassword,
+  ensurePassword,
+  isAuthenticated,
   createSession,
-  destroySession,
-  getCookieToken,
-  setSessionCookie,
-  clearSessionCookie,
-  requireAuth,
-  getClientIP,
-  loginRateLimit
+  deleteSession,
+  sessionCookie,
+  clearSessionCookie
 } = require("../lib/auth");
 
-function securityHeaders(res) {
-  res.setHeader("Cache-Control", "no-store");
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("Referrer-Policy", "no-referrer");
-}
+module.exports = async (req, res) => {
+  res.setHeader(
+    "Cache-Control",
+    "no-store"
+  );
 
-function sameOrigin(req) {
-  const origin = req.headers.origin;
+  res.setHeader(
+    "X-Content-Type-Options",
+    "nosniff"
+  );
 
-  if (!origin) {
-    return true;
-  }
-
-  const host = req.headers.host;
-
-  try {
-    return new URL(origin).host === host;
-  } catch {
-    return false;
-  }
-}
-
-module.exports = async function handler(req, res) {
-  securityHeaders(res);
-
-  if (!sameOrigin(req)) {
-    return res.status(403).json({
+  if (req.method !== "POST") {
+    return res.status(405).json({
       ok: false,
-      error: "Invalid origin"
+      message: "POST required"
     });
   }
 
-  const action = req.query.action;
-
   try {
-    if (req.method === "POST" && action === "login") {
-      const ip = getClientIP(req);
+    const action = String(
+      req.body?.action || ""
+    );
 
-      if (!(await loginRateLimit(ip))) {
-        return res.status(429).json({
-          ok: false,
-          error: "Too many login attempts. Try again later."
-        });
-      }
+    // ==============================
+    // LOGIN
+    // ==============================
 
-      const password = String(req.body?.password || "");
+    if (action === "login") {
+      const password = String(
+        req.body?.password || ""
+      );
 
       if (!password) {
         return res.status(400).json({
           ok: false,
-          error: "Password required"
+          message: "Password required"
         });
       }
 
-      const valid = await checkPassword(password);
+      const savedHash =
+        await ensurePassword();
 
-      if (!valid) {
+      if (
+        hashPassword(password) !==
+        savedHash
+      ) {
         return res.status(401).json({
           ok: false,
-          error: "Invalid password"
+          message: "Wrong password"
         });
       }
 
-      const token = await createSession();
+      const token =
+        await createSession();
 
-      setSessionCookie(res, token);
-
-      return res.status(200).json({
-        ok: true
-      });
-    }
-
-    if (req.method === "POST" && action === "logout") {
-      const token = getCookieToken(req);
-
-      await destroySession(token);
-      clearSessionCookie(res);
-
-      return res.status(200).json({
-        ok: true
-      });
-    }
-
-    if (req.method === "GET" && action === "status") {
-      const token = getCookieToken(req);
-      const valid = await requireAuth(req, res);
-
-      if (!valid) {
-        return;
-      }
+      res.setHeader(
+        "Set-Cookie",
+        sessionCookie(token)
+      );
 
       return res.status(200).json({
         ok: true,
-        loggedIn: true
+        message: "Login successful"
       });
     }
 
-    if (req.method === "POST" && action === "change-password") {
-      const token = await requireAuth(req, res);
+    // ==============================
+    // STATUS
+    // ==============================
 
-      if (!token) {
-        return;
+    if (action === "status") {
+      const loggedIn =
+        await isAuthenticated(req);
+
+      return res.status(200).json({
+        ok: true,
+        loggedIn
+      });
+    }
+
+    // ==============================
+    // LOGOUT
+    // ==============================
+
+    if (action === "logout") {
+      await deleteSession(req);
+
+      res.setHeader(
+        "Set-Cookie",
+        clearSessionCookie()
+      );
+
+      return res.status(200).json({
+        ok: true
+      });
+    }
+
+    // ==============================
+    // CHANGE PASSWORD
+    // ==============================
+
+    if (action === "change-password") {
+      const loggedIn =
+        await isAuthenticated(req);
+
+      if (!loggedIn) {
+        return res.status(401).json({
+          ok: false,
+          message: "Login required"
+        });
       }
 
-      const currentPassword = String(
-        req.body?.currentPassword || ""
+      const oldPassword = String(
+        req.body?.oldPassword || ""
       );
 
       const newPassword = String(
         req.body?.newPassword || ""
       );
 
-      if (!currentPassword || !newPassword) {
+      if (
+        !oldPassword ||
+        !newPassword
+      ) {
         return res.status(400).json({
           ok: false,
-          error: "Both passwords are required"
+          message:
+            "Old and new password required"
         });
       }
 
-      if (newPassword.length < 10) {
+      if (newPassword.length < 8) {
         return res.status(400).json({
           ok: false,
-          error: "New password must contain at least 10 characters"
+          message:
+            "New password must be at least 8 characters"
         });
       }
 
-      const currentValid =
-        await checkPassword(currentPassword);
+      const currentHash =
+        await ensurePassword();
 
-      if (!currentValid) {
+      if (
+        hashPassword(oldPassword) !==
+        currentHash
+      ) {
         return res.status(401).json({
           ok: false,
-          error: "Current password is incorrect"
+          message:
+            "Old password is incorrect"
         });
       }
 
-      await changePassword(newPassword);
-      clearSessionCookie(res);
+      await redis.set(
+        PASSWORD_KEY,
+        hashPassword(newPassword)
+      );
+
+      await deleteSession(req);
+
+      res.setHeader(
+        "Set-Cookie",
+        clearSessionCookie()
+      );
 
       return res.status(200).json({
         ok: true,
-        message: "Password changed. Please log in again."
+        message:
+          "Password changed. Login again."
       });
     }
 
-    return res.status(404).json({
+    return res.status(400).json({
       ok: false,
-      error: "Unknown action"
+      message: "Invalid action"
     });
+
   } catch (error) {
     console.error(error);
 
     return res.status(500).json({
       ok: false,
-      error: "Server error"
+      message: "Authentication server error"
     });
   }
 };
