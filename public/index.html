@@ -1,566 +1,1640 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1">
 
-<meta
- name="viewport"
- content="width=device-width,initial-scale=1"
->
-
-<title>TXG Information</title>
+<title>TXG Information Center</title>
 
 <style>
-
-*{
- box-sizing:border-box;
+* {
+  box-sizing: border-box;
 }
 
-body{
- margin:0;
- background:#07090f;
- color:#fff;
- font-family:Arial,sans-serif;
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: #020817;
+  color: #e8f3ff;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
-.login{
- min-height:100vh;
- display:flex;
- align-items:center;
- justify-content:center;
- padding:20px;
+body {
+  overflow-x: hidden;
 }
 
-.card{
- width:100%;
- max-width:430px;
- background:#101521;
- border:1px solid #252c3b;
- border-radius:22px;
- padding:25px;
+/* ======================================
+   CODE BACKGROUND
+====================================== */
+
+#codeBg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    radial-gradient(
+      circle at 50% 20%,
+      rgba(0,120,255,.20),
+      transparent 45%
+    ),
+    #020817;
 }
 
-.logo{
- font-size:28px;
- font-weight:bold;
- margin-bottom:10px;
+.codeLine {
+  position: absolute;
+  white-space: nowrap;
+
+  font-family:
+    "Courier New",
+    monospace;
+
+  font-size: 12px;
+
+  color:
+    rgba(70,170,255,.48);
+
+  text-shadow:
+    0 0 8px
+    rgba(0,130,255,.7);
+
+  animation:
+    codeMove linear forwards;
 }
 
-input{
- width:100%;
- padding:14px;
- margin:8px 0;
- background:#080b11;
- color:white;
- border:1px solid #293141;
- border-radius:12px;
- outline:none;
+@keyframes codeMove {
+  0% {
+    transform:
+      translateY(110vh);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform:
+      translateY(-120px);
+    opacity: 0;
+  }
 }
 
-button{
- border:0;
- padding:13px 18px;
- border-radius:12px;
- background:#7157ff;
- color:white;
- font-weight:bold;
- cursor:pointer;
+/* ======================================
+   LOGIN
+====================================== */
+
+#loginScreen {
+  position: relative;
+  z-index: 10;
+
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
 }
 
-.login button{
- width:100%;
- margin-top:10px;
+.loginBox {
+  width: 100%;
+  max-width: 390px;
+
+  padding: 30px;
+
+  border:
+    1px solid
+    rgba(50,150,255,.30);
+
+  border-radius: 24px;
+
+  background:
+    rgba(3,15,35,.88);
+
+  backdrop-filter:
+    blur(18px);
+
+  box-shadow:
+    0 0 50px
+    rgba(0,100,255,.20);
 }
 
-#panel{
- display:none;
- padding:20px;
- max-width:1200px;
- margin:auto;
+.logo {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 1px;
+
+  color: #55b8ff;
+
+  text-shadow:
+    0 0 20px
+    rgba(0,150,255,.8);
 }
 
-.header{
- display:flex;
- justify-content:space-between;
- align-items:center;
- margin-bottom:25px;
+.sub {
+  text-align: center;
+  color: #7691ad;
+  margin: 8px 0 25px;
+  font-size: 13px;
 }
 
-.tools{
- display:grid;
- grid-template-columns:
- repeat(auto-fit,minmax(260px,1fr));
- gap:15px;
+input {
+  width: 100%;
+
+  border: 1px solid
+    rgba(80,150,220,.28);
+
+  outline: none;
+
+  background:
+    rgba(0,10,25,.75);
+
+  color: white;
+
+  border-radius: 13px;
+
+  padding: 14px;
+
+  font-size: 16px;
 }
 
-.tool{
- background:#101521;
- border:1px solid #252c3b;
- border-radius:18px;
- padding:18px;
+input:focus {
+  border-color:
+    #269cff;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(38,156,255,.10);
 }
 
-.tool h3{
- margin-top:0;
+button {
+  border: 0;
+  cursor: pointer;
+
+  border-radius: 13px;
+
+  padding: 13px 16px;
+
+  font-weight: 700;
+
+  color: white;
+
+  background:
+    linear-gradient(
+      135deg,
+      #087cff,
+      #0051c9
+    );
+
+  box-shadow:
+    0 0 20px
+    rgba(0,110,255,.18);
 }
 
-.row{
- display:flex;
- gap:7px;
+button:hover {
+  filter: brightness(1.12);
 }
 
-.row button{
- white-space:nowrap;
+.full {
+  width: 100%;
+  margin-top: 12px;
 }
 
-.result{
- margin-top:12px;
- padding:12px;
- background:#080b11;
- border-radius:12px;
- font-size:13px;
- overflow:auto;
+.error {
+  color: #ff7070;
+  font-size: 13px;
+  margin-top: 12px;
+  text-align: center;
 }
 
-.line{
- padding:7px 0;
- border-bottom:1px solid #202635;
+/* ======================================
+   DASHBOARD
+====================================== */
+
+#dashboard {
+  display: none;
+
+  position: relative;
+  z-index: 2;
+
+  min-height: 100vh;
+
+  padding: 22px;
 }
 
-.key{
- color:#8f99ab;
+.dashboardWrap {
+  width: 100%;
+  max-width: 1100px;
+  margin: auto;
 }
 
-.error{
- color:#ff526d;
- margin-top:10px;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 15px;
+
+  margin-bottom: 20px;
 }
 
-@media(max-width:600px){
+.brand {
+  font-size: 25px;
+  font-weight: 900;
 
- .row{
-  flex-direction:column;
- }
+  color: #5bbaff;
 
- .header{
-  align-items:flex-start;
- }
-
+  text-shadow:
+    0 0 18px
+    rgba(0,150,255,.65);
 }
 
+.headerActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.smallBtn {
+  padding: 10px 13px;
+  font-size: 13px;
+}
+
+/* ======================================
+   MAIN PANEL
+====================================== */
+
+.panel {
+  border:
+    1px solid
+    rgba(70,160,255,.25);
+
+  background:
+    rgba(3,15,35,.78);
+
+  backdrop-filter:
+    blur(15px);
+
+  border-radius: 22px;
+
+  padding: 20px;
+
+  box-shadow:
+    0 0 40px
+    rgba(0,90,255,.12);
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+.searchRow {
+  display: flex;
+  gap: 10px;
+}
+
+.searchRow input {
+  flex: 1;
+}
+
+.tools {
+  display: grid;
+
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(135px, 1fr)
+    );
+
+  gap: 10px;
+
+  margin-top: 18px;
+}
+
+.tool {
+  padding: 15px 10px;
+
+  background:
+    rgba(5,25,55,.82);
+
+  border:
+    1px solid
+    rgba(65,145,230,.20);
+
+  color: #b8d9f8;
+}
+
+.tool.active {
+  border-color:
+    #168fff;
+
+  background:
+    rgba(0,100,220,.20);
+
+  color: white;
+
+  box-shadow:
+    0 0 18px
+    rgba(0,120,255,.18);
+}
+
+/* ======================================
+   RESPONSE
+====================================== */
+
+#status {
+  margin-top: 14px;
+
+  color: #73bfff;
+
+  font-size: 13px;
+}
+
+#response {
+  margin-top: 15px;
+
+  min-height: 180px;
+
+  max-height: 500px;
+
+  overflow: auto;
+
+  padding: 17px;
+
+  border-radius: 15px;
+
+  background:
+    rgba(0,5,15,.82);
+
+  border:
+    1px solid
+    rgba(80,150,220,.18);
+
+  font-family:
+    "Courier New",
+    monospace;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+
+  white-space: pre-wrap;
+
+  word-break: break-word;
+
+  color: #a9d8ff;
+}
+
+/* ======================================
+   CUSTOM API
+====================================== */
+
+.customSection {
+  margin-top: 20px;
+}
+
+.customForm {
+  display: grid;
+
+  grid-template-columns:
+    1fr 2fr auto;
+
+  gap: 8px;
+}
+
+.customList {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin-top: 12px;
+}
+
+.customApi {
+  background:
+    rgba(0,90,190,.20);
+
+  border:
+    1px solid
+    rgba(50,140,240,.28);
+
+  color: #9fd4ff;
+}
+
+/* ======================================
+   MODAL
+====================================== */
+
+.modal {
+  display: none;
+
+  position: fixed;
+  inset: 0;
+
+  z-index: 50;
+
+  background:
+    rgba(0,5,15,.72);
+
+  backdrop-filter:
+    blur(7px);
+
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+}
+
+.modalBox {
+  width: 100%;
+  max-width: 420px;
+
+  background:
+    #041225;
+
+  border:
+    1px solid
+    rgba(60,150,255,.30);
+
+  border-radius: 20px;
+
+  padding: 23px;
+}
+
+.modalTitle {
+  font-size: 19px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+
+.modalButtons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.secondary {
+  background:
+    rgba(50,90,130,.30);
+}
+
+/* ======================================
+   MOBILE
+====================================== */
+
+@media(max-width:650px) {
+
+  #dashboard {
+    padding: 12px;
+  }
+
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .searchRow {
+    flex-direction: column;
+  }
+
+  .customForm {
+    grid-template-columns: 1fr;
+  }
+
+  .tools {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .panel {
+    padding: 14px;
+  }
+}
 </style>
-
 </head>
 
 <body>
 
+<div id="codeBg"></div>
+
+<!-- =====================================
+     LOGIN
+===================================== -->
+
+<section id="loginScreen">
+
+  <div class="loginBox">
+
+    <div class="logo">
+      TXG
+    </div>
+
+    <div class="sub">
+      INFORMATION CENTER
+    </div>
+
+    <input
+      id="loginPassword"
+      type="password"
+      placeholder="Enter password"
+      autocomplete="current-password"
+    >
+
+    <button
+      id="loginBtn"
+      class="full"
+    >
+      Login
+    </button>
+
+    <div
+      id="loginError"
+      class="error"
+    ></div>
+
+  </div>
+
+</section>
+
+<!-- =====================================
+     DASHBOARD
+===================================== -->
+
+<section id="dashboard">
+
+  <div class="dashboardWrap">
+
+    <div class="header">
+
+      <div class="brand">
+        TXG INFORMATION
+      </div>
+
+      <div class="headerActions">
+
+        <button
+          class="smallBtn"
+          id="changePasswordBtn"
+        >
+          Change Password
+        </button>
+
+        <button
+          class="smallBtn"
+          id="logoutBtn"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+
+    <div class="panel">
+
+      <div class="title">
+        Lookup Center
+      </div>
+
+      <div class="searchRow">
+
+        <input
+          id="lookupInput"
+          placeholder="Enter value..."
+          autocomplete="off"
+        >
+
+        <button id="searchBtn">
+          Search
+        </button>
+
+      </div>
+
+      <div
+        id="status"
+      >
+        Select a lookup type.
+      </div>
+
+      <div class="tools">
+
+        <button
+          class="tool active"
+          data-type="mobile"
+        >
+          📱 Mobile
+        </button>
+
+        <button
+          class="tool"
+          data-type="pin"
+        >
+          📍 PIN
+        </button>
+
+        <button
+          class="tool"
+          data-type="ifsc"
+        >
+          🏦 IFSC
+        </button>
+
+        <button
+          class="tool"
+          data-type="ip"
+        >
+          🌐 IP
+        </button>
+
+        <button
+          class="tool"
+          data-type="url"
+        >
+          🔗 URL
+        </button>
+
+        <button
+          class="tool"
+          data-type="upi"
+        >
+          💳 UPI
+        </button>
+
+      </div>
+
+      <pre id="response">
+Ready...
+      </pre>
+
+      <!-- CUSTOM API -->
+
+      <div class="customSection">
+
+        <div class="title">
+          Custom APIs
+        </div>
+
+        <div class="customForm">
+
+          <input
+            id="apiName"
+            placeholder="Button name"
+          >
+
+          <input
+            id="apiUrl"
+            placeholder="https://example.com/?message={message}"
+          >
+
+          <button id="addApiBtn">
+            Add API
+          </button>
+
+        </div>
+
+        <div
+          id="customList"
+          class="customList"
+        ></div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =====================================
+     CHANGE PASSWORD MODAL
+===================================== -->
+
 <div
- id="login"
- class="login"
+  id="passwordModal"
+  class="modal"
 >
 
-<div class="card">
+  <div class="modalBox">
 
-<div class="logo">
-TXG INFORMATION
-</div>
+    <div class="modalTitle">
+      Change Password
+    </div>
 
-<p>
-Secure Information Center
-</p>
+    <input
+      id="oldPassword"
+      type="password"
+      placeholder="Current password"
+    >
 
-<input
- id="password"
- type="password"
- placeholder="Admin Password"
->
+    <br><br>
 
-<button onclick="enter()">
-ENTER PANEL
-</button>
+    <input
+      id="newPassword"
+      type="password"
+      placeholder="New password"
+    >
 
-<div
- id="loginError"
- class="error"
-></div>
+    <div class="modalButtons">
 
-</div>
+      <button id="savePasswordBtn">
+        Save Password
+      </button>
 
-</div>
+      <button
+        id="closePasswordBtn"
+        class="secondary"
+      >
+        Cancel
+      </button>
 
+    </div>
 
-<div id="panel">
+    <div
+      id="passwordMessage"
+      class="error"
+    ></div>
 
-<div class="header">
-
-<div>
-
-<h1>TXG Information</h1>
-
-<div>
-Mobile • UPI • IFSC • PIN • Email • IP
-</div>
-
-</div>
-
-<button onclick="logout()">
-Logout
-</button>
+  </div>
 
 </div>
-
-
-<div class="tools">
-
-
-<div class="tool">
-
-<h3>📱 Mobile</h3>
-
-<input
- id="mobile"
- placeholder="+91 9876543210"
->
-
-<button
- onclick="search('mobile','mobile')"
->
-Search
-</button>
-
-<div id="mobileResult"></div>
-
-</div>
-
-
-<div class="tool">
-
-<h3>💳 UPI</h3>
-
-<input
- id="upi"
- placeholder="example@upi"
->
-
-<button
- onclick="search('upi','upi')"
->
-Search
-</button>
-
-<div id="upiResult"></div>
-
-</div>
-
-
-<div class="tool">
-
-<h3>🏦 IFSC</h3>
-
-<input
- id="ifsc"
- placeholder="SBIN0000001"
->
-
-<button
- onclick="search('ifsc','ifsc')"
->
-Search
-</button>
-
-<div id="ifscResult"></div>
-
-</div>
-
-
-<div class="tool">
-
-<h3>📮 PIN Code</h3>
-
-<input
- id="pin"
- placeholder="700001"
->
-
-<button
- onclick="search('pin','pin')"
->
-Search
-</button>
-
-<div id="pinResult"></div>
-
-</div>
-
-
-<div class="tool">
-
-<h3>📧 Email</h3>
-
-<input
- id="email"
- placeholder="user@example.com"
->
-
-<button
- onclick="search('email','email')"
->
-Search
-</button>
-
-<div id="emailResult"></div>
-
-</div>
-
-
-<div class="tool">
-
-<h3>🌐 IP Address</h3>
-
-<input
- id="ip"
- placeholder="8.8.8.8"
->
-
-<button
- onclick="search('ip','ip')"
->
-Search
-</button>
-
-<div id="ipResult"></div>
-
-</div>
-
-
-</div>
-
-</div>
-
 
 <script>
+/* =====================================
+   BLUE FAKE CODE
+===================================== */
 
-const PASSWORD =
-"TXG@Admin#2026!Secure";
+(function () {
 
-
-function enter(){
-
- const p =
- document.getElementById(
-  "password"
- ).value;
-
- if(p !== PASSWORD){
-
-  document.getElementById(
-   "loginError"
-  ).textContent =
-   "Wrong password.";
-
-  return;
- }
-
- sessionStorage.setItem(
-  "txg_login",
-  "1"
- );
-
- document.getElementById(
-  "login"
- ).style.display="none";
-
- document.getElementById(
-  "panel"
- ).style.display="block";
-}
-
-
-function logout(){
-
- sessionStorage.removeItem(
-  "txg_login"
- );
-
- location.reload();
-}
-
-
-if(
- sessionStorage.getItem(
-  "txg_login"
- ) === "1"
-){
-
- document.getElementById(
-  "login"
- ).style.display="none";
-
- document.getElementById(
-  "panel"
- ).style.display="block";
-}
-
-
-async function search(type,id){
-
- const value =
- document.getElementById(id)
- .value.trim();
-
- const output =
- document.getElementById(
-  id+"Result"
- );
-
- if(!value){
-
-  output.innerHTML =
-   '<div class="error">Enter value.</div>';
-
-  return;
- }
-
- output.innerHTML =
-  "Searching...";
-
- try{
-
-  const response =
-   await fetch("/api/lookup",{
-
-    method:"POST",
-
-    headers:{
-     "Content-Type":
-      "application/json",
-
-     "x-txg-key":
-      PASSWORD
-    },
-
-    body:JSON.stringify({
-     type,
-     value
-    })
-
-   });
-
-  const data =
-   await response.json();
-
-  if(!response.ok){
-
-   throw new Error(
-    data.error || "Failed"
-   );
-
-  }
-
-  output.innerHTML =
-   render(data.data);
-
- }catch(e){
-
-  output.innerHTML =
-   `<div class="error">
-   ${escapeHtml(e.message)}
-   </div>`;
-
- }
-
-}
-
-
-function render(data){
-
- if(
-  data === null ||
-  data === undefined
- ){
-  return "";
- }
-
- if(
-  typeof data !== "object"
- ){
-  return escapeHtml(data);
- }
-
- let html =
-  '<div class="result">';
-
- for(
-  const [key,value]
-  of Object.entries(data)
- ){
-
-  let display;
-
-  if(
-   typeof value === "object"
-  ){
-
-   display =
-    JSON.stringify(
-     value,
-     null,
-     2
+  const bg =
+    document.getElementById(
+      "codeBg"
     );
 
-  }else{
+  const codes = [
+    "const TXG = initialize();",
+    "API_STATUS: CONNECTED",
+    "fetch('/api/lookup')",
+    "response.status === 200",
+    "VERIFYING_REQUEST...",
+    "UPI_VALIDATION: READY",
+    "IFSC_DATABASE: ONLINE",
+    "MOBILE_LOOKUP: ACTIVE",
+    "PIN_SERVICE: CONNECTED",
+    "IP_LOOKUP: RUNNING",
+    "CUSTOM_API: READY",
+    "SECURE_SESSION: TRUE",
+    "AUTHENTICATION: OK",
+    "request_id: TXG_2026",
+    "await response.json();",
+    "HTTP 200 OK",
+    "SYSTEM_STATUS: ONLINE",
+    "ENCRYPTION: ACTIVE",
+    "DATABASE: CONNECTED",
+    "TXG_INFORMATION_CENTER",
+    "lookup.process(input);",
+    "server.response();",
+    "session.verify();",
+    "UPI.handle.validate();",
+    "IFSC.branch.lookup();"
+  ];
 
-   display =
-    String(value);
+  function createLine() {
 
+    const line =
+      document.createElement(
+        "div"
+      );
+
+    line.className =
+      "codeLine";
+
+    line.textContent =
+      codes[
+        Math.floor(
+          Math.random() *
+          codes.length
+        )
+      ];
+
+    line.style.left =
+      Math.random() * 95 + "%";
+
+    line.style.animationDuration =
+      7 + Math.random() * 10 + "s";
+
+    line.style.animationDelay =
+      Math.random() * 2 + "s";
+
+    line.style.fontSize =
+      10 + Math.random() * 4 + "px";
+
+    bg.appendChild(line);
+
+    setTimeout(
+      () => line.remove(),
+      19000
+    );
   }
 
-  html +=
-   `<div class="line">
-      <div class="key">
-       ${escapeHtml(
-        format(key)
-       )}
-      </div>
-      <div>
-       ${escapeHtml(display)}
-      </div>
-    </div>`;
- }
+  for (
+    let i = 0;
+    i < 30;
+    i++
+  ) {
+    createLine();
+  }
 
- html +=
-  "</div>";
+  setInterval(
+    createLine,
+    500
+  );
 
- return html;
+})();
+
+/* =====================================
+   VARIABLES
+===================================== */
+
+let currentType =
+  "mobile";
+
+let selectedCustomApi =
+  null;
+
+/* =====================================
+   ELEMENTS
+===================================== */
+
+const loginScreen =
+  document.getElementById(
+    "loginScreen"
+  );
+
+const dashboard =
+  document.getElementById(
+    "dashboard"
+  );
+
+const loginPassword =
+  document.getElementById(
+    "loginPassword"
+  );
+
+const loginBtn =
+  document.getElementById(
+    "loginBtn"
+  );
+
+const loginError =
+  document.getElementById(
+    "loginError"
+  );
+
+const lookupInput =
+  document.getElementById(
+    "lookupInput"
+  );
+
+const searchBtn =
+  document.getElementById(
+    "searchBtn"
+  );
+
+const responseBox =
+  document.getElementById(
+    "response"
+  );
+
+const statusBox =
+  document.getElementById(
+    "status"
+  );
+
+const customList =
+  document.getElementById(
+    "customList"
+  );
+
+/* =====================================
+   AUTH
+===================================== */
+
+async function auth(action, data = {}) {
+
+  const response =
+    await fetch(
+      "/api/auth",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+        body: JSON.stringify({
+          action,
+          ...data
+        })
+      }
+    );
+
+  return response.json();
 }
 
+async function checkLogin() {
 
-function format(key){
+  try {
 
- return String(key)
-  .replace(
-   /([A-Z])/g,
-   " $1"
+    const result =
+      await auth("status");
+
+    if (
+      result.ok &&
+      result.loggedIn
+    ) {
+      showDashboard();
+    } else {
+      showLogin();
+    }
+
+  } catch (_) {
+    showLogin();
+  }
+}
+
+function showLogin() {
+
+  loginScreen.style.display =
+    "flex";
+
+  dashboard.style.display =
+    "none";
+}
+
+function showDashboard() {
+
+  loginScreen.style.display =
+    "none";
+
+  dashboard.style.display =
+    "block";
+}
+
+/* =====================================
+   LOGIN
+===================================== */
+
+loginBtn.addEventListener(
+  "click",
+  async () => {
+
+    loginError.textContent =
+      "Checking...";
+
+    const password =
+      loginPassword.value;
+
+    if (!password) {
+      loginError.textContent =
+        "Enter password";
+      return;
+    }
+
+    try {
+
+      const result =
+        await auth(
+          "login",
+          { password }
+        );
+
+      if (result.ok) {
+
+        loginPassword.value =
+          "";
+
+        loginError.textContent =
+          "";
+
+        showDashboard();
+
+      } else {
+
+        loginError.textContent =
+          result.message ||
+          "Login failed";
+      }
+
+    } catch (_) {
+
+      loginError.textContent =
+        "Server error";
+    }
+  }
+);
+
+loginPassword.addEventListener(
+  "keydown",
+  e => {
+
+    if (
+      e.key === "Enter"
+    ) {
+      loginBtn.click();
+    }
+
+  }
+);
+
+/* =====================================
+   LOGOUT
+===================================== */
+
+document
+  .getElementById(
+    "logoutBtn"
   )
-  .replace(
-   /^./,
-   x=>x.toUpperCase()
+  .addEventListener(
+    "click",
+    async () => {
+
+      await auth("logout");
+
+      showLogin();
+
+    }
+  );
+
+/* =====================================
+   CHANGE PASSWORD
+===================================== */
+
+const passwordModal =
+  document.getElementById(
+    "passwordModal"
+  );
+
+document
+  .getElementById(
+    "changePasswordBtn"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      passwordModal.style.display =
+        "flex";
+
+      document
+        .getElementById(
+          "passwordMessage"
+        )
+        .textContent = "";
+
+    }
+  );
+
+document
+  .getElementById(
+    "closePasswordBtn"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      passwordModal.style.display =
+        "none";
+
+    }
+  );
+
+document
+  .getElementById(
+    "savePasswordBtn"
+  )
+  .addEventListener(
+    "click",
+    async () => {
+
+      const oldPassword =
+        document.getElementById(
+          "oldPassword"
+        ).value;
+
+      const newPassword =
+        document.getElementById(
+          "newPassword"
+        ).value;
+
+      const message =
+        document.getElementById(
+          "passwordMessage"
+        );
+
+      if (
+        !oldPassword ||
+        !newPassword
+      ) {
+        message.textContent =
+          "Fill both passwords";
+        return;
+      }
+
+      try {
+
+        const result =
+          await auth(
+            "change-password",
+            {
+              oldPassword,
+              newPassword
+            }
+          );
+
+        if (result.ok) {
+
+          message.style.color =
+            "#61d5ff";
+
+          message.textContent =
+            "Password changed. Login again.";
+
+          setTimeout(
+            () => {
+
+              passwordModal.style.display =
+                "none";
+
+              showLogin();
+
+            },
+            1200
+          );
+
+        } else {
+
+          message.style.color =
+            "#ff7070";
+
+          message.textContent =
+            result.message ||
+            "Password change failed";
+        }
+
+      } catch (_) {
+
+        message.textContent =
+          "Server error";
+      }
+
+    }
+  );
+
+/* =====================================
+   LOOKUP TYPE
+===================================== */
+
+document
+  .querySelectorAll(
+    ".tool"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll(
+              ".tool"
+            )
+            .forEach(
+              x =>
+                x.classList.remove(
+                  "active"
+                )
+            );
+
+          button.classList.add(
+            "active"
+          );
+
+          selectedCustomApi =
+            null;
+
+          currentType =
+            button.dataset.type;
+
+          statusBox.textContent =
+            "Selected: " +
+            currentType.toUpperCase();
+
+          lookupInput.placeholder =
+            getPlaceholder(
+              currentType
+            );
+        }
+      );
+
+    }
+  );
+
+function getPlaceholder(type) {
+
+  const map = {
+    mobile:
+      "Enter mobile number...",
+    pin:
+      "Enter 6 digit PIN...",
+    ifsc:
+      "Enter IFSC...",
+    ip:
+      "Enter IP address...",
+    url:
+      "Enter URL...",
+    upi:
+      "Enter UPI ID..."
+  };
+
+  return (
+    map[type] ||
+    "Enter value..."
+  );
+}
+
+/* =====================================
+   BUILT-IN LOOKUP
+===================================== */
+
+async function runLookup() {
+
+  const value =
+    lookupInput.value.trim();
+
+  if (!value) {
+
+    statusBox.textContent =
+      "Enter a value first.";
+
+    return;
+  }
+
+  if (selectedCustomApi) {
+
+    await runCustomApi(
+      selectedCustomApi,
+      value
+    );
+
+    return;
+  }
+
+  statusBox.textContent =
+    "Running " +
+    currentType.toUpperCase() +
+    " lookup...";
+
+  responseBox.textContent =
+    "Processing...";
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/lookup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+          body:
+            JSON.stringify({
+              type:
+                currentType,
+              value
+            })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    responseBox.textContent =
+      JSON.stringify(
+        data,
+        null,
+        2
+      );
+
+    statusBox.textContent =
+      data.ok
+        ? "Lookup completed."
+        : (
+          data.message ||
+          "Lookup failed."
+        );
+
+  } catch (error) {
+
+    responseBox.textContent =
+      error.message;
+
+    statusBox.textContent =
+      "Request failed.";
+  }
+}
+
+searchBtn.addEventListener(
+  "click",
+  runLookup
+);
+
+lookupInput.addEventListener(
+  "keydown",
+  e => {
+
+    if (
+      e.key === "Enter"
+    ) {
+      runLookup();
+    }
+
+  }
+);
+
+/* =====================================
+   CUSTOM APIs
+===================================== */
+
+function getCustomApis() {
+
+  try {
+
+    return JSON.parse(
+      localStorage.getItem(
+        "txg_custom_apis"
+      ) || "[]"
+    );
+
+  } catch (_) {
+
+    return [];
+  }
+}
+
+function saveCustomApis(apis) {
+
+  localStorage.setItem(
+    "txg_custom_apis",
+    JSON.stringify(apis)
   );
 
 }
 
+function renderCustomApis() {
 
-function escapeHtml(value){
+  customList.innerHTML =
+    "";
 
- return String(value ?? "")
-  .replaceAll("&","&amp;")
-  .replaceAll("<","&lt;")
-  .replaceAll(">","&gt;")
-  .replaceAll('"',"&quot;")
-  .replaceAll("'","&#039;");
+  const apis =
+    getCustomApis();
 
+  apis.forEach(
+    (api, index) => {
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+      button.className =
+        "customApi";
+
+      button.textContent =
+        api.name;
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll(
+              ".tool"
+            )
+            .forEach(
+              x =>
+                x.classList.remove(
+                  "active"
+                )
+            );
+
+          selectedCustomApi =
+            api;
+
+          statusBox.textContent =
+            "Custom API selected: " +
+            api.name;
+
+          lookupInput.placeholder =
+            "Enter value for " +
+            api.name +
+            "...";
+
+        }
+      );
+
+      customList.appendChild(
+        button
+      );
+
+    }
+  );
 }
+
+document
+  .getElementById(
+    "addApiBtn"
+  )
+  .addEventListener(
+    "click",
+    () => {
+
+      const name =
+        document
+          .getElementById(
+            "apiName"
+          )
+          .value
+          .trim();
+
+      const url =
+        document
+          .getElementById(
+            "apiUrl"
+          )
+          .value
+          .trim();
+
+      if (!name) {
+        alert(
+          "Enter API button name"
+        );
+        return;
+      }
+
+      if (
+        !url.startsWith(
+          "https://"
+        )
+      ) {
+        alert(
+          "Only HTTPS APIs are allowed"
+        );
+        return;
+      }
+
+      if (
+        !url
+          .toLowerCase()
+          .includes(
+            "{message}"
+          )
+      ) {
+        alert(
+          "API URL must contain {message}"
+        );
+        return;
+      }
+
+      const apis =
+        getCustomApis();
+
+      apis.push({
+        name,
+        url
+      });
+
+      saveCustomApis(
+        apis
+      );
+
+      document
+        .getElementById(
+          "apiName"
+        )
+        .value = "";
+
+      document
+        .getElementById(
+          "apiUrl"
+        )
+        .value = "";
+
+      renderCustomApis();
+
+      statusBox.textContent =
+        "Custom API added.";
+    }
+  );
+
+/* =====================================
+   CUSTOM API RUNNER
+===================================== */
+
+async function runCustomApi(
+  api,
+  message
+) {
+
+  statusBox.textContent =
+    "Running " +
+    api.name +
+    "...";
+
+  responseBox.textContent =
+    "Processing...";
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/custom",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+          body:
+            JSON.stringify({
+              url:
+                api.url,
+              message
+            })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    responseBox.textContent =
+      JSON.stringify(
+        data,
+        null,
+        2
+      );
+
+    statusBox.textContent =
+      data.ok
+        ? "Custom API completed."
+        : (
+          data.message ||
+          "Custom API failed."
+        );
+
+  } catch (error) {
+
+    responseBox.textContent =
+      error.message;
+
+    statusBox.textContent =
+      "Custom API request failed.";
+  }
+}
+
+/* =====================================
+   START
+===================================== */
+
+renderCustomApis();
+
+lookupInput.placeholder =
+  getPlaceholder(
+    currentType
+  );
+
+checkLogin();
 
 </script>
 
