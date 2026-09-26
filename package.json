@@ -1,12 +1,8 @@
 {
   "name": "txg-information-center",
-  "version": "2.0.0",
+  "version": "4.0.0",
   "private": true,
-  "engines": {
-    "node": "24.x"
-  },
   "dependencies": {
-    "@upstash/redis": "^1.35.3",
     "libphonenumber-js": "^1.12.31"
   }
 }
