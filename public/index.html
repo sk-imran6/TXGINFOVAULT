@@ -1,1316 +1,1853 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TXG Information Center</title><style>
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#020817;color:#e5f2ff}
-body{overflow-x:hidden}
 
-#codeBg{
-position:fixed;
-inset:0;
-width:100%;
-height:100%;
-z-index:0;
-opacity:.24;
-pointer-events:none
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
+
+<title>TXG Information Center</title>
+
+<style>
+
+* {
+  box-sizing: border-box;
 }
 
-.overlay{
-position:fixed;
-inset:0;
-background:
-radial-gradient(circle at 15% 10%,rgba(0,140,255,.13),transparent 32%),
-radial-gradient(circle at 85% 90%,rgba(0,80,255,.12),transparent 35%),
-rgba(1,7,18,.72);
-z-index:1;
-pointer-events:none
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family:
+    Inter,
+    Arial,
+    sans-serif;
+  background: #020712;
+  color: #eaf4ff;
 }
 
-.app{
-position:relative;
-z-index:2;
-width:min(1100px,94%);
-margin:auto;
-padding:30px 0 60px
+body {
+  overflow-x: hidden;
 }
 
-.hidden{display:none!important}
 
-.login{
-min-height:85vh;
-display:flex;
-align-items:center;
-justify-content:center
+/* ==========================================
+   BACKGROUND
+========================================== */
+
+.code-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .22;
 }
 
-.login-card,.panel{
-background:rgba(5,18,38,.88);
-border:1px solid rgba(65,160,255,.22);
-border-radius:22px;
-box-shadow:0 20px 70px rgba(0,0,0,.45);
-backdrop-filter:blur(14px)
+.code-line {
+  position: absolute;
+  white-space: nowrap;
+  color: #168cff;
+  font-family: monospace;
+  font-size: 12px;
+  animation: moveCode linear infinite;
 }
 
-.login-card{
-width:min(420px,100%);
-padding:32px
+@keyframes moveCode {
+  from {
+    transform: translateX(110vw);
+  }
+
+  to {
+    transform: translateX(-120vw);
+  }
 }
 
-.logo{
-font-size:28px;
-font-weight:900;
-color:#55b9ff;
-margin-bottom:8px
+
+/* ==========================================
+   MAIN
+========================================== */
+
+.app {
+  position: relative;
+  z-index: 2;
+  width: min(1100px, 94%);
+  margin: auto;
+  padding: 35px 0 70px;
 }
 
-.sub{
-color:#8da5bf;
-font-size:14px;
-margin-bottom:25px
+
+/* ==========================================
+   LOGIN
+========================================== */
+
+.login-screen {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-input,button,textarea{
-width:100%;
-border-radius:12px;
-border:1px solid rgba(100,170,255,.22);
-background:rgba(0,10,25,.85);
-color:white;
-padding:13px 14px;
-font-size:15px;
-outline:none
+.login-box {
+  width: min(430px, 100%);
+  background: rgba(5, 14, 29, .92);
+  border: 1px solid rgba(0, 132, 255, .28);
+  border-radius: 22px;
+  padding: 32px;
+  box-shadow:
+    0 0 60px rgba(0, 100, 255, .12);
+  backdrop-filter: blur(18px);
 }
 
-input:focus,textarea:focus{
-border-color:#2d9cff;
-box-shadow:0 0 0 3px rgba(45,156,255,.12)
+.logo {
+  font-size: 29px;
+  font-weight: 900;
+  letter-spacing: 1px;
 }
 
-button{
-cursor:pointer;
-font-weight:700;
-background:linear-gradient(135deg,#087cff,#0055d8);
-border:0
+.logo span {
+  color: #1694ff;
 }
 
-button:hover{filter:brightness(1.08)}
-button:disabled{opacity:.55;cursor:not-allowed}
-
-button.secondary{background:rgba(255,255,255,.07)}
-button.danger{background:#8d2330}
-
-.error{
-margin-top:12px;
-color:#ff7180;
-font-size:14px
+.subtitle {
+  margin-top: 8px;
+  color: #7890aa;
+  font-size: 14px;
 }
 
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:15px;
-margin-bottom:22px
+
+/* ==========================================
+   INPUT
+========================================== */
+
+input,
+button {
+  font: inherit;
 }
 
-.header-title{
-font-size:27px;
-font-weight:900
+input {
+  width: 100%;
+  margin-top: 18px;
+  padding: 15px 16px;
+  border-radius: 13px;
+  border: 1px solid #193450;
+  background: #06101f;
+  color: white;
+  outline: none;
 }
 
-.header-sub{
-color:#7e98b5;
-font-size:13px;
-margin-top:4px
+input:focus {
+  border-color: #148cff;
+  box-shadow:
+    0 0 0 3px rgba(20, 140, 255, .12);
 }
 
-.header-actions{
-display:flex;
-gap:8px
+
+/* ==========================================
+   BUTTON
+========================================== */
+
+button {
+  border: 0;
+  cursor: pointer;
 }
 
-.header-actions button{
-width:auto;
-padding:10px 15px
+.primary {
+  width: 100%;
+  margin-top: 14px;
+  padding: 15px;
+  border-radius: 13px;
+  color: white;
+  font-weight: 800;
+  background:
+    linear-gradient(
+      135deg,
+      #087cff,
+      #0051bb
+    );
 }
 
-.status{
-margin-bottom:15px;
-color:#57d68d;
-font-size:13px
+.primary:hover {
+  filter: brightness(1.12);
 }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:14px
+.logout {
+  padding: 10px 15px;
+  border-radius: 11px;
+  background: #101d2d;
+  color: #b8c9dc;
 }
 
-.tool{
-padding:22px;
-min-height:145px;
-text-align:left
+
+/* ==========================================
+   ERROR
+========================================== */
+
+.error {
+  margin-top: 13px;
+  color: #ff7180;
+  font-size: 13px;
+  min-height: 18px;
 }
 
-.tool-title{
-font-size:18px;
-font-weight:800;
-margin-bottom:7px
+
+/* ==========================================
+   DASHBOARD
+========================================== */
+
+.dashboard {
+  display: none;
 }
 
-.tool-desc{
-color:#7e98b5;
-font-size:13px;
-line-height:1.5;
-margin-bottom:17px
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 28px;
 }
 
-.tool button{padding:10px}
-
-.panel{
-padding:22px;
-margin-top:18px
+.brand {
+  font-size: 25px;
+  font-weight: 900;
 }
 
-.panel-title{
-font-size:19px;
-font-weight:800;
-margin-bottom:15px
+.brand span {
+  color: #148cff;
 }
 
-.form-row{
-display:grid;
-grid-template-columns:1fr 180px;
-gap:10px
+.tagline {
+  margin-top: 5px;
+  color: #688099;
+  font-size: 13px;
 }
 
-.result{
-margin-top:18px;
-padding:17px;
-border-radius:15px;
-background:rgba(0,0,0,.28);
-border:1px solid rgba(80,160,255,.13);
-white-space:pre-wrap;
-word-break:break-word;
-max-height:500px;
-overflow:auto;
-color:#cfe7ff;
-font-family:Consolas,monospace;
-font-size:13px
+
+/* ==========================================
+   GRID
+========================================== */
+
+.grid {
+  display: grid;
+  grid-template-columns:
+    repeat(
+      auto-fit,
+      minmax(220px, 1fr)
+    );
+  gap: 16px;
 }
 
-.result.success{
-border-color:rgba(60,220,140,.25)
+
+/* ==========================================
+   MODULE
+========================================== */
+
+.card {
+  min-height: 145px;
+  padding: 22px;
+  border-radius: 18px;
+  border: 1px solid rgba(35, 93, 145, .35);
+  background:
+    rgba(5, 15, 29, .86);
+  backdrop-filter: blur(15px);
+  transition: .2s;
 }
 
-.result.error-box{
-border-color:rgba(255,80,100,.3);
-color:#ff9ca8
+.card:hover {
+  transform: translateY(-2px);
+  border-color:
+    rgba(20, 140, 255, .7);
 }
 
-.custom-list{
-display:grid;
-gap:9px;
-margin-top:15px
+.card-title {
+  font-size: 18px;
+  font-weight: 800;
 }
 
-.custom-item{
-display:flex;
-gap:8px
+.card-desc {
+  margin-top: 7px;
+  color: #70859d;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
-.custom-item button{
-width:auto;
-flex:1
+.search-btn {
+  margin-top: 18px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #0c7cff;
+  color: white;
+  font-weight: 700;
 }
 
-.custom-item .remove{
-flex:0 0 55px;
-background:#65212c
+
+/* ==========================================
+   CUSTOM API
+========================================== */
+
+.custom-card {
+  margin-top: 18px;
+  padding: 23px;
+  border-radius: 18px;
+  border: 1px solid rgba(35, 93, 145, .35);
+  background: rgba(5, 15, 29, .88);
 }
 
-.small{
-color:#718ba7;
-font-size:12px;
-margin-top:8px
+.custom-list {
+  margin-top: 15px;
+  display: grid;
+  gap: 10px;
 }
 
-.server-error{
-margin-top:10px;
-font-size:12px;
-color:#ff8995;
-word-break:break-word
+.api-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #071425;
+  border-radius: 12px;
 }
 
-@media(max-width:800px){
-.grid{grid-template-columns:repeat(2,1fr)}
+.api-item button {
+  padding: 8px 12px;
+  border-radius: 9px;
+  background: #0c7cff;
+  color: white;
 }
 
-@media(max-width:550px){
-.app{width:92%}
-.grid{grid-template-columns:1fr}
-.header{
-align-items:flex-start;
-flex-direction:column
+
+/* ==========================================
+   MODAL
+========================================== */
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(0, 4, 10, .78);
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
-.header-actions{width:100%}
-.header-actions button{flex:1}
-.form-row{grid-template-columns:1fr}
+
+.modal-box {
+  width: min(650px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  background: #06101f;
+  border: 1px solid #173654;
+  border-radius: 20px;
+  padding: 24px;
 }
-</style></head><body><canvas id="codeBg"></canvas>
 
-<div class="overlay"></div><div class="app"><section id="loginScreen" class="login"><div class="login-card"><div class="logo">TXG INFORMATION</div><div class="sub">
-Secure Information & Lookup Center
-</div><input
-id="password"
-type="password"
-placeholder="Enter admin password"
-autocomplete="current-password"
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
 
-«»
+.close {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #101d2d;
+  color: white;
+}
 
-<br><br>
+.result {
+  margin-top: 18px;
+  padding: 17px;
+  background: #020a14;
+  border: 1px solid #122941;
+  border-radius: 13px;
+  overflow: auto;
+}
 
-<button id="loginBtn">
-Login
-</button><div id="loginError" class="error"></div></div></section><section id="dashboard" class="hidden"><div class="header"><div>
-<div class="header-title">
-TXG Information Center
-</div><div class="header-sub">
-Authorized information & technical lookup tools
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #a9d5ff;
+  font-family: monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.status {
+  margin-top: 10px;
+  color: #6d87a0;
+  font-size: 13px;
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 600px) {
+
+  .app {
+    width: 92%;
+    padding-top: 22px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .brand {
+    font-size: 21px;
+  }
+
+  .login-box {
+    padding: 24px;
+  }
+
+  .card {
+    min-height: auto;
+  }
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<!-- ========================================
+     BACKGROUND
+========================================= -->
+
+<div class="code-bg" id="codeBg"></div>
+
+
+<!-- ========================================
+     APP
+========================================= -->
+
+<div class="app">
+
+
+<!-- ========================================
+     LOGIN
+========================================= -->
+
+<section
+  class="login-screen"
+  id="loginScreen"
+>
+
+  <div class="login-box">
+
+    <div class="logo">
+      TXG <span>Information</span>
+    </div>
+
+    <div class="subtitle">
+      Secure Information Center
+    </div>
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Admin password"
+      autocomplete="current-password"
+    >
+
+    <button
+      class="primary"
+      id="loginBtn"
+    >
+      Login
+    </button>
+
+    <div
+      class="error"
+      id="loginError"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- ========================================
+     DASHBOARD
+========================================= -->
+
+<section
+  class="dashboard"
+  id="dashboard"
+>
+
+  <div class="topbar">
+
+    <div>
+
+      <div class="brand">
+        TXG <span>Information Center</span>
+      </div>
+
+      <div class="tagline">
+        Public & authorized information lookup tools
+      </div>
+
+    </div>
+
+    <button
+      class="logout"
+      id="logoutBtn"
+    >
+      Logout
+    </button>
+
+  </div>
+
+
+  <!-- ======================================
+       LOOKUP GRID
+  ======================================= -->
+
+  <div class="grid">
+
+
+    <div class="card">
+
+      <div class="card-title">
+        📱 Mobile
+      </div>
+
+      <div class="card-desc">
+        Validate and format an international
+        phone number.
+      </div>
+
+      <button
+        class="search-btn"
+        data-type="mobile"
+      >
+        Search
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-title">
+        📍 PIN
+      </div>
+
+      <div class="card-desc">
+        Find postal information from an
+        Indian PIN code.
+      </div>
+
+      <button
+        class="search-btn"
+        data-type="pin"
+      >
+        Search
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-title">
+        🏦 IFSC
+      </div>
+
+      <div class="card-desc">
+        Find bank and branch information
+        from an IFSC code.
+      </div>
+
+      <button
+        class="search-btn"
+        data-type="ifsc"
+      >
+        Search
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-title">
+        🌐 IP
+      </div>
+
+      <div class="card-desc">
+        Check public IP and approximate
+        network information.
+      </div>
+
+      <button
+        class="search-btn"
+        data-type="ip"
+      >
+        Search
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-title">
+        🔗 URL
+      </div>
+
+      <div class="card-desc">
+        Inspect URL structure and basic
+        DNS information.
+      </div>
+
+      <button
+        class="search-btn"
+        data-type="url"
+      >
+        Search
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <div class="card-title">
+        💳 UPI
+      </div>
+
+      <div class="card-desc">
+        Validate the basic structure of
+        a UPI ID.
+      </div>
+
+      <button
+        class="search-btn"
+        data-type="upi"
+      >
+        Search
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- ======================================
+       CUSTOM API
+  ======================================= -->
+
+  <div class="custom-card">
+
+    <div class="card-title">
+      Add Custom API
+    </div>
+
+    <div class="card-desc">
+      Add your own HTTPS API using
+      <b>{message}</b> as the input placeholder.
+    </div>
+
+    <input
+      id="apiName"
+      placeholder="Button name"
+    >
+
+    <input
+      id="apiUrl"
+      placeholder="https://example.com/api?message={message}"
+    >
+
+    <button
+      class="primary"
+      id="addApiBtn"
+    >
+      Add API
+    </button>
+
+    <div
+      class="error"
+      id="apiAddError"
+    ></div>
+
+    <div
+      class="custom-list"
+      id="customList"
+    ></div>
+
+  </div>
+
+</section>
+
 </div>
-</div><div class="header-actions">
-<button class="secondary" id="logoutBtn">
-Logout
-</button>
-</div></div><div class="status">
-● Authentication active
-</div><div class="grid"><div class="panel tool">
-<div class="tool-title">Mobile</div><div class="tool-desc">
-Validate phone number, country and formatting information.
-</div><button onclick="openTool('mobile','Mobile Number')">
-Open Mobile
-</button>
-</div><div class="panel tool">
-<div class="tool-title">PIN</div><div class="tool-desc">
-Find public postal information for an Indian PIN code.
-</div><button onclick="openTool('pin','PIN Code')">
-Open PIN
-</button>
-</div><div class="panel tool">
-<div class="tool-title">IFSC</div><div class="tool-desc">
-Check public bank and branch information from IFSC.
-</div><button onclick="openTool('ifsc','IFSC Code')">
-Open IFSC
-</button>
-</div><div class="panel tool">
-<div class="tool-title">IP</div><div class="tool-desc">
-View public IP and approximate network information.
-</div><button onclick="openTool('ip','IP Address')">
-Open IP
-</button>
-</div><div class="panel tool">
-<div class="tool-title">URL</div><div class="tool-desc">
-Parse URL and perform basic DNS information lookup.
-</div><button onclick="openTool('url','URL')">
-Open URL
-</button>
-</div><div class="panel tool">
-<div class="tool-title">UPI</div><div class="tool-desc">
-Validate UPI ID format and handle.
-</div><button onclick="openTool('upi','UPI ID')">
-Open UPI
-</button>
-</div></div><div id="toolPanel" class="panel hidden"><div class="panel-title" id="toolTitle">
-Lookup
-</div><div class="form-row"><input
-id="toolInput"
-placeholder="Enter value"
-
-«»
-
-<button id="lookupBtn">
-Search
-</button></div><div id="lookupResult" class="result hidden"></div></div><div class="panel"><div class="panel-title">
-Add Custom API
-</div><input
-id="apiName"
-placeholder="Button name e.g. My API"
-
-«»
-
-<br><br>
-
-<input
-id="apiURL"
-placeholder="https://example.com/api?message={message}"
-
-«»
-
-<div class="small">
-Use {message} where the user's input should be inserted.
-</div><br><button id="addApiBtn">
-+ Add API
-</button><div id="customList" class="custom-list"></div></div><div id="customPanel" class="panel hidden"><div class="panel-title" id="customTitle">
-Custom API
-</div><input
-id="customMessage"
-placeholder="Enter your message"
-
-«»
-
-<br><br>
-
-<button id="customRunBtn">
-Run API
-</button><div id="customResult" class="result hidden"></div></div></section></div><script>
-
-const $ = id => document.getElementById(id);
-
-let currentTool = "";
-let currentCustomAPI = null;
 
 
-const builtInTools = {
+<!-- ========================================
+     LOOKUP MODAL
+========================================= -->
 
-mobile:{
-placeholder:"+91 9876543210"
-},
+<div
+  class="modal"
+  id="lookupModal"
+>
 
-pin:{
-placeholder:"Enter 6 digit PIN"
-},
+  <div class="modal-box">
 
-ifsc:{
-placeholder:"SBIN0000001"
-},
+    <div class="modal-head">
 
-ip:{
-placeholder:"Leave empty for your public IP"
-},
+      <div>
 
-url:{
-placeholder:"https://example.com"
-},
+        <div
+          class="card-title"
+          id="modalTitle"
+        >
+          Search
+        </div>
 
-upi:{
-placeholder:"example@upi"
+        <div
+          class="status"
+          id="modalStatus"
+        ></div>
+
+      </div>
+
+      <button
+        class="close"
+        id="closeModal"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <input
+      id="lookupInput"
+      placeholder="Enter value"
+      autocomplete="off"
+    >
+
+    <button
+      class="primary"
+      id="runLookup"
+    >
+      Search
+    </button>
+
+
+    <div
+      class="result"
+      id="lookupResult"
+      style="display:none"
+    >
+
+      <pre id="resultText"></pre>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+
+// ==========================================
+// ELEMENTS
+// ==========================================
+
+const loginScreen =
+  document.getElementById(
+    "loginScreen"
+  );
+
+const dashboard =
+  document.getElementById(
+    "dashboard"
+  );
+
+const passwordInput =
+  document.getElementById(
+    "password"
+  );
+
+const loginBtn =
+  document.getElementById(
+    "loginBtn"
+  );
+
+const loginError =
+  document.getElementById(
+    "loginError"
+  );
+
+const logoutBtn =
+  document.getElementById(
+    "logoutBtn"
+  );
+
+const lookupModal =
+  document.getElementById(
+    "lookupModal"
+  );
+
+const modalTitle =
+  document.getElementById(
+    "modalTitle"
+  );
+
+const modalStatus =
+  document.getElementById(
+    "modalStatus"
+  );
+
+const lookupInput =
+  document.getElementById(
+    "lookupInput"
+  );
+
+const runLookup =
+  document.getElementById(
+    "runLookup"
+  );
+
+const closeModal =
+  document.getElementById(
+    "closeModal"
+  );
+
+const lookupResult =
+  document.getElementById(
+    "lookupResult"
+  );
+
+const resultText =
+  document.getElementById(
+    "resultText"
+  );
+
+const apiName =
+  document.getElementById(
+    "apiName"
+  );
+
+const apiUrl =
+  document.getElementById(
+    "apiUrl"
+  );
+
+const addApiBtn =
+  document.getElementById(
+    "addApiBtn"
+  );
+
+const customList =
+  document.getElementById(
+    "customList"
+  );
+
+const apiAddError =
+  document.getElementById(
+    "apiAddError"
+  );
+
+
+// ==========================================
+// CURRENT TYPE
+// ==========================================
+
+let currentType = "";
+
+
+// ==========================================
+// API REQUEST
+// ==========================================
+
+async function request(
+  url,
+  options = {}
+) {
+
+  const response =
+    await fetch(
+      url,
+      {
+        credentials: "same-origin",
+        ...options
+      }
+    );
+
+
+  const text =
+    await response.text();
+
+
+  let data;
+
+
+  try {
+
+    data =
+      text
+        ? JSON.parse(text)
+        : {};
+
+  } catch {
+
+    throw new Error(
+      `Server returned HTTP ${response.status}: ${text.slice(0, 300)}`
+    );
+  }
+
+
+  if (!response.ok) {
+
+    throw new Error(
+      data?.error ||
+      `Request failed with HTTP ${response.status}`
+    );
+  }
+
+
+  return data;
 }
 
-};
+
+// ==========================================
+// SHOW DASHBOARD
+// ==========================================
+
+function showDashboard() {
+
+  loginScreen.style.display =
+    "none";
+
+  dashboard.style.display =
+    "block";
+}
 
 
-/* =========================
-   SAFE SERVER REQUEST
-========================= */
+// ==========================================
+// SHOW LOGIN
+// ==========================================
 
-async function request(url, options = {}) {
+function showLogin() {
 
-let response;
+  dashboard.style.display =
+    "none";
 
-try {
+  loginScreen.style.display =
+    "flex";
+}
 
-response = await fetch(url,{
-credentials:"same-origin",
-...options
-});
 
-} catch(error) {
+// ==========================================
+// CHECK LOGIN
+// ==========================================
 
-throw new Error(
-"Could not connect to server."
+async function checkLogin() {
+
+  try {
+
+    const data =
+      await request(
+        "/api/auth?action=status"
+      );
+
+
+    if (
+      data.ok &&
+      data.loggedIn
+    ) {
+
+      showDashboard();
+
+    } else {
+
+      showLogin();
+    }
+
+  } catch (error) {
+
+    showLogin();
+  }
+}
+
+
+// ==========================================
+// LOGIN
+// ==========================================
+
+async function login() {
+
+  loginError.textContent =
+    "";
+
+  const password =
+    passwordInput.value;
+
+
+  if (!password) {
+
+    loginError.textContent =
+      "Enter password.";
+
+    return;
+  }
+
+
+  loginBtn.disabled =
+    true;
+
+  loginBtn.textContent =
+    "Logging in...";
+
+
+  try {
+
+    const data =
+      await request(
+        "/api/auth",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            action: "login",
+            password
+          })
+        }
+      );
+
+
+    if (
+      data.ok &&
+      data.loggedIn
+    ) {
+
+      passwordInput.value =
+        "";
+
+      showDashboard();
+
+    } else {
+
+      throw new Error(
+        data.error ||
+        "Login failed"
+      );
+    }
+
+  } catch (error) {
+
+    loginError.textContent =
+      error.message;
+
+  } finally {
+
+    loginBtn.disabled =
+      false;
+
+    loginBtn.textContent =
+      "Login";
+  }
+}
+
+
+// ==========================================
+// LOGOUT
+// ==========================================
+
+async function logout() {
+
+  try {
+
+    await request(
+      "/api/auth",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        body: JSON.stringify({
+          action: "logout"
+        })
+      }
+    );
+
+  } catch {}
+
+  showLogin();
+}
+
+
+// ==========================================
+// OPEN LOOKUP
+// ==========================================
+
+function openLookup(type) {
+
+  currentType =
+    type;
+
+  const titles = {
+    mobile: "Mobile Lookup",
+    pin: "PIN Lookup",
+    ifsc: "IFSC Lookup",
+    ip: "IP Lookup",
+    url: "URL Lookup",
+    upi: "UPI Lookup"
+  };
+
+
+  const placeholders = {
+
+    mobile:
+      "Enter mobile number",
+
+    pin:
+      "Enter 6 digit PIN",
+
+    ifsc:
+      "Enter IFSC code",
+
+    ip:
+      "Enter IP or leave empty for your public IP",
+
+    url:
+      "Enter URL",
+
+    upi:
+      "Enter UPI ID"
+  };
+
+
+  modalTitle.textContent =
+    titles[type] ||
+    "Lookup";
+
+
+  lookupInput.placeholder =
+    placeholders[type] ||
+    "Enter value";
+
+
+  lookupInput.value =
+    "";
+
+  resultText.textContent =
+    "";
+
+  lookupResult.style.display =
+    "none";
+
+  modalStatus.textContent =
+    "";
+
+  lookupModal.style.display =
+    "flex";
+
+
+  setTimeout(
+    () => lookupInput.focus(),
+    50
+  );
+}
+
+
+// ==========================================
+// CLOSE LOOKUP
+// ==========================================
+
+function closeLookup() {
+
+  lookupModal.style.display =
+    "none";
+}
+
+
+// ==========================================
+// RUN LOOKUP
+// ==========================================
+
+async function performLookup() {
+
+  const input =
+    lookupInput.value.trim();
+
+
+  if (
+    currentType !== "ip" &&
+    !input
+  ) {
+
+    modalStatus.textContent =
+      "Enter a value first.";
+
+    return;
+  }
+
+
+  runLookup.disabled =
+    true;
+
+  runLookup.textContent =
+    "Searching...";
+
+  modalStatus.textContent =
+    "Connecting to lookup service...";
+
+  lookupResult.style.display =
+    "none";
+
+
+  try {
+
+    const data =
+      await request(
+        "/api/lookup",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            type:
+              currentType,
+
+            input
+          })
+        }
+      );
+
+
+    resultText.textContent =
+      JSON.stringify(
+        data.result,
+        null,
+        2
+      );
+
+
+    lookupResult.style.display =
+      "block";
+
+    modalStatus.textContent =
+      "Lookup completed.";
+
+  } catch (error) {
+
+    modalStatus.textContent =
+      error.message;
+
+  } finally {
+
+    runLookup.disabled =
+      false;
+
+    runLookup.textContent =
+      "Search";
+  }
+}
+
+
+// ==========================================
+// CUSTOM API STORAGE
+// ==========================================
+
+function loadCustomApis() {
+
+  try {
+
+    return JSON.parse(
+      localStorage.getItem(
+        "txg_custom_apis"
+      ) || "[]"
+    );
+
+  } catch {
+
+    return [];
+  }
+}
+
+
+function saveCustomApis(items) {
+
+  localStorage.setItem(
+    "txg_custom_apis",
+    JSON.stringify(items)
+  );
+}
+
+
+// ==========================================
+// RENDER CUSTOM APIS
+// ==========================================
+
+function renderCustomApis() {
+
+  customList.innerHTML =
+    "";
+
+
+  const items =
+    loadCustomApis();
+
+
+  if (!items.length) {
+
+    customList.innerHTML =
+      `<div class="status">
+        No custom APIs added yet.
+      </div>`;
+
+    return;
+  }
+
+
+  items.forEach(
+    (item, index) => {
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+      row.className =
+        "api-item";
+
+
+      const name =
+        document.createElement(
+          "div"
+        );
+
+      name.textContent =
+        item.name;
+
+
+      const actions =
+        document.createElement(
+          "div"
+        );
+
+
+      const open =
+        document.createElement(
+          "button"
+        );
+
+      open.textContent =
+        "Open";
+
+
+      open.addEventListener(
+        "click",
+        () => {
+
+          openCustomApi(
+            item
+          );
+        }
+      );
+
+
+      const remove =
+        document.createElement(
+          "button"
+        );
+
+      remove.textContent =
+        "×";
+
+      remove.style.marginLeft =
+        "6px";
+
+      remove.style.background =
+        "#30141a";
+
+
+      remove.addEventListener(
+        "click",
+        () => {
+
+          const all =
+            loadCustomApis();
+
+          all.splice(
+            index,
+            1
+          );
+
+          saveCustomApis(
+            all
+          );
+
+          renderCustomApis();
+        }
+      );
+
+
+      actions.appendChild(
+        open
+      );
+
+      actions.appendChild(
+        remove
+      );
+
+
+      row.appendChild(
+        name
+      );
+
+      row.appendChild(
+        actions
+      );
+
+
+      customList.appendChild(
+        row
+      );
+    }
+  );
+}
+
+
+// ==========================================
+// ADD CUSTOM API
+// ==========================================
+
+function addCustomApi() {
+
+  apiAddError.textContent =
+    "";
+
+
+  const name =
+    apiName.value.trim();
+
+  const url =
+    apiUrl.value.trim();
+
+
+  if (!name) {
+
+    apiAddError.textContent =
+      "Enter a button name.";
+
+    return;
+  }
+
+
+  if (!url) {
+
+    apiAddError.textContent =
+      "Enter API URL.";
+
+    return;
+  }
+
+
+  if (
+    !/^https:\/\//i.test(url)
+  ) {
+
+    apiAddError.textContent =
+      "API URL must start with https://";
+
+    return;
+  }
+
+
+  if (
+    !url.includes(
+      "{message}"
+    )
+  ) {
+
+    apiAddError.textContent =
+      "URL must contain {message}.";
+
+    return;
+  }
+
+
+  const items =
+    loadCustomApis();
+
+
+  items.push({
+    name,
+    url
+  });
+
+
+  saveCustomApis(
+    items
+  );
+
+
+  apiName.value =
+    "";
+
+  apiUrl.value =
+    "";
+
+  apiAddError.textContent =
+    "";
+
+  renderCustomApis();
+}
+
+
+// ==========================================
+// OPEN CUSTOM API
+// ==========================================
+
+function openCustomApi(item) {
+
+  currentType =
+    "custom";
+
+
+  modalTitle.textContent =
+    item.name;
+
+
+  modalStatus.textContent =
+    "Enter the message for this API.";
+
+
+  lookupInput.placeholder =
+    "Enter message";
+
+
+  lookupInput.value =
+    "";
+
+
+  lookupResult.style.display =
+    "none";
+
+
+  runLookup.textContent =
+    "Send";
+
+
+  lookupModal.style.display =
+    "flex";
+
+
+  runLookup.onclick =
+    () => performCustomApi(item);
+
+
+  setTimeout(
+    () => lookupInput.focus(),
+    50
+  );
+}
+
+
+// ==========================================
+// CUSTOM API REQUEST
+// ==========================================
+
+async function performCustomApi(item) {
+
+  const message =
+    lookupInput.value;
+
+
+  runLookup.disabled =
+    true;
+
+  runLookup.textContent =
+    "Sending...";
+
+
+  modalStatus.textContent =
+    "Calling custom API...";
+
+
+  lookupResult.style.display =
+    "none";
+
+
+  try {
+
+    const data =
+      await request(
+        "/api/custom",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+            url:
+              item.url,
+
+            message
+          })
+        }
+      );
+
+
+    resultText.textContent =
+      typeof data.response ===
+      "string"
+        ? data.response
+        : JSON.stringify(
+            data.response,
+            null,
+            2
+          );
+
+
+    lookupResult.style.display =
+      "block";
+
+
+    modalStatus.textContent =
+      `HTTP ${data.httpStatus || "OK"}`;
+
+  } catch (error) {
+
+    modalStatus.textContent =
+      error.message;
+
+  } finally {
+
+    runLookup.disabled =
+      false;
+
+    runLookup.textContent =
+      "Send";
+  }
+}
+
+
+// ==========================================
+// SEARCH BUTTONS
+// ==========================================
+
+document
+  .querySelectorAll(
+    ".search-btn"
+  )
+  .forEach(
+    button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          openLookup(
+            button.dataset.type
+          );
+        }
+      );
+    }
+  );
+
+
+// ==========================================
+// EVENTS
+// ==========================================
+
+loginBtn.addEventListener(
+  "click",
+  login
 );
 
-}
-
-
-const text =
-await response.text();
-
-
-if(!text){
-
-throw new Error(
-"Server returned an empty response."
+logoutBtn.addEventListener(
+  "click",
+  logout
 );
 
-}
+closeModal.addEventListener(
+  "click",
+  () => {
 
+    closeLookup();
 
-let data;
+    runLookup.onclick =
+      performLookup;
 
-try {
-
-data =
-JSON.parse(text);
-
-} catch(error) {
-
-console.error(
-"NON JSON SERVER RESPONSE:",
-text
+    runLookup.textContent =
+      "Search";
+  }
 );
 
-throw new Error(
-"Server error: " +
-text.substring(0,180)
+runLookup.addEventListener(
+  "click",
+  performLookup
 );
 
-}
-
-
-if(response.status === 401){
-
-showLogin();
-
-}
-
-
-return data;
-
-}
-
-
-/* =========================
-   AUTH
-========================= */
-
-async function checkAuth(){
-
-try{
-
-const data =
-await request(
-"/api/auth?action=status"
-);
-
-if(data && data.loggedIn){
-
-showDashboard();
-
-}else{
-
-showLogin();
-
-}
-
-}catch(error){
-
-showLogin();
-
-$("loginError").textContent =
-error.message || "Server connection error.";
-
-}
-
-}
-
-
-async function login(){
-
-const password =
-$("password").value;
-
-$("loginError").textContent = "";
-
-
-if(!password){
-
-$("loginError").textContent =
-"Enter password.";
-
-return;
-
-}
-
-
-$("loginBtn").disabled = true;
-
-$("loginBtn").textContent =
-"Checking...";
-
-
-try{
-
-const data =
-await request(
-"/api/auth",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-action:"login",
-password:password
-})
-}
+addApiBtn.addEventListener(
+  "click",
+  addCustomApi
 );
 
 
-if(data.ok){
-
-$("password").value = "";
-
-showDashboard();
-
-}else{
-
-$("loginError").textContent =
-data.error ||
-"Invalid password.";
-
-}
-
-}catch(error){
-
-$("loginError").textContent =
-error.message ||
-"Authentication server error.";
-
-}finally{
-
-$("loginBtn").disabled = false;
-
-$("loginBtn").textContent =
-"Login";
-
-}
-
-}
-
-
-async function logout(){
-
-try{
-
-await request(
-"/api/auth",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-action:"logout"
-})
-}
-);
-
-}catch(error){
-
-console.error(error);
-
-}
-
-showLogin();
-
-}
-
-
-function showLogin(){
-
-$("loginScreen")
-.classList.remove("hidden");
-
-$("dashboard")
-.classList.add("hidden");
-
-}
-
-
-function showDashboard(){
-
-$("loginScreen")
-.classList.add("hidden");
-
-$("dashboard")
-.classList.remove("hidden");
-
-loadCustomAPIs();
-
-}
-
-
-/* =========================
-   BUILT-IN LOOKUPS
-========================= */
-
-function openTool(type,title){
-
-currentTool = type;
-
-$("toolPanel")
-.classList.remove("hidden");
-
-$("toolTitle")
-.textContent = title;
-
-$("toolInput").value = "";
-
-$("toolInput").placeholder =
-builtInTools[type]?.placeholder ||
-"Enter value";
-
-$("lookupResult")
-.className =
-"result hidden";
-
-$("toolInput").focus();
-
-}
-
-
-async function lookup(){
-
-if(!currentTool)return;
-
-const input =
-$("toolInput").value.trim();
-
-
-if(!input && currentTool !== "ip"){
-
-showResult({
-ok:false,
-error:"Enter a value."
-},true);
-
-return;
-
-}
-
-
-$("lookupBtn").disabled = true;
-
-$("lookupBtn").textContent =
-"Searching...";
-
-
-try{
-
-const data =
-await request(
-"/api/lookup",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-type:currentTool,
-input:input
-})
-}
-);
-
-showResult(
-data,
-!data.ok
-);
-
-}catch(error){
-
-showResult({
-ok:false,
-error:error.message
-},true);
-
-}finally{
-
-$("lookupBtn").disabled = false;
-
-$("lookupBtn").textContent =
-"Search";
-
-}
-
-}
-
-
-function showResult(data,isError=false){
-
-const box =
-$("lookupResult");
-
-box.className =
-"result" +
-(isError ? " error-box" : " success");
-
-box.classList.remove("hidden");
-
-try{
-
-box.textContent =
-JSON.stringify(
-data,
-null,
-2
-);
-
-}catch(error){
-
-box.textContent =
-String(data);
-
-}
-
-}
-
-
-/* =========================
-   CUSTOM API STORAGE
-========================= */
-
-function getCustomAPIs(){
-
-try{
-
-return JSON.parse(
-sessionStorage.getItem(
-"txg_custom_apis"
-) || "[]"
-);
-
-}catch(error){
-
-return [];
-
-}
-
-}
-
-
-function saveCustomAPIs(items){
-
-try{
-
-sessionStorage.setItem(
-"txg_custom_apis",
-JSON.stringify(items)
-);
-
-}catch(error){
-
-console.error(error);
-
-}
-
-}
-
-
-function loadCustomAPIs(){
-
-renderCustomAPIs(
-getCustomAPIs()
-);
-
-}
-
-
-function renderCustomAPIs(items){
-
-const list =
-$("customList");
-
-list.innerHTML = "";
-
-
-if(!items.length){
-
-const empty =
-document.createElement("div");
-
-empty.className =
-"small";
-
-empty.textContent =
-"No custom APIs added yet.";
-
-list.appendChild(empty);
-
-return;
-
-}
-
-
-items.forEach((api,index)=>{
-
-const row =
-document.createElement("div");
-
-row.className =
-"custom-item";
-
-
-const button =
-document.createElement("button");
-
-button.textContent =
-api.name;
-
-button.addEventListener(
-"click",
-()=>{
-
-currentCustomAPI = api;
-
-$("customPanel")
-.classList.remove("hidden");
-
-$("customTitle")
-.textContent =
-api.name;
-
-$("customMessage").value = "";
-
-$("customResult")
-.className =
-"result hidden";
-
-$("customMessage").focus();
-
-}
+passwordInput.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.key === "Enter"
+    ) {
+
+      login();
+    }
+  }
 );
 
 
-const remove =
-document.createElement("button");
+lookupInput.addEventListener(
+  "keydown",
+  event => {
 
-remove.className =
-"remove";
+    if (
+      event.key === "Enter"
+    ) {
 
-remove.textContent =
-"×";
-
-remove.title =
-"Remove API";
-
-
-remove.addEventListener(
-"click",
-()=>{
-
-items.splice(index,1);
-
-saveCustomAPIs(items);
-
-renderCustomAPIs(items);
-
-}
+      runLookup.click();
+    }
+  }
 );
 
 
-row.appendChild(button);
+lookupModal.addEventListener(
+  "click",
+  event => {
 
-row.appendChild(remove);
+    if (
+      event.target ===
+      lookupModal
+    ) {
 
-list.appendChild(row);
-
-});
-
-}
-
-
-/* =========================
-   ADD CUSTOM API
-========================= */
-
-function addCustomAPI(){
-
-const name =
-$("apiName").value.trim();
-
-const url =
-$("apiURL").value.trim();
-
-
-if(!name){
-
-alert("Enter API button name.");
-
-return;
-
-}
-
-
-if(!url){
-
-alert("Enter API URL.");
-
-return;
-
-}
-
-
-if(!/^https:\/\//i.test(url)){
-
-alert(
-"Only HTTPS API URLs are allowed."
-);
-
-return;
-
-}
-
-
-if(!url.includes("{message}")){
-
-alert(
-"API URL must contain {message}."
-);
-
-return;
-
-}
-
-
-const items =
-getCustomAPIs();
-
-
-items.push({
-name:name,
-url:url
-});
-
-
-saveCustomAPIs(items);
-
-renderCustomAPIs(items);
-
-
-$("apiName").value = "";
-
-$("apiURL").value = "";
-
-}
-
-
-/* =========================
-   RUN CUSTOM API
-========================= */
-
-async function runCustomAPI(){
-
-if(!currentCustomAPI)return;
-
-const message =
-$("customMessage").value;
-
-
-$("customRunBtn").disabled = true;
-
-$("customRunBtn").textContent =
-"Running...";
-
-
-try{
-
-const data =
-await request(
-"/api/custom",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-url:currentCustomAPI.url,
-message:message
-})
-}
+      closeLookup();
+    }
+  }
 );
 
 
-const box =
-$("customResult");
+// ==========================================
+// CODE BACKGROUND
+// ==========================================
 
-box.classList.remove("hidden");
+function createCodeBackground() {
 
-if(!data.ok){
+  const bg =
+    document.getElementById(
+      "codeBg"
+    );
 
-box.className =
-"result error-box";
 
-}else{
+  const code = [
+    "const TXG = await lookup();",
+    "fetch('/api/information');",
+    "response.json();",
+    "validate(input);",
+    "const result = data;",
+    "if (authorized) return result;",
+    "POST /api/lookup",
+    "GET /api/auth",
+    "status: 200",
+    "TXG_INFORMATION_CENTER",
+    "https://api.service.com",
+    "JSON.parse(response);",
+    "await fetch(endpoint);"
+  ];
 
-box.className =
-"result success";
 
+  for (
+    let i = 0;
+    i < 25;
+    i++
+  ) {
+
+    const line =
+      document.createElement(
+        "div"
+      );
+
+
+    line.className =
+      "code-line";
+
+
+    line.textContent =
+      code[
+        Math.floor(
+          Math.random() *
+          code.length
+        )
+      ];
+
+
+    line.style.top =
+      `${Math.random() * 100}%`;
+
+
+    line.style.animationDuration =
+      `${12 + Math.random() * 20}s`;
+
+
+    line.style.animationDelay =
+      `${-Math.random() * 20}s`;
+
+
+    bg.appendChild(
+      line
+    );
+  }
 }
 
 
-if(
-data &&
-data.response !== undefined
-){
+// ==========================================
+// INIT
+// ==========================================
 
-if(
-typeof data.response ===
-"object"
-){
+createCodeBackground();
 
-box.textContent =
-JSON.stringify(
-data.response,
-null,
-2
-);
+renderCustomApis();
 
-}else{
+checkLogin();
 
-box.textContent =
-String(data.response);
+</script>
 
-}
-
-}else{
-
-box.textContent =
-JSON.stringify(
-data,
-null,
-2
-);
-
-}
-
-}catch(error){
-
-const box =
-$("customResult");
-
-box.className =
-"result error-box";
-
-box.classList.remove("hidden");
-
-box.textContent =
-error.message ||
-"API request failed.";
-
-}finally{
-
-$("customRunBtn").disabled =
-false;
-
-$("customRunBtn").textContent =
-"Run API";
-
-}
-
-}
-
-
-/* =========================
-   EVENTS
-========================= */
-
-$("loginBtn")
-.addEventListener(
-"click",
-login
-);
-
-
-$("password")
-.addEventListener(
-"keydown",
-event=>{
-
-if(event.key==="Enter"){
-
-login();
-
-}
-
-}
-);
-
-
-$("logoutBtn")
-.addEventListener(
-"click",
-logout
-);
-
-
-$("lookupBtn")
-.addEventListener(
-"click",
-lookup
-);
-
-
-$("toolInput")
-.addEventListener(
-"keydown",
-event=>{
-
-if(event.key==="Enter"){
-
-lookup();
-
-}
-
-}
-);
-
-
-$("addApiBtn")
-.addEventListener(
-"click",
-addCustomAPI
-);
-
-
-$("customRunBtn")
-.addEventListener(
-"click",
-runCustomAPI
-);
-
-
-/* =========================
-   CODE BACKGROUND
-========================= */
-
-const canvas =
-$("codeBg");
-
-const ctx =
-canvas.getContext("2d");
-
-let width = 0;
-
-let height = 0;
-
-const fontSize = 13;
-
-const chars =
-"01{}[]()<>/\\=+-_*#$%ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-let columns = [];
-
-
-function resizeCanvas(){
-
-width =
-canvas.width =
-window.innerWidth;
-
-height =
-canvas.height =
-window.innerHeight;
-
-
-const count =
-Math.ceil(
-width / fontSize
-);
-
-
-columns =
-Array.from(
-{length:count},
-()=>Math.random() *
-(height / fontSize)
-);
-
-}
-
-
-function drawCode(){
-
-ctx.fillStyle =
-"rgba(2,8,23,.16)";
-
-ctx.fillRect(
-0,
-0,
-width,
-height
-);
-
-
-ctx.fillStyle =
-"rgba(45,156,255,.65)";
-
-ctx.font =
-fontSize +
-"px monospace";
-
-
-for(
-let i=0;
-i<columns.length;
-i++
-){
-
-const char =
-chars[
-Math.floor(
-Math.random() *
-chars.length
-)
-];
-
-
-const x =
-i * fontSize;
-
-const y =
-columns[i] *
-fontSize;
-
-
-ctx.fillText(
-char,
-x,
-y
-);
-
-
-if(
-y > height &&
-Math.random() > .975
-){
-
-columns[i] = 0;
-
-}
-
-
-columns[i] += .45;
-
-}
-
-
-requestAnimationFrame(
-drawCode
-);
-
-}
-
-
-window.addEventListener(
-"resize",
-resizeCanvas
-);
-
-
-resizeCanvas();
-
-drawCode();
-
-
-/* =========================
-   START
-========================= */
-
-checkAuth();
-
-</script></body>
+</body>
 </html>
