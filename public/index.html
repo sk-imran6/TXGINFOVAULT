@@ -1,1642 +1,1316 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TXG Information Center</title><style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#020817;color:#e5f2ff}
+body{overflow-x:hidden}
 
-<title>TXG Information Center</title>
-
-<style>
-* {
-  box-sizing: border-box;
+#codeBg{
+position:fixed;
+inset:0;
+width:100%;
+height:100%;
+z-index:0;
+opacity:.24;
+pointer-events:none
 }
 
-html,
-body {
-  margin: 0;
-  min-height: 100%;
-  background: #020817;
-  color: #e8f3ff;
-  font-family:
-    Inter,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+.overlay{
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at 15% 10%,rgba(0,140,255,.13),transparent 32%),
+radial-gradient(circle at 85% 90%,rgba(0,80,255,.12),transparent 35%),
+rgba(1,7,18,.72);
+z-index:1;
+pointer-events:none
 }
 
-body {
-  overflow-x: hidden;
+.app{
+position:relative;
+z-index:2;
+width:min(1100px,94%);
+margin:auto;
+padding:30px 0 60px
 }
 
-/* ======================================
-   CODE BACKGROUND
-====================================== */
+.hidden{display:none!important}
 
-#codeBg {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  z-index: 0;
-  pointer-events: none;
-
-  background:
-    radial-gradient(
-      circle at 50% 20%,
-      rgba(0,120,255,.20),
-      transparent 45%
-    ),
-    #020817;
+.login{
+min-height:85vh;
+display:flex;
+align-items:center;
+justify-content:center
 }
 
-.codeLine {
-  position: absolute;
-  white-space: nowrap;
-
-  font-family:
-    "Courier New",
-    monospace;
-
-  font-size: 12px;
-
-  color:
-    rgba(70,170,255,.48);
-
-  text-shadow:
-    0 0 8px
-    rgba(0,130,255,.7);
-
-  animation:
-    codeMove linear forwards;
+.login-card,.panel{
+background:rgba(5,18,38,.88);
+border:1px solid rgba(65,160,255,.22);
+border-radius:22px;
+box-shadow:0 20px 70px rgba(0,0,0,.45);
+backdrop-filter:blur(14px)
 }
 
-@keyframes codeMove {
-  0% {
-    transform:
-      translateY(110vh);
-    opacity: 0;
-  }
-
-  10% {
-    opacity: 1;
-  }
-
-  90% {
-    opacity: 1;
-  }
-
-  100% {
-    transform:
-      translateY(-120px);
-    opacity: 0;
-  }
+.login-card{
+width:min(420px,100%);
+padding:32px
 }
 
-/* ======================================
-   LOGIN
-====================================== */
-
-#loginScreen {
-  position: relative;
-  z-index: 10;
-
-  min-height: 100vh;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 20px;
+.logo{
+font-size:28px;
+font-weight:900;
+color:#55b9ff;
+margin-bottom:8px
 }
 
-.loginBox {
-  width: 100%;
-  max-width: 390px;
-
-  padding: 30px;
-
-  border:
-    1px solid
-    rgba(50,150,255,.30);
-
-  border-radius: 24px;
-
-  background:
-    rgba(3,15,35,.88);
-
-  backdrop-filter:
-    blur(18px);
-
-  box-shadow:
-    0 0 50px
-    rgba(0,100,255,.20);
+.sub{
+color:#8da5bf;
+font-size:14px;
+margin-bottom:25px
 }
 
-.logo {
-  text-align: center;
-  font-size: 28px;
-  font-weight: 900;
-  letter-spacing: 1px;
-
-  color: #55b8ff;
-
-  text-shadow:
-    0 0 20px
-    rgba(0,150,255,.8);
+input,button,textarea{
+width:100%;
+border-radius:12px;
+border:1px solid rgba(100,170,255,.22);
+background:rgba(0,10,25,.85);
+color:white;
+padding:13px 14px;
+font-size:15px;
+outline:none
 }
 
-.sub {
-  text-align: center;
-  color: #7691ad;
-  margin: 8px 0 25px;
-  font-size: 13px;
+input:focus,textarea:focus{
+border-color:#2d9cff;
+box-shadow:0 0 0 3px rgba(45,156,255,.12)
 }
 
-input {
-  width: 100%;
-
-  border: 1px solid
-    rgba(80,150,220,.28);
-
-  outline: none;
-
-  background:
-    rgba(0,10,25,.75);
-
-  color: white;
-
-  border-radius: 13px;
-
-  padding: 14px;
-
-  font-size: 16px;
+button{
+cursor:pointer;
+font-weight:700;
+background:linear-gradient(135deg,#087cff,#0055d8);
+border:0
 }
 
-input:focus {
-  border-color:
-    #269cff;
+button:hover{filter:brightness(1.08)}
+button:disabled{opacity:.55;cursor:not-allowed}
 
-  box-shadow:
-    0 0 0 3px
-    rgba(38,156,255,.10);
+button.secondary{background:rgba(255,255,255,.07)}
+button.danger{background:#8d2330}
+
+.error{
+margin-top:12px;
+color:#ff7180;
+font-size:14px
 }
 
-button {
-  border: 0;
-  cursor: pointer;
-
-  border-radius: 13px;
-
-  padding: 13px 16px;
-
-  font-weight: 700;
-
-  color: white;
-
-  background:
-    linear-gradient(
-      135deg,
-      #087cff,
-      #0051c9
-    );
-
-  box-shadow:
-    0 0 20px
-    rgba(0,110,255,.18);
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+margin-bottom:22px
 }
 
-button:hover {
-  filter: brightness(1.12);
+.header-title{
+font-size:27px;
+font-weight:900
 }
 
-.full {
-  width: 100%;
-  margin-top: 12px;
+.header-sub{
+color:#7e98b5;
+font-size:13px;
+margin-top:4px
 }
 
-.error {
-  color: #ff7070;
-  font-size: 13px;
-  margin-top: 12px;
-  text-align: center;
+.header-actions{
+display:flex;
+gap:8px
 }
 
-/* ======================================
-   DASHBOARD
-====================================== */
-
-#dashboard {
-  display: none;
-
-  position: relative;
-  z-index: 2;
-
-  min-height: 100vh;
-
-  padding: 22px;
+.header-actions button{
+width:auto;
+padding:10px 15px
 }
 
-.dashboardWrap {
-  width: 100%;
-  max-width: 1100px;
-  margin: auto;
+.status{
+margin-bottom:15px;
+color:#57d68d;
+font-size:13px
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  gap: 15px;
-
-  margin-bottom: 20px;
+.grid{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:14px
 }
 
-.brand {
-  font-size: 25px;
-  font-weight: 900;
-
-  color: #5bbaff;
-
-  text-shadow:
-    0 0 18px
-    rgba(0,150,255,.65);
+.tool{
+padding:22px;
+min-height:145px;
+text-align:left
 }
 
-.headerActions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+.tool-title{
+font-size:18px;
+font-weight:800;
+margin-bottom:7px
 }
 
-.smallBtn {
-  padding: 10px 13px;
-  font-size: 13px;
+.tool-desc{
+color:#7e98b5;
+font-size:13px;
+line-height:1.5;
+margin-bottom:17px
 }
 
-/* ======================================
-   MAIN PANEL
-====================================== */
+.tool button{padding:10px}
 
-.panel {
-  border:
-    1px solid
-    rgba(70,160,255,.25);
-
-  background:
-    rgba(3,15,35,.78);
-
-  backdrop-filter:
-    blur(15px);
-
-  border-radius: 22px;
-
-  padding: 20px;
-
-  box-shadow:
-    0 0 40px
-    rgba(0,90,255,.12);
+.panel{
+padding:22px;
+margin-top:18px
 }
 
-.title {
-  font-size: 18px;
-  font-weight: 800;
-  margin-bottom: 15px;
+.panel-title{
+font-size:19px;
+font-weight:800;
+margin-bottom:15px
 }
 
-.searchRow {
-  display: flex;
-  gap: 10px;
+.form-row{
+display:grid;
+grid-template-columns:1fr 180px;
+gap:10px
 }
 
-.searchRow input {
-  flex: 1;
+.result{
+margin-top:18px;
+padding:17px;
+border-radius:15px;
+background:rgba(0,0,0,.28);
+border:1px solid rgba(80,160,255,.13);
+white-space:pre-wrap;
+word-break:break-word;
+max-height:500px;
+overflow:auto;
+color:#cfe7ff;
+font-family:Consolas,monospace;
+font-size:13px
 }
 
-.tools {
-  display: grid;
-
-  grid-template-columns:
-    repeat(
-      auto-fit,
-      minmax(135px, 1fr)
-    );
-
-  gap: 10px;
-
-  margin-top: 18px;
+.result.success{
+border-color:rgba(60,220,140,.25)
 }
 
-.tool {
-  padding: 15px 10px;
-
-  background:
-    rgba(5,25,55,.82);
-
-  border:
-    1px solid
-    rgba(65,145,230,.20);
-
-  color: #b8d9f8;
+.result.error-box{
+border-color:rgba(255,80,100,.3);
+color:#ff9ca8
 }
 
-.tool.active {
-  border-color:
-    #168fff;
-
-  background:
-    rgba(0,100,220,.20);
-
-  color: white;
-
-  box-shadow:
-    0 0 18px
-    rgba(0,120,255,.18);
+.custom-list{
+display:grid;
+gap:9px;
+margin-top:15px
 }
 
-/* ======================================
-   RESPONSE
-====================================== */
-
-#status {
-  margin-top: 14px;
-
-  color: #73bfff;
-
-  font-size: 13px;
+.custom-item{
+display:flex;
+gap:8px
 }
 
-#response {
-  margin-top: 15px;
-
-  min-height: 180px;
-
-  max-height: 500px;
-
-  overflow: auto;
-
-  padding: 17px;
-
-  border-radius: 15px;
-
-  background:
-    rgba(0,5,15,.82);
-
-  border:
-    1px solid
-    rgba(80,150,220,.18);
-
-  font-family:
-    "Courier New",
-    monospace;
-
-  font-size: 13px;
-
-  line-height: 1.6;
-
-  white-space: pre-wrap;
-
-  word-break: break-word;
-
-  color: #a9d8ff;
+.custom-item button{
+width:auto;
+flex:1
 }
 
-/* ======================================
-   CUSTOM API
-====================================== */
-
-.customSection {
-  margin-top: 20px;
+.custom-item .remove{
+flex:0 0 55px;
+background:#65212c
 }
 
-.customForm {
-  display: grid;
-
-  grid-template-columns:
-    1fr 2fr auto;
-
-  gap: 8px;
+.small{
+color:#718ba7;
+font-size:12px;
+margin-top:8px
 }
 
-.customList {
-  display: flex;
-
-  flex-wrap: wrap;
-
-  gap: 8px;
-
-  margin-top: 12px;
+.server-error{
+margin-top:10px;
+font-size:12px;
+color:#ff8995;
+word-break:break-word
 }
 
-.customApi {
-  background:
-    rgba(0,90,190,.20);
-
-  border:
-    1px solid
-    rgba(50,140,240,.28);
-
-  color: #9fd4ff;
+@media(max-width:800px){
+.grid{grid-template-columns:repeat(2,1fr)}
 }
 
-/* ======================================
-   MODAL
-====================================== */
-
-.modal {
-  display: none;
-
-  position: fixed;
-  inset: 0;
-
-  z-index: 50;
-
-  background:
-    rgba(0,5,15,.72);
-
-  backdrop-filter:
-    blur(7px);
-
-  align-items: center;
-  justify-content: center;
-
-  padding: 20px;
+@media(max-width:550px){
+.app{width:92%}
+.grid{grid-template-columns:1fr}
+.header{
+align-items:flex-start;
+flex-direction:column
 }
-
-.modalBox {
-  width: 100%;
-  max-width: 420px;
-
-  background:
-    #041225;
-
-  border:
-    1px solid
-    rgba(60,150,255,.30);
-
-  border-radius: 20px;
-
-  padding: 23px;
+.header-actions{width:100%}
+.header-actions button{flex:1}
+.form-row{grid-template-columns:1fr}
 }
-
-.modalTitle {
-  font-size: 19px;
-  font-weight: 800;
-  margin-bottom: 15px;
-}
-
-.modalButtons {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.secondary {
-  background:
-    rgba(50,90,130,.30);
-}
-
-/* ======================================
-   MOBILE
-====================================== */
-
-@media(max-width:650px) {
-
-  #dashboard {
-    padding: 12px;
-  }
-
-  .header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .searchRow {
-    flex-direction: column;
-  }
-
-  .customForm {
-    grid-template-columns: 1fr;
-  }
-
-  .tools {
-    grid-template-columns:
-      repeat(2, 1fr);
-  }
-
-  .panel {
-    padding: 14px;
-  }
-}
-</style>
-</head>
-
-<body>
-
-<div id="codeBg"></div>
-
-<!-- =====================================
-     LOGIN
-===================================== -->
-
-<section id="loginScreen">
-
-  <div class="loginBox">
-
-    <div class="logo">
-      TXG
-    </div>
-
-    <div class="sub">
-      INFORMATION CENTER
-    </div>
-
-    <input
-      id="loginPassword"
-      type="password"
-      placeholder="Enter password"
-      autocomplete="current-password"
-    >
-
-    <button
-      id="loginBtn"
-      class="full"
-    >
-      Login
-    </button>
-
-    <div
-      id="loginError"
-      class="error"
-    ></div>
-
-  </div>
-
-</section>
-
-<!-- =====================================
-     DASHBOARD
-===================================== -->
-
-<section id="dashboard">
-
-  <div class="dashboardWrap">
-
-    <div class="header">
-
-      <div class="brand">
-        TXG INFORMATION
-      </div>
-
-      <div class="headerActions">
-
-        <button
-          class="smallBtn"
-          id="changePasswordBtn"
-        >
-          Change Password
-        </button>
-
-        <button
-          class="smallBtn"
-          id="logoutBtn"
-        >
-          Logout
-        </button>
-
-      </div>
-
-    </div>
-
-    <div class="panel">
-
-      <div class="title">
-        Lookup Center
-      </div>
-
-      <div class="searchRow">
-
-        <input
-          id="lookupInput"
-          placeholder="Enter value..."
-          autocomplete="off"
-        >
-
-        <button id="searchBtn">
-          Search
-        </button>
-
-      </div>
-
-      <div
-        id="status"
-      >
-        Select a lookup type.
-      </div>
-
-      <div class="tools">
-
-        <button
-          class="tool active"
-          data-type="mobile"
-        >
-          📱 Mobile
-        </button>
-
-        <button
-          class="tool"
-          data-type="pin"
-        >
-          📍 PIN
-        </button>
-
-        <button
-          class="tool"
-          data-type="ifsc"
-        >
-          🏦 IFSC
-        </button>
-
-        <button
-          class="tool"
-          data-type="ip"
-        >
-          🌐 IP
-        </button>
-
-        <button
-          class="tool"
-          data-type="url"
-        >
-          🔗 URL
-        </button>
-
-        <button
-          class="tool"
-          data-type="upi"
-        >
-          💳 UPI
-        </button>
-
-      </div>
-
-      <pre id="response">
-Ready...
-      </pre>
-
-      <!-- CUSTOM API -->
-
-      <div class="customSection">
-
-        <div class="title">
-          Custom APIs
-        </div>
-
-        <div class="customForm">
-
-          <input
-            id="apiName"
-            placeholder="Button name"
-          >
-
-          <input
-            id="apiUrl"
-            placeholder="https://example.com/?message={message}"
-          >
-
-          <button id="addApiBtn">
-            Add API
-          </button>
-
-        </div>
-
-        <div
-          id="customList"
-          class="customList"
-        ></div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- =====================================
-     CHANGE PASSWORD MODAL
-===================================== -->
-
-<div
-  id="passwordModal"
-  class="modal"
->
-
-  <div class="modalBox">
-
-    <div class="modalTitle">
-      Change Password
-    </div>
-
-    <input
-      id="oldPassword"
-      type="password"
-      placeholder="Current password"
-    >
-
-    <br><br>
-
-    <input
-      id="newPassword"
-      type="password"
-      placeholder="New password"
-    >
-
-    <div class="modalButtons">
-
-      <button id="savePasswordBtn">
-        Save Password
-      </button>
-
-      <button
-        id="closePasswordBtn"
-        class="secondary"
-      >
-        Cancel
-      </button>
-
-    </div>
-
-    <div
-      id="passwordMessage"
-      class="error"
-    ></div>
-
-  </div>
-
+</style></head><body><canvas id="codeBg"></canvas>
+
+<div class="overlay"></div><div class="app"><section id="loginScreen" class="login"><div class="login-card"><div class="logo">TXG INFORMATION</div><div class="sub">
+Secure Information & Lookup Center
+</div><input
+id="password"
+type="password"
+placeholder="Enter admin password"
+autocomplete="current-password"
+
+«»
+
+<br><br>
+
+<button id="loginBtn">
+Login
+</button><div id="loginError" class="error"></div></div></section><section id="dashboard" class="hidden"><div class="header"><div>
+<div class="header-title">
+TXG Information Center
+</div><div class="header-sub">
+Authorized information & technical lookup tools
 </div>
+</div><div class="header-actions">
+<button class="secondary" id="logoutBtn">
+Logout
+</button>
+</div></div><div class="status">
+● Authentication active
+</div><div class="grid"><div class="panel tool">
+<div class="tool-title">Mobile</div><div class="tool-desc">
+Validate phone number, country and formatting information.
+</div><button onclick="openTool('mobile','Mobile Number')">
+Open Mobile
+</button>
+</div><div class="panel tool">
+<div class="tool-title">PIN</div><div class="tool-desc">
+Find public postal information for an Indian PIN code.
+</div><button onclick="openTool('pin','PIN Code')">
+Open PIN
+</button>
+</div><div class="panel tool">
+<div class="tool-title">IFSC</div><div class="tool-desc">
+Check public bank and branch information from IFSC.
+</div><button onclick="openTool('ifsc','IFSC Code')">
+Open IFSC
+</button>
+</div><div class="panel tool">
+<div class="tool-title">IP</div><div class="tool-desc">
+View public IP and approximate network information.
+</div><button onclick="openTool('ip','IP Address')">
+Open IP
+</button>
+</div><div class="panel tool">
+<div class="tool-title">URL</div><div class="tool-desc">
+Parse URL and perform basic DNS information lookup.
+</div><button onclick="openTool('url','URL')">
+Open URL
+</button>
+</div><div class="panel tool">
+<div class="tool-title">UPI</div><div class="tool-desc">
+Validate UPI ID format and handle.
+</div><button onclick="openTool('upi','UPI ID')">
+Open UPI
+</button>
+</div></div><div id="toolPanel" class="panel hidden"><div class="panel-title" id="toolTitle">
+Lookup
+</div><div class="form-row"><input
+id="toolInput"
+placeholder="Enter value"
 
-<script>
-/* =====================================
-   BLUE FAKE CODE
-===================================== */
+«»
 
-(function () {
+<button id="lookupBtn">
+Search
+</button></div><div id="lookupResult" class="result hidden"></div></div><div class="panel"><div class="panel-title">
+Add Custom API
+</div><input
+id="apiName"
+placeholder="Button name e.g. My API"
 
-  const bg =
-    document.getElementById(
-      "codeBg"
-    );
+«»
 
-  const codes = [
-    "const TXG = initialize();",
-    "API_STATUS: CONNECTED",
-    "fetch('/api/lookup')",
-    "response.status === 200",
-    "VERIFYING_REQUEST...",
-    "UPI_VALIDATION: READY",
-    "IFSC_DATABASE: ONLINE",
-    "MOBILE_LOOKUP: ACTIVE",
-    "PIN_SERVICE: CONNECTED",
-    "IP_LOOKUP: RUNNING",
-    "CUSTOM_API: READY",
-    "SECURE_SESSION: TRUE",
-    "AUTHENTICATION: OK",
-    "request_id: TXG_2026",
-    "await response.json();",
-    "HTTP 200 OK",
-    "SYSTEM_STATUS: ONLINE",
-    "ENCRYPTION: ACTIVE",
-    "DATABASE: CONNECTED",
-    "TXG_INFORMATION_CENTER",
-    "lookup.process(input);",
-    "server.response();",
-    "session.verify();",
-    "UPI.handle.validate();",
-    "IFSC.branch.lookup();"
-  ];
+<br><br>
 
-  function createLine() {
+<input
+id="apiURL"
+placeholder="https://example.com/api?message={message}"
 
-    const line =
-      document.createElement(
-        "div"
-      );
+«»
 
-    line.className =
-      "codeLine";
+<div class="small">
+Use {message} where the user's input should be inserted.
+</div><br><button id="addApiBtn">
++ Add API
+</button><div id="customList" class="custom-list"></div></div><div id="customPanel" class="panel hidden"><div class="panel-title" id="customTitle">
+Custom API
+</div><input
+id="customMessage"
+placeholder="Enter your message"
 
-    line.textContent =
-      codes[
-        Math.floor(
-          Math.random() *
-          codes.length
-        )
-      ];
+«»
 
-    line.style.left =
-      Math.random() * 95 + "%";
+<br><br>
 
-    line.style.animationDuration =
-      7 + Math.random() * 10 + "s";
+<button id="customRunBtn">
+Run API
+</button><div id="customResult" class="result hidden"></div></div></section></div><script>
 
-    line.style.animationDelay =
-      Math.random() * 2 + "s";
+const $ = id => document.getElementById(id);
 
-    line.style.fontSize =
-      10 + Math.random() * 4 + "px";
+let currentTool = "";
+let currentCustomAPI = null;
 
-    bg.appendChild(line);
 
-    setTimeout(
-      () => line.remove(),
-      19000
-    );
-  }
+const builtInTools = {
 
-  for (
-    let i = 0;
-    i < 30;
-    i++
-  ) {
-    createLine();
-  }
+mobile:{
+placeholder:"+91 9876543210"
+},
 
-  setInterval(
-    createLine,
-    500
-  );
+pin:{
+placeholder:"Enter 6 digit PIN"
+},
 
-})();
+ifsc:{
+placeholder:"SBIN0000001"
+},
 
-/* =====================================
-   VARIABLES
-===================================== */
+ip:{
+placeholder:"Leave empty for your public IP"
+},
 
-let currentType =
-  "mobile";
+url:{
+placeholder:"https://example.com"
+},
 
-let selectedCustomApi =
-  null;
+upi:{
+placeholder:"example@upi"
+}
 
-/* =====================================
-   ELEMENTS
-===================================== */
+};
 
-const loginScreen =
-  document.getElementById(
-    "loginScreen"
-  );
 
-const dashboard =
-  document.getElementById(
-    "dashboard"
-  );
+/* =========================
+   SAFE SERVER REQUEST
+========================= */
 
-const loginPassword =
-  document.getElementById(
-    "loginPassword"
-  );
+async function request(url, options = {}) {
 
-const loginBtn =
-  document.getElementById(
-    "loginBtn"
-  );
+let response;
 
-const loginError =
-  document.getElementById(
-    "loginError"
-  );
+try {
 
-const lookupInput =
-  document.getElementById(
-    "lookupInput"
-  );
+response = await fetch(url,{
+credentials:"same-origin",
+...options
+});
 
-const searchBtn =
-  document.getElementById(
-    "searchBtn"
-  );
+} catch(error) {
 
-const responseBox =
-  document.getElementById(
-    "response"
-  );
+throw new Error(
+"Could not connect to server."
+);
 
-const statusBox =
-  document.getElementById(
-    "status"
-  );
+}
 
-const customList =
-  document.getElementById(
-    "customList"
-  );
 
-/* =====================================
+const text =
+await response.text();
+
+
+if(!text){
+
+throw new Error(
+"Server returned an empty response."
+);
+
+}
+
+
+let data;
+
+try {
+
+data =
+JSON.parse(text);
+
+} catch(error) {
+
+console.error(
+"NON JSON SERVER RESPONSE:",
+text
+);
+
+throw new Error(
+"Server error: " +
+text.substring(0,180)
+);
+
+}
+
+
+if(response.status === 401){
+
+showLogin();
+
+}
+
+
+return data;
+
+}
+
+
+/* =========================
    AUTH
-===================================== */
+========================= */
 
-async function auth(action, data = {}) {
+async function checkAuth(){
 
-  const response =
-    await fetch(
-      "/api/auth",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type":
-            "application/json"
-        },
-        body: JSON.stringify({
-          action,
-          ...data
-        })
-      }
-    );
+try{
 
-  return response.json();
-}
-
-async function checkLogin() {
-
-  try {
-
-    const result =
-      await auth("status");
-
-    if (
-      result.ok &&
-      result.loggedIn
-    ) {
-      showDashboard();
-    } else {
-      showLogin();
-    }
-
-  } catch (_) {
-    showLogin();
-  }
-}
-
-function showLogin() {
-
-  loginScreen.style.display =
-    "flex";
-
-  dashboard.style.display =
-    "none";
-}
-
-function showDashboard() {
-
-  loginScreen.style.display =
-    "none";
-
-  dashboard.style.display =
-    "block";
-}
-
-/* =====================================
-   LOGIN
-===================================== */
-
-loginBtn.addEventListener(
-  "click",
-  async () => {
-
-    loginError.textContent =
-      "Checking...";
-
-    const password =
-      loginPassword.value;
-
-    if (!password) {
-      loginError.textContent =
-        "Enter password";
-      return;
-    }
-
-    try {
-
-      const result =
-        await auth(
-          "login",
-          { password }
-        );
-
-      if (result.ok) {
-
-        loginPassword.value =
-          "";
-
-        loginError.textContent =
-          "";
-
-        showDashboard();
-
-      } else {
-
-        loginError.textContent =
-          result.message ||
-          "Login failed";
-      }
-
-    } catch (_) {
-
-      loginError.textContent =
-        "Server error";
-    }
-  }
+const data =
+await request(
+"/api/auth?action=status"
 );
 
-loginPassword.addEventListener(
-  "keydown",
-  e => {
+if(data && data.loggedIn){
 
-    if (
-      e.key === "Enter"
-    ) {
-      loginBtn.click();
-    }
+showDashboard();
 
-  }
+}else{
+
+showLogin();
+
+}
+
+}catch(error){
+
+showLogin();
+
+$("loginError").textContent =
+error.message || "Server connection error.";
+
+}
+
+}
+
+
+async function login(){
+
+const password =
+$("password").value;
+
+$("loginError").textContent = "";
+
+
+if(!password){
+
+$("loginError").textContent =
+"Enter password.";
+
+return;
+
+}
+
+
+$("loginBtn").disabled = true;
+
+$("loginBtn").textContent =
+"Checking...";
+
+
+try{
+
+const data =
+await request(
+"/api/auth",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+action:"login",
+password:password
+})
+}
 );
 
-/* =====================================
-   LOGOUT
-===================================== */
 
-document
-  .getElementById(
-    "logoutBtn"
-  )
-  .addEventListener(
-    "click",
-    async () => {
+if(data.ok){
 
-      await auth("logout");
+$("password").value = "";
 
-      showLogin();
+showDashboard();
 
-    }
-  );
+}else{
 
-/* =====================================
-   CHANGE PASSWORD
-===================================== */
+$("loginError").textContent =
+data.error ||
+"Invalid password.";
 
-const passwordModal =
-  document.getElementById(
-    "passwordModal"
-  );
-
-document
-  .getElementById(
-    "changePasswordBtn"
-  )
-  .addEventListener(
-    "click",
-    () => {
-
-      passwordModal.style.display =
-        "flex";
-
-      document
-        .getElementById(
-          "passwordMessage"
-        )
-        .textContent = "";
-
-    }
-  );
-
-document
-  .getElementById(
-    "closePasswordBtn"
-  )
-  .addEventListener(
-    "click",
-    () => {
-
-      passwordModal.style.display =
-        "none";
-
-    }
-  );
-
-document
-  .getElementById(
-    "savePasswordBtn"
-  )
-  .addEventListener(
-    "click",
-    async () => {
-
-      const oldPassword =
-        document.getElementById(
-          "oldPassword"
-        ).value;
-
-      const newPassword =
-        document.getElementById(
-          "newPassword"
-        ).value;
-
-      const message =
-        document.getElementById(
-          "passwordMessage"
-        );
-
-      if (
-        !oldPassword ||
-        !newPassword
-      ) {
-        message.textContent =
-          "Fill both passwords";
-        return;
-      }
-
-      try {
-
-        const result =
-          await auth(
-            "change-password",
-            {
-              oldPassword,
-              newPassword
-            }
-          );
-
-        if (result.ok) {
-
-          message.style.color =
-            "#61d5ff";
-
-          message.textContent =
-            "Password changed. Login again.";
-
-          setTimeout(
-            () => {
-
-              passwordModal.style.display =
-                "none";
-
-              showLogin();
-
-            },
-            1200
-          );
-
-        } else {
-
-          message.style.color =
-            "#ff7070";
-
-          message.textContent =
-            result.message ||
-            "Password change failed";
-        }
-
-      } catch (_) {
-
-        message.textContent =
-          "Server error";
-      }
-
-    }
-  );
-
-/* =====================================
-   LOOKUP TYPE
-===================================== */
-
-document
-  .querySelectorAll(
-    ".tool"
-  )
-  .forEach(
-    button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          document
-            .querySelectorAll(
-              ".tool"
-            )
-            .forEach(
-              x =>
-                x.classList.remove(
-                  "active"
-                )
-            );
-
-          button.classList.add(
-            "active"
-          );
-
-          selectedCustomApi =
-            null;
-
-          currentType =
-            button.dataset.type;
-
-          statusBox.textContent =
-            "Selected: " +
-            currentType.toUpperCase();
-
-          lookupInput.placeholder =
-            getPlaceholder(
-              currentType
-            );
-        }
-      );
-
-    }
-  );
-
-function getPlaceholder(type) {
-
-  const map = {
-    mobile:
-      "Enter mobile number...",
-    pin:
-      "Enter 6 digit PIN...",
-    ifsc:
-      "Enter IFSC...",
-    ip:
-      "Enter IP address...",
-    url:
-      "Enter URL...",
-    upi:
-      "Enter UPI ID..."
-  };
-
-  return (
-    map[type] ||
-    "Enter value..."
-  );
 }
 
-/* =====================================
-   BUILT-IN LOOKUP
-===================================== */
+}catch(error){
 
-async function runLookup() {
+$("loginError").textContent =
+error.message ||
+"Authentication server error.";
 
-  const value =
-    lookupInput.value.trim();
+}finally{
 
-  if (!value) {
+$("loginBtn").disabled = false;
 
-    statusBox.textContent =
-      "Enter a value first.";
+$("loginBtn").textContent =
+"Login";
 
-    return;
-  }
-
-  if (selectedCustomApi) {
-
-    await runCustomApi(
-      selectedCustomApi,
-      value
-    );
-
-    return;
-  }
-
-  statusBox.textContent =
-    "Running " +
-    currentType.toUpperCase() +
-    " lookup...";
-
-  responseBox.textContent =
-    "Processing...";
-
-  try {
-
-    const response =
-      await fetch(
-        "/api/lookup",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-          body:
-            JSON.stringify({
-              type:
-                currentType,
-              value
-            })
-        }
-      );
-
-    const data =
-      await response.json();
-
-    responseBox.textContent =
-      JSON.stringify(
-        data,
-        null,
-        2
-      );
-
-    statusBox.textContent =
-      data.ok
-        ? "Lookup completed."
-        : (
-          data.message ||
-          "Lookup failed."
-        );
-
-  } catch (error) {
-
-    responseBox.textContent =
-      error.message;
-
-    statusBox.textContent =
-      "Request failed.";
-  }
 }
 
-searchBtn.addEventListener(
-  "click",
-  runLookup
+}
+
+
+async function logout(){
+
+try{
+
+await request(
+"/api/auth",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+action:"logout"
+})
+}
 );
 
-lookupInput.addEventListener(
-  "keydown",
-  e => {
+}catch(error){
 
-    if (
-      e.key === "Enter"
-    ) {
-      runLookup();
-    }
+console.error(error);
 
-  }
+}
+
+showLogin();
+
+}
+
+
+function showLogin(){
+
+$("loginScreen")
+.classList.remove("hidden");
+
+$("dashboard")
+.classList.add("hidden");
+
+}
+
+
+function showDashboard(){
+
+$("loginScreen")
+.classList.add("hidden");
+
+$("dashboard")
+.classList.remove("hidden");
+
+loadCustomAPIs();
+
+}
+
+
+/* =========================
+   BUILT-IN LOOKUPS
+========================= */
+
+function openTool(type,title){
+
+currentTool = type;
+
+$("toolPanel")
+.classList.remove("hidden");
+
+$("toolTitle")
+.textContent = title;
+
+$("toolInput").value = "";
+
+$("toolInput").placeholder =
+builtInTools[type]?.placeholder ||
+"Enter value";
+
+$("lookupResult")
+.className =
+"result hidden";
+
+$("toolInput").focus();
+
+}
+
+
+async function lookup(){
+
+if(!currentTool)return;
+
+const input =
+$("toolInput").value.trim();
+
+
+if(!input && currentTool !== "ip"){
+
+showResult({
+ok:false,
+error:"Enter a value."
+},true);
+
+return;
+
+}
+
+
+$("lookupBtn").disabled = true;
+
+$("lookupBtn").textContent =
+"Searching...";
+
+
+try{
+
+const data =
+await request(
+"/api/lookup",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+type:currentTool,
+input:input
+})
+}
 );
 
-/* =====================================
-   CUSTOM APIs
-===================================== */
+showResult(
+data,
+!data.ok
+);
 
-function getCustomApis() {
+}catch(error){
 
-  try {
+showResult({
+ok:false,
+error:error.message
+},true);
 
-    return JSON.parse(
-      localStorage.getItem(
-        "txg_custom_apis"
-      ) || "[]"
-    );
+}finally{
 
-  } catch (_) {
+$("lookupBtn").disabled = false;
 
-    return [];
-  }
-}
-
-function saveCustomApis(apis) {
-
-  localStorage.setItem(
-    "txg_custom_apis",
-    JSON.stringify(apis)
-  );
+$("lookupBtn").textContent =
+"Search";
 
 }
 
-function renderCustomApis() {
-
-  customList.innerHTML =
-    "";
-
-  const apis =
-    getCustomApis();
-
-  apis.forEach(
-    (api, index) => {
-
-      const button =
-        document.createElement(
-          "button"
-        );
-
-      button.className =
-        "customApi";
-
-      button.textContent =
-        api.name;
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          document
-            .querySelectorAll(
-              ".tool"
-            )
-            .forEach(
-              x =>
-                x.classList.remove(
-                  "active"
-                )
-            );
-
-          selectedCustomApi =
-            api;
-
-          statusBox.textContent =
-            "Custom API selected: " +
-            api.name;
-
-          lookupInput.placeholder =
-            "Enter value for " +
-            api.name +
-            "...";
-
-        }
-      );
-
-      customList.appendChild(
-        button
-      );
-
-    }
-  );
 }
 
-document
-  .getElementById(
-    "addApiBtn"
-  )
-  .addEventListener(
-    "click",
-    () => {
 
-      const name =
-        document
-          .getElementById(
-            "apiName"
-          )
-          .value
-          .trim();
+function showResult(data,isError=false){
 
-      const url =
-        document
-          .getElementById(
-            "apiUrl"
-          )
-          .value
-          .trim();
+const box =
+$("lookupResult");
 
-      if (!name) {
-        alert(
-          "Enter API button name"
-        );
-        return;
-      }
+box.className =
+"result" +
+(isError ? " error-box" : " success");
 
-      if (
-        !url.startsWith(
-          "https://"
-        )
-      ) {
-        alert(
-          "Only HTTPS APIs are allowed"
-        );
-        return;
-      }
+box.classList.remove("hidden");
 
-      if (
-        !url
-          .toLowerCase()
-          .includes(
-            "{message}"
-          )
-      ) {
-        alert(
-          "API URL must contain {message}"
-        );
-        return;
-      }
+try{
 
-      const apis =
-        getCustomApis();
+box.textContent =
+JSON.stringify(
+data,
+null,
+2
+);
 
-      apis.push({
-        name,
-        url
-      });
+}catch(error){
 
-      saveCustomApis(
-        apis
-      );
+box.textContent =
+String(data);
 
-      document
-        .getElementById(
-          "apiName"
-        )
-        .value = "";
-
-      document
-        .getElementById(
-          "apiUrl"
-        )
-        .value = "";
-
-      renderCustomApis();
-
-      statusBox.textContent =
-        "Custom API added.";
-    }
-  );
-
-/* =====================================
-   CUSTOM API RUNNER
-===================================== */
-
-async function runCustomApi(
-  api,
-  message
-) {
-
-  statusBox.textContent =
-    "Running " +
-    api.name +
-    "...";
-
-  responseBox.textContent =
-    "Processing...";
-
-  try {
-
-    const response =
-      await fetch(
-        "/api/custom",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-          body:
-            JSON.stringify({
-              url:
-                api.url,
-              message
-            })
-        }
-      );
-
-    const data =
-      await response.json();
-
-    responseBox.textContent =
-      JSON.stringify(
-        data,
-        null,
-        2
-      );
-
-    statusBox.textContent =
-      data.ok
-        ? "Custom API completed."
-        : (
-          data.message ||
-          "Custom API failed."
-        );
-
-  } catch (error) {
-
-    responseBox.textContent =
-      error.message;
-
-    statusBox.textContent =
-      "Custom API request failed.";
-  }
 }
 
-/* =====================================
+}
+
+
+/* =========================
+   CUSTOM API STORAGE
+========================= */
+
+function getCustomAPIs(){
+
+try{
+
+return JSON.parse(
+sessionStorage.getItem(
+"txg_custom_apis"
+) || "[]"
+);
+
+}catch(error){
+
+return [];
+
+}
+
+}
+
+
+function saveCustomAPIs(items){
+
+try{
+
+sessionStorage.setItem(
+"txg_custom_apis",
+JSON.stringify(items)
+);
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+
+
+function loadCustomAPIs(){
+
+renderCustomAPIs(
+getCustomAPIs()
+);
+
+}
+
+
+function renderCustomAPIs(items){
+
+const list =
+$("customList");
+
+list.innerHTML = "";
+
+
+if(!items.length){
+
+const empty =
+document.createElement("div");
+
+empty.className =
+"small";
+
+empty.textContent =
+"No custom APIs added yet.";
+
+list.appendChild(empty);
+
+return;
+
+}
+
+
+items.forEach((api,index)=>{
+
+const row =
+document.createElement("div");
+
+row.className =
+"custom-item";
+
+
+const button =
+document.createElement("button");
+
+button.textContent =
+api.name;
+
+button.addEventListener(
+"click",
+()=>{
+
+currentCustomAPI = api;
+
+$("customPanel")
+.classList.remove("hidden");
+
+$("customTitle")
+.textContent =
+api.name;
+
+$("customMessage").value = "";
+
+$("customResult")
+.className =
+"result hidden";
+
+$("customMessage").focus();
+
+}
+);
+
+
+const remove =
+document.createElement("button");
+
+remove.className =
+"remove";
+
+remove.textContent =
+"×";
+
+remove.title =
+"Remove API";
+
+
+remove.addEventListener(
+"click",
+()=>{
+
+items.splice(index,1);
+
+saveCustomAPIs(items);
+
+renderCustomAPIs(items);
+
+}
+);
+
+
+row.appendChild(button);
+
+row.appendChild(remove);
+
+list.appendChild(row);
+
+});
+
+}
+
+
+/* =========================
+   ADD CUSTOM API
+========================= */
+
+function addCustomAPI(){
+
+const name =
+$("apiName").value.trim();
+
+const url =
+$("apiURL").value.trim();
+
+
+if(!name){
+
+alert("Enter API button name.");
+
+return;
+
+}
+
+
+if(!url){
+
+alert("Enter API URL.");
+
+return;
+
+}
+
+
+if(!/^https:\/\//i.test(url)){
+
+alert(
+"Only HTTPS API URLs are allowed."
+);
+
+return;
+
+}
+
+
+if(!url.includes("{message}")){
+
+alert(
+"API URL must contain {message}."
+);
+
+return;
+
+}
+
+
+const items =
+getCustomAPIs();
+
+
+items.push({
+name:name,
+url:url
+});
+
+
+saveCustomAPIs(items);
+
+renderCustomAPIs(items);
+
+
+$("apiName").value = "";
+
+$("apiURL").value = "";
+
+}
+
+
+/* =========================
+   RUN CUSTOM API
+========================= */
+
+async function runCustomAPI(){
+
+if(!currentCustomAPI)return;
+
+const message =
+$("customMessage").value;
+
+
+$("customRunBtn").disabled = true;
+
+$("customRunBtn").textContent =
+"Running...";
+
+
+try{
+
+const data =
+await request(
+"/api/custom",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+url:currentCustomAPI.url,
+message:message
+})
+}
+);
+
+
+const box =
+$("customResult");
+
+box.classList.remove("hidden");
+
+if(!data.ok){
+
+box.className =
+"result error-box";
+
+}else{
+
+box.className =
+"result success";
+
+}
+
+
+if(
+data &&
+data.response !== undefined
+){
+
+if(
+typeof data.response ===
+"object"
+){
+
+box.textContent =
+JSON.stringify(
+data.response,
+null,
+2
+);
+
+}else{
+
+box.textContent =
+String(data.response);
+
+}
+
+}else{
+
+box.textContent =
+JSON.stringify(
+data,
+null,
+2
+);
+
+}
+
+}catch(error){
+
+const box =
+$("customResult");
+
+box.className =
+"result error-box";
+
+box.classList.remove("hidden");
+
+box.textContent =
+error.message ||
+"API request failed.";
+
+}finally{
+
+$("customRunBtn").disabled =
+false;
+
+$("customRunBtn").textContent =
+"Run API";
+
+}
+
+}
+
+
+/* =========================
+   EVENTS
+========================= */
+
+$("loginBtn")
+.addEventListener(
+"click",
+login
+);
+
+
+$("password")
+.addEventListener(
+"keydown",
+event=>{
+
+if(event.key==="Enter"){
+
+login();
+
+}
+
+}
+);
+
+
+$("logoutBtn")
+.addEventListener(
+"click",
+logout
+);
+
+
+$("lookupBtn")
+.addEventListener(
+"click",
+lookup
+);
+
+
+$("toolInput")
+.addEventListener(
+"keydown",
+event=>{
+
+if(event.key==="Enter"){
+
+lookup();
+
+}
+
+}
+);
+
+
+$("addApiBtn")
+.addEventListener(
+"click",
+addCustomAPI
+);
+
+
+$("customRunBtn")
+.addEventListener(
+"click",
+runCustomAPI
+);
+
+
+/* =========================
+   CODE BACKGROUND
+========================= */
+
+const canvas =
+$("codeBg");
+
+const ctx =
+canvas.getContext("2d");
+
+let width = 0;
+
+let height = 0;
+
+const fontSize = 13;
+
+const chars =
+"01{}[]()<>/\\=+-_*#$%ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+let columns = [];
+
+
+function resizeCanvas(){
+
+width =
+canvas.width =
+window.innerWidth;
+
+height =
+canvas.height =
+window.innerHeight;
+
+
+const count =
+Math.ceil(
+width / fontSize
+);
+
+
+columns =
+Array.from(
+{length:count},
+()=>Math.random() *
+(height / fontSize)
+);
+
+}
+
+
+function drawCode(){
+
+ctx.fillStyle =
+"rgba(2,8,23,.16)";
+
+ctx.fillRect(
+0,
+0,
+width,
+height
+);
+
+
+ctx.fillStyle =
+"rgba(45,156,255,.65)";
+
+ctx.font =
+fontSize +
+"px monospace";
+
+
+for(
+let i=0;
+i<columns.length;
+i++
+){
+
+const char =
+chars[
+Math.floor(
+Math.random() *
+chars.length
+)
+];
+
+
+const x =
+i * fontSize;
+
+const y =
+columns[i] *
+fontSize;
+
+
+ctx.fillText(
+char,
+x,
+y
+);
+
+
+if(
+y > height &&
+Math.random() > .975
+){
+
+columns[i] = 0;
+
+}
+
+
+columns[i] += .45;
+
+}
+
+
+requestAnimationFrame(
+drawCode
+);
+
+}
+
+
+window.addEventListener(
+"resize",
+resizeCanvas
+);
+
+
+resizeCanvas();
+
+drawCode();
+
+
+/* =========================
    START
-===================================== */
+========================= */
 
-renderCustomApis();
+checkAuth();
 
-lookupInput.placeholder =
-  getPlaceholder(
-    currentType
-  );
-
-checkLogin();
-
-</script>
-
-</body>
+</script></body>
 </html>
