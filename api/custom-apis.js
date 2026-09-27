@@ -1,59 +1,84 @@
-// api/custom-apis.js
-
 const crypto = require("crypto");
+const { neon } = require("@neondatabase/serverless");
+
+const COOKIE_NAME = "txg_admin_session";
+
+const FALLBACK_SECRET =
+  "TXG-INFORMATION-AUTH-2026-CHANGE-ME";
+
+const SESSION_HOURS = 12;
+
+function getSecret() {
+  return process.env.AUTH_SECRET || FALLBACK_SECRET;
+}
 
 function getCookie(req, name) {
-  const cookies = req.headers.cookie || "";
+  const cookieHeader = req.headers.cookie || "";
 
-  for (const part of cookies.split(";")) {
-    const [key, ...rest] = part.trim().split("=");
+  for (const item of cookieHeader.split(";")) {
+    const index = item.indexOf("=");
+
+    if (index === -1) continue;
+
+    const key = item.slice(0, index).trim();
+    const value = item.slice(index + 1).trim();
+
     if (key === name) {
-      return decodeURIComponent(rest.join("="));
+      try {
+        return decodeURIComponent(value);
+      } catch {
+        return value;
+      }
     }
   }
 
   return null;
 }
 
-function isAuthenticated(req) {
-  const session = getCookie(req, "txg_admin_session");
+function verifySession(token) {
+  if (!token) return false;
 
-  if (!session) return false;
+  const parts = token.split(".");
 
-  const secret =
-    process.env.AUTH_SECRET ||
-    "TXG-INFORMATION-AUTH-2026-CHANGE-ME";
+  if (parts.length !== 2) return false;
 
-  const [timestamp, signature] = session.split(".");
+  const timestamp = Number(parts[0]);
+  const signature = parts[1];
 
-  if (!timestamp || !signature) return false;
+  if (!Number.isFinite(timestamp)) return false;
 
-  const time = Number(timestamp);
+  const age = Date.now() - timestamp;
 
-  if (!Number.isFinite(time)) return false;
-
-  // 12 hours
-  if (Date.now() - time > 12 * 60 * 60 * 1000) {
+  if (
+    age < 0 ||
+    age > SESSION_HOURS * 60 * 60 * 1000
+  ) {
     return false;
   }
 
   const expected = crypto
-    .createHmac("sha256", secret)
+    .createHmac("sha256", getSecret())
     .update(String(timestamp))
     .digest("hex");
 
+  if (signature.length !== expected.length) {
+    return false;
+  }
+
   try {
     return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expected)
+      Buffer.from(signature, "utf8"),
+      Buffer.from(expected, "utf8")
     );
   } catch {
     return false;
   }
 }
 
-function send(res, status, data) {
-  res.status(status).json(data);
+function isAuthenticated(req) {
+  return verifySession(
+    getCookie(req, COOKIE_NAME)
+  );
 }
 
 function clean(value, max = 500) {
@@ -73,95 +98,40 @@ function makeId() {
   );
 }
 
-/*
-  IMPORTANT:
+function send(res, status, data) {
+  return res.status(status).json(data);
+}
 
-  Vercel Functions are stateless.
-  This file therefore uses an external Custom API storage endpoint
-  when CUSTOM_API_STORE_URL is configured.
+async function getDatabase() {
+  const databaseUrl =
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_URL;
 
-  Set these environment variables in Vercel:
-
-  CUSTOM_API_STORE_URL=https://your-storage-api.example.com
-  CUSTOM_API_STORE_KEY=your-secret-key
-
-  Your storage API should support:
-
-  GET    /apis
-  POST   /apis
-  DELETE /apis/:id
-
-  If you haven't connected durable storage yet, GET/POST/DELETE
-  will return a clear configuration error instead of pretending
-  that data was permanently saved.
-*/
-
-const STORE_URL = (
-  process.env.CUSTOM_API_STORE_URL || ""
-).replace(/\/+$/, "");
-
-const STORE_KEY =
-  process.env.CUSTOM_API_STORE_KEY || "";
-
-async function storeRequest(path, options = {}) {
-  if (!STORE_URL) {
+  if (!databaseUrl) {
     throw new Error(
-      "CUSTOM_API_STORE_URL is not configured."
+      "DATABASE_URL is not configured. Connect Neon to this Vercel project."
     );
   }
 
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers || {})
-  };
+  const sql = neon(databaseUrl);
 
-  if (STORE_KEY) {
-    headers["Authorization"] = `Bearer ${STORE_KEY}`;
-  }
+  await sql`
+    CREATE TABLE IF NOT EXISTS custom_apis (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      url TEXT NOT NULL,
+      method TEXT NOT NULL DEFAULT 'GET',
+      description TEXT DEFAULT '',
+      category TEXT DEFAULT 'Custom API',
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `;
 
-  const controller = new AbortController();
-
-  const timer = setTimeout(() => {
-    controller.abort();
-  }, 10000);
-
-  try {
-    const response = await fetch(
-      `${STORE_URL}${path}`,
-      {
-        ...options,
-        headers,
-        signal: controller.signal
-      }
-    );
-
-    const text = await response.text();
-
-    let data;
-
-    try {
-      data = text ? JSON.parse(text) : {};
-    } catch {
-      data = {
-        raw: text
-      };
-    }
-
-    if (!response.ok) {
-      throw new Error(
-        data?.error ||
-        data?.message ||
-        `Storage API returned ${response.status}`
-      );
-    }
-
-    return data;
-  } finally {
-    clearTimeout(timer);
-  }
+  return sql;
 }
 
 module.exports = async function handler(req, res) {
+
   res.setHeader(
     "Cache-Control",
     "no-store, no-cache, must-revalidate"
@@ -172,9 +142,9 @@ module.exports = async function handler(req, res) {
     "nosniff"
   );
 
-  // -----------------------------
-  // ADMIN LOGIN CHECK
-  // -----------------------------
+  // ==============================
+  // LOGIN CHECK
+  // ==============================
 
   if (!isAuthenticated(req)) {
     return send(res, 401, {
@@ -184,39 +154,49 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // -----------------------------
-    // GET SAVED APIS
-    // -----------------------------
+
+    const sql = await getDatabase();
+
+    // ==============================
+    // GET APIs
+    // ==============================
 
     if (req.method === "GET") {
-      const result = await storeRequest("/apis", {
-        method: "GET"
-      });
 
-      const apis = Array.isArray(result)
-        ? result
-        : Array.isArray(result.apis)
-          ? result.apis
-          : [];
+      const rows = await sql`
+        SELECT
+          id,
+          name,
+          url,
+          method,
+          description,
+          category,
+          created_at AS "createdAt"
+        FROM custom_apis
+        ORDER BY created_at DESC
+      `;
 
       return send(res, 200, {
         ok: true,
-        apis
+        apis: rows
       });
     }
 
-    // -----------------------------
-    // ADD NEW API
-    // -----------------------------
+    // ==============================
+    // ADD API
+    // ==============================
 
     if (req.method === "POST") {
+
       const body =
-        typeof req.body === "object" && req.body
+        req.body &&
+        typeof req.body === "object"
           ? req.body
           : {};
 
       const name = clean(body.name, 80);
       const url = clean(body.url, 2000);
+
       const method = clean(
         body.method || "GET",
         10
@@ -246,11 +226,10 @@ module.exports = async function handler(req, res) {
         });
       }
 
-      // Only normal HTTP(S) API URLs.
-      let parsed;
+      let parsedUrl;
 
       try {
-        parsed = new URL(url);
+        parsedUrl = new URL(url);
       } catch {
         return send(res, 400, {
           ok: false,
@@ -259,8 +238,8 @@ module.exports = async function handler(req, res) {
       }
 
       if (
-        parsed.protocol !== "https:" &&
-        parsed.protocol !== "http:"
+        parsedUrl.protocol !== "https:" &&
+        parsedUrl.protocol !== "http:"
       ) {
         return send(res, 400, {
           ok: false,
@@ -279,39 +258,51 @@ module.exports = async function handler(req, res) {
       if (!allowedMethods.includes(method)) {
         return send(res, 400, {
           ok: false,
-          error: "Unsupported HTTP method."
+          error: "Invalid HTTP method."
         });
       }
 
-      const api = {
-        id: makeId(),
-        name,
-        url,
-        method,
-        description,
-        category,
-        createdAt: new Date().toISOString()
-      };
+      const id = makeId();
 
-      const result = await storeRequest("/apis", {
-        method: "POST",
-        body: JSON.stringify(api)
-      });
+      const rows = await sql`
+        INSERT INTO custom_apis (
+          id,
+          name,
+          url,
+          method,
+          description,
+          category
+        )
+        VALUES (
+          ${id},
+          ${name},
+          ${url},
+          ${method},
+          ${description},
+          ${category}
+        )
+        RETURNING
+          id,
+          name,
+          url,
+          method,
+          description,
+          category,
+          created_at AS "createdAt"
+      `;
 
       return send(res, 201, {
         ok: true,
-        api:
-          result?.api ||
-          result ||
-          api
+        api: rows[0]
       });
     }
 
-    // -----------------------------
-    // REMOVE SAVED API
-    // -----------------------------
+    // ==============================
+    // REMOVE API
+    // ==============================
 
     if (req.method === "DELETE") {
+
       let id =
         req.query?.id ||
         req.body?.id;
@@ -325,23 +316,24 @@ module.exports = async function handler(req, res) {
         });
       }
 
-      const result = await storeRequest(
-        `/apis/${encodeURIComponent(id)}`,
-        {
-          method: "DELETE"
-        }
-      );
+      const rows = await sql`
+        DELETE FROM custom_apis
+        WHERE id = ${id}
+        RETURNING id
+      `;
+
+      if (!rows.length) {
+        return send(res, 404, {
+          ok: false,
+          error: "API not found."
+        });
+      }
 
       return send(res, 200, {
         ok: true,
-        removed: id,
-        result
+        removed: id
       });
     }
-
-    // -----------------------------
-    // METHOD NOT ALLOWED
-    // -----------------------------
 
     res.setHeader(
       "Allow",
@@ -354,8 +346,9 @@ module.exports = async function handler(req, res) {
     });
 
   } catch (error) {
+
     console.error(
-      "CUSTOM API ERROR:",
+      "CUSTOM API DATABASE ERROR:",
       error
     );
 
@@ -363,7 +356,7 @@ module.exports = async function handler(req, res) {
       ok: false,
       error:
         error?.message ||
-        "Custom API storage error."
+        "Database error."
     });
   }
 };
