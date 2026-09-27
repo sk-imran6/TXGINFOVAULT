@@ -1,1613 +1,855 @@
 // api/lookup.js
 
-const crypto = require("crypto");
-
-const TIMEOUT = 10000;
-const MAX_RESULTS = 15;
-
-const COOKIE_NAME = "txg_admin_session";
-
-const FALLBACK_SECRET =
-  "TXG-INFORMATION-AUTH-2026-CHANGE-ME";
-
-const SESSION_HOURS = 12;
+const dns = require("dns").promises;
+const net = require("net");
 
 
-// ==========================================
-// AUTH SECRET
-// ==========================================
+// ================================
+// BASIC HELPERS
+// ================================
 
-function getSecret() {
-  return (
-    process.env.AUTH_SECRET ||
-    FALLBACK_SECRET
-  );
+function send(res, status, data) {
+  return res
+    .status(status)
+    .setHeader("Content-Type", "application/json")
+    .json(data);
 }
 
 
-// ==========================================
-// COOKIE
-// ==========================================
+async function fetchJSON(url, options = {}) {
+  const controller = new AbortController();
 
-function getCookie(req, name) {
-
-  const header =
-    req.headers.cookie || "";
-
-  for (const item of header.split(";")) {
-
-    const index =
-      item.indexOf("=");
-
-    if (index === -1) {
-      continue;
-    }
-
-    const key =
-      item.slice(0, index).trim();
-
-    const value =
-      item.slice(index + 1).trim();
-
-    if (key === name) {
-
-      try {
-        return decodeURIComponent(value);
-      } catch {
-        return value;
-      }
-
-    }
-
-  }
-
-  return null;
-}
-
-
-// ==========================================
-// VERIFY SESSION
-// ==========================================
-
-function verifySession(token) {
-
-  if (!token) {
-    return false;
-  }
-
-  const parts =
-    token.split(".");
-
-  if (parts.length !== 2) {
-    return false;
-  }
-
-  const timestamp =
-    Number(parts[0]);
-
-  const signature =
-    parts[1];
-
-  if (!Number.isFinite(timestamp)) {
-    return false;
-  }
-
-  const age =
-    Date.now() - timestamp;
-
-  if (
-    age < 0 ||
-    age >
-      SESSION_HOURS *
-      60 *
-      60 *
-      1000
-  ) {
-    return false;
-  }
-
-  const expected =
-    crypto
-      .createHmac(
-        "sha256",
-        getSecret()
-      )
-      .update(
-        String(timestamp)
-      )
-      .digest("hex");
-
-  if (
-    signature.length !==
-    expected.length
-  ) {
-    return false;
-  }
+  const timer = setTimeout(() => {
+    controller.abort();
+  }, 12000);
 
   try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
 
-    return crypto.timingSafeEqual(
-      Buffer.from(
-        signature,
-        "utf8"
-      ),
-      Buffer.from(
-        expected,
-        "utf8"
-      )
-    );
-
-  } catch {
-
-    return false;
-
-  }
-
-}
-
-
-// ==========================================
-// AUTH CHECK
-// ==========================================
-
-function isAuthenticated(req) {
-
-  const token =
-    getCookie(
-      req,
-      COOKIE_NAME
-    );
-
-  return verifySession(token);
-}
-
-
-// ==========================================
-// CLEAN
-// ==========================================
-
-function clean(value) {
-
-  return String(
-    value || ""
-  )
-    .trim()
-    .slice(0, 500);
-
-}
-
-
-// ==========================================
-// RESULT
-// ==========================================
-
-function result(
-  name,
-  source,
-  data,
-  status = "success"
-) {
-
-  return {
-    name,
-    source,
-    status,
-    data
-  };
-
-}
-
-
-// ==========================================
-// HTTP REQUEST
-// ==========================================
-
-async function request(
-  url,
-  options = {}
-) {
-
-  const controller =
-    new AbortController();
-
-  const timer =
-    setTimeout(
-      () => controller.abort(),
-      TIMEOUT
-    );
-
-  try {
-
-    const response =
-      await fetch(
-        url,
-        {
-          ...options,
-
-          signal:
-            controller.signal,
-
-          headers: {
-            "User-Agent":
-              "TXG-Information/10.0",
-
-            "Accept":
-              "application/json,text/plain,*/*",
-
-            ...(options.headers || {})
-          }
-        }
-      );
-
-
-    const text =
-      await response.text();
-
+    const contentType =
+      response.headers.get("content-type") || "";
 
     let data;
 
-
-    try {
-
-      data =
-        text
-          ? JSON.parse(text)
-          : {};
-
-    } catch {
-
-      data =
-        text.slice(
-          0,
-          15000
-        );
-
+    if (contentType.includes("application/json")) {
+      data = await response.json().catch(() => null);
+    } else {
+      data = await response.text();
     }
 
-
     return {
-      ok:
-        response.ok,
-
-      status:
-        response.status,
-
-      headers:
-        response.headers,
-
+      ok: response.ok,
+      status: response.status,
       data
     };
 
   } finally {
-
-    clearTimeout(
-      timer
-    );
-
+    clearTimeout(timer);
   }
-
 }
 
 
-// ==========================================
-// DETECTORS
-// ==========================================
+// ================================
+// MOBILE
+// ================================
 
-function isEmail(v) {
+function mobileLookup(value) {
 
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    .test(v);
-
-}
-
-
-function isIP(v) {
-
-  return (
-    /^(?:\d{1,3}\.){3}\d{1,3}$/
-      .test(v)
-    ||
-    v.includes(":")
-  );
-
-}
-
-
-function isPIN(v) {
-
-  return /^\d{6}$/.test(v);
-
-}
-
-
-function isIFSC(v) {
-
-  return /^[A-Z]{4}0[A-Z0-9]{6}$/i
-    .test(v);
-
-}
-
-
-function isUPI(v) {
-
-  return /^[a-zA-Z0-9._-]{2,}@[a-zA-Z0-9.-]{2,}$/
-    .test(v);
-
-}
-
-
-function isPhone(v) {
+  const input = String(value).trim();
 
   const digits =
-    v.replace(
-      /\D/g,
-      ""
-    );
+    input.replace(/\D/g, "");
 
-  return (
-    digits.length >= 8 &&
-    digits.length <= 15
-  );
+  const indiaValid =
+    /^(?:91)?[6-9]\d{9}$/.test(digits);
 
-}
+  let country = "Unknown";
+  let countryCode = "";
 
-
-function isURL(v) {
-
-  return (
-    /^https?:\/\//i.test(v)
-    ||
-    /^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i
-      .test(v)
-  );
-
-}
-
-
-// ==========================================
-// HOST
-// ==========================================
-
-function getHost(value) {
-
-  try {
-
-    return new URL(
-      /^https?:\/\//i.test(value)
-        ? value
-        : `https://${value}`
-    )
-      .hostname
-      .toLowerCase();
-
-  } catch {
-
-    return null;
-
+  if (indiaValid) {
+    country = "India";
+    countryCode = "+91";
   }
 
+  return {
+    input,
+    normalized: indiaValid
+      ? "+91" + digits.slice(-10)
+      : input,
+
+    country,
+    country_code: countryCode,
+
+    type: indiaValid
+      ? "Mobile"
+      : "Unknown",
+
+    valid: indiaValid,
+
+    note:
+      "This lookup does not expose private subscriber, IMEI, live-location, or owner-KYC data."
+  };
 }
 
 
-// ==========================================
-// DNS
-// ==========================================
-
-async function dns(
-  domain,
-  type
-) {
-
-  const r =
-    await request(
-      `https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=${type}`,
-      {
-        headers: {
-          Accept:
-            "application/dns-json"
-        }
-      }
-    );
-
-
-  return r.ok
-    ? r.data
-    : {
-        error:
-          `DNS HTTP ${r.status}`
-      };
-
-}
-
-
-// ==========================================
+// ================================
 // EMAIL
-// ==========================================
+// ================================
 
-async function emailLookup(
-  value
-) {
+async function emailLookup(value) {
+
+  const input =
+    String(value).trim().toLowerCase();
 
   const parts =
-    value.split("@");
+    input.split("@");
+
+  const valid =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input);
 
   const local =
-    parts[0];
+    parts.length === 2
+      ? parts[0]
+      : "";
 
   const domain =
-    parts[1].toLowerCase();
+    parts.length === 2
+      ? parts[1]
+      : "";
 
+  let dnsRecords = {};
 
-  const dnsData = {};
-
-
-  for (
-    const type of [
-      "A",
-      "AAAA",
-      "MX",
-      "NS",
-      "TXT",
-      "CAA"
-    ]
-  ) {
-
-    try {
-
-      dnsData[type] =
-        await dns(
-          domain,
-          type
-        );
-
-    } catch (e) {
-
-      dnsData[type] = {
-        error:
-          e.message
-      };
-
-    }
-
+  if (domain) {
+    dnsRecords =
+      await getDNS(domain);
   }
 
+  return {
+    input,
+    valid,
+    local,
+    domain,
 
-  return result(
-    "EMAIL",
-    "Google DNS",
-    {
-      input:
-        value,
+    tld:
+      domain.includes(".")
+        ? domain.split(".").pop()
+        : "",
 
-      normalized:
-        value.toLowerCase(),
-
-      local_part:
-        local,
-
-      domain,
-
-      dns:
-        dnsData
-    }
-  );
-
+    dns:
+      dnsRecords
+  };
 }
 
 
-// ==========================================
-// DOMAIN / URL
-// ==========================================
+// ================================
+// IP
+// ================================
 
-async function domainLookup(
-  value
-) {
+async function ipLookup(value) {
 
-  const host =
-    getHost(value);
+  const input =
+    String(value).trim();
 
+  if (!net.isIP(input)) {
+    return {
+      input,
+      valid: false,
+      error: "Invalid IP address"
+    };
+  }
 
-  if (!host) {
-
-    throw new Error(
-      "Invalid URL/domain"
+  const response =
+    await fetchJSON(
+      "https://ipwho.is/" +
+      encodeURIComponent(input)
     );
 
-  }
+  return {
+    input,
+    version:
+      net.isIPv4(input)
+        ? 4
+        : 6,
+
+    data:
+      response.data
+  };
+}
 
 
-  let rdap;
+// ================================
+// DNS
+// ================================
 
+async function getDNS(host) {
 
-  try {
+  const result = {};
 
-    const r =
-      await request(
-        `https://rdap.org/domain/${encodeURIComponent(host)}`
-      );
+  const types = [
+    "A",
+    "AAAA",
+    "MX",
+    "NS",
+    "TXT",
+    "CNAME"
+  ];
 
-
-    rdap =
-      r.ok
-        ? r.data
-        : {
-            error:
-              `RDAP HTTP ${r.status}`
-          };
-
-  } catch (e) {
-
-    rdap = {
-      error:
-        e.message
-    };
-
-  }
-
-
-  const dnsData = {};
-
-
-  for (
-    const type of [
-      "A",
-      "AAAA",
-      "MX",
-      "NS",
-      "TXT",
-      "CAA"
-    ]
-  ) {
+  for (const type of types) {
 
     try {
 
-      dnsData[type] =
-        await dns(
+      result[type] =
+        await dns.resolve(
           host,
           type
         );
 
-    } catch (e) {
+    } catch {
 
-      dnsData[type] = {
-        error:
-          e.message
-      };
+      result[type] = [];
 
     }
 
   }
 
+  return result;
+}
 
-  let http;
 
+// ================================
+// URL / DOMAIN
+// ================================
+
+async function urlLookup(value) {
+
+  let input =
+    String(value).trim();
+
+  let url =
+    input;
+
+  if (!/^https?:\/\//i.test(url)) {
+    url =
+      "https://" + url;
+  }
+
+  let parsed;
 
   try {
 
-    const url =
-      /^https?:\/\//i.test(value)
-        ? value
-        : `https://${value}`;
+    parsed =
+      new URL(url);
 
+  } catch {
 
-    const r =
-      await request(
-        url,
-        {
-          redirect:
-            "manual"
-        }
+    return {
+      input,
+      valid: false,
+      error: "Invalid URL"
+    };
+
+  }
+
+  const hostname =
+    parsed.hostname;
+
+  const dnsRecords =
+    await getDNS(hostname);
+
+  let rdap = null;
+
+  try {
+
+    const rdapResponse =
+      await fetchJSON(
+        "https://rdap.org/domain/" +
+        encodeURIComponent(hostname)
       );
 
-
-    http = {
-      status:
-        r.status,
-
-      location:
-        r.headers.get(
-          "location"
-        ),
-
-      content_type:
-        r.headers.get(
-          "content-type"
-        ),
-
-      server:
-        r.headers.get(
-          "server"
-        ),
-
-      powered_by:
-        r.headers.get(
-          "x-powered-by"
-        ),
-
-      strict_transport_security:
-        r.headers.get(
-          "strict-transport-security"
-        ),
-
-      content_security_policy:
-        r.headers.get(
-          "content-security-policy"
-        ),
-
-      x_frame_options:
-        r.headers.get(
-          "x-frame-options"
-        )
-    };
-
-  } catch (e) {
-
-    http = {
-      error:
-        e.message
-    };
-
-  }
-
-
-  return result(
-    "URL / DOMAIN",
-    "RDAP + DNS + HTTP",
-    {
-      hostname:
-        host,
-
-      rdap,
-
-      dns:
-        dnsData,
-
-      http
+    if (rdapResponse.ok) {
+      rdap =
+        rdapResponse.data;
     }
-  );
 
+  } catch {}
+
+  return {
+
+    input,
+
+    valid: true,
+
+    protocol:
+      parsed.protocol,
+
+    hostname,
+
+    port:
+      parsed.port || "",
+
+    pathname:
+      parsed.pathname,
+
+    search:
+      parsed.search,
+
+    hash:
+      parsed.hash,
+
+    dns:
+      dnsRecords,
+
+    rdap
+  };
 }
 
 
-// ==========================================
-// IP
-// ==========================================
+// ================================
+// PIN CODE
+// ================================
 
-async function ipLookup(
-  value
-) {
+async function pinLookup(value) {
 
-  const template =
-    process.env.IP_API_URL ||
-    "https://ipwho.is/{ip}";
+  const pin =
+    String(value)
+      .trim()
+      .replace(/\D/g, "");
 
+  if (!/^\d{6}$/.test(pin)) {
 
-  const url =
-    template.replace(
-      "{ip}",
-      encodeURIComponent(value)
-    );
-
-
-  const r =
-    await request(url);
-
-
-  if (!r.ok) {
-
-    throw new Error(
-      `IP API HTTP ${r.status}`
-    );
+    return {
+      input: value,
+      valid: false,
+      error: "PIN must contain 6 digits"
+    };
 
   }
 
+  const response =
+    await fetchJSON(
+      "https://api.postalpincode.in/pincode/" +
+      encodeURIComponent(pin)
+    );
 
-  return result(
-    "IP",
-    "IP API",
-    r.data
-  );
-
+  return {
+    input: pin,
+    valid: true,
+    data: response.data
+  };
 }
 
 
-// ==========================================
-// PIN
-// ==========================================
-
-async function pinLookup(
-  value
-) {
-
-  const template =
-    process.env.PIN_API_URL ||
-    "https://api.postalpincode.in/pincode/{pin}";
-
-
-  const url =
-    template.replace(
-      "{pin}",
-      encodeURIComponent(value)
-    );
-
-
-  const r =
-    await request(url);
-
-
-  if (!r.ok) {
-
-    throw new Error(
-      `PIN API HTTP ${r.status}`
-    );
-
-  }
-
-
-  return result(
-    "PIN",
-    "India Post PIN API",
-    r.data
-  );
-
-}
-
-
-// ==========================================
+// ================================
 // IFSC
-// ==========================================
+// ================================
 
-async function ifscLookup(
-  value
-) {
+async function ifscLookup(value) {
 
-  const template =
-    process.env.IFSC_API_URL ||
-    "https://ifsc.razorpay.com/{ifsc}";
+  const ifsc =
+    String(value)
+      .trim()
+      .toUpperCase();
 
+  if (!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc)) {
 
-  const url =
-    template.replace(
-      "{ifsc}",
-      encodeURIComponent(
-        value.toUpperCase()
-      )
-    );
-
-
-  const r =
-    await request(url);
-
-
-  if (!r.ok) {
-
-    throw new Error(
-      `IFSC API HTTP ${r.status}`
-    );
+    return {
+      input: ifsc,
+      valid: false,
+      error: "Invalid IFSC format"
+    };
 
   }
 
-
-  return result(
-    "IFSC",
-    "IFSC API",
-    r.data
-  );
-
-}
-
-
-// ==========================================
-// MOBILE
-// ==========================================
-
-function mobileLookup(
-  value
-) {
-
-  const digits =
-    value.replace(
-      /\D/g,
-      ""
+  const response =
+    await fetchJSON(
+      "https://ifsc.razorpay.com/" +
+      encodeURIComponent(ifsc)
     );
 
+  if (!response.ok) {
 
-  return result(
-    "MOBILE",
-    "Local validation",
-    {
-      input:
-        value,
+    return {
+      input: ifsc,
+      valid: false,
+      error: "IFSC not found"
+    };
 
-      digits,
+  }
 
-      length:
-        digits.length,
-
-      country_guess:
-        digits.startsWith("91") ||
-        (
-          digits.length === 10 &&
-          /^[6-9]/.test(digits)
-        )
-          ? "India"
-          : "Unknown",
-
-      possible_number:
-        digits.length >= 8 &&
-        digits.length <= 15
-    }
-  );
-
+  return {
+    input: ifsc,
+    valid: true,
+    data: response.data
+  };
 }
 
 
-// ==========================================
+// ================================
 // UPI
-// ==========================================
+// ================================
 
-function upiLookup(
-  value
-) {
+function upiLookup(value) {
+
+  const input =
+    String(value).trim();
 
   const valid =
-    isUPI(value);
+    /^[A-Za-z0-9._-]{2,256}@[A-Za-z0-9._-]{2,64}$/
+      .test(input);
 
+  let id = "";
+  let handle = "";
 
-  return result(
-    "UPI",
-    "Format validation",
-    {
-      input:
-        value,
+  if (valid) {
 
-      valid_format:
-        valid,
+    const parts =
+      input.split("@");
 
-      handle:
-        valid
-          ? value.split("@")[1]
-          : null,
-
-      note:
-        "Format validation does not prove account existence or ownership."
-    }
-  );
-
-}
-
-
-// ==========================================
-// COMPANY
-// ==========================================
-
-function companyLookup(
-  value
-) {
-
-  return result(
-    "COMPANY",
-    "TXG public-input analysis",
-    {
-      query:
-        value,
-
-      note:
-        "Live company records require an authorized public/company-data provider. Private owner/KYC data is not returned."
-    },
-    "not_configured"
-  );
-
-}
-
-
-// ==========================================
-// VEHICLE
-// ==========================================
-
-async function vehicleLookup(
-  value
-) {
-
-  const template =
-    process.env.VEHICLE_API_URL;
-
-
-  if (!template) {
-
-    return result(
-      "VEHICLE",
-      "Authorized vehicle provider",
-      {
-        registration_number:
-          value.toUpperCase(),
-
-        configured:
-          false,
-
-        note:
-          "Add an authorized vehicle API in VEHICLE_API_URL to enable live vehicle data."
-      },
-      "not_configured"
-    );
+    id = parts[0];
+    handle = parts.slice(1).join("@");
 
   }
 
+  return {
+
+    input,
+
+    valid,
+
+    id,
+
+    handle,
+
+    note:
+      "Format validation only. This does not verify account ownership or expose private banking information."
+  };
+}
+
+
+// ================================
+// VEHICLE
+// ================================
+
+async function vehicleLookup(value) {
+
+  const registration =
+    String(value)
+      .trim()
+      .toUpperCase();
+
+  if (!process.env.VEHICLE_API_URL) {
+
+    return {
+
+      input: registration,
+
+      available: false,
+
+      note:
+        "No authorized vehicle-data provider is configured."
+    };
+
+  }
+
+  let url =
+    process.env.VEHICLE_API_URL
+      .replace(
+        "{registration}",
+        encodeURIComponent(registration)
+      );
 
   const headers = {};
 
+  if (process.env.VEHICLE_API_KEY) {
 
-  if (
-    process.env.VEHICLE_API_KEY
-  ) {
-
-    headers[
+    const header =
       process.env.VEHICLE_API_HEADER ||
-      "Authorization"
-    ] =
-      process.env.VEHICLE_API_KEY;
+      "Authorization";
 
+    headers[header] =
+      header === "Authorization"
+        ? "Bearer " +
+          process.env.VEHICLE_API_KEY
+        : process.env.VEHICLE_API_KEY;
   }
 
-
-  const url =
-    template.replace(
-      "{registration}",
-      encodeURIComponent(
-        value.toUpperCase()
-      )
-    );
-
-
-  const r =
-    await request(
+  const response =
+    await fetchJSON(
       url,
       {
         headers
       }
     );
 
+  return {
 
-  if (!r.ok) {
+    input: registration,
 
-    throw new Error(
-      `Vehicle API HTTP ${r.status}`
-    );
+    authorized_provider:
+      true,
 
-  }
+    data:
+      response.data
 
-
-  return result(
-    "VEHICLE",
-    "Authorized vehicle API",
-    r.data
-  );
-
+  };
 }
 
 
-// ==========================================
+// ================================
+// COMPANY
+// ================================
+
+function companyLookup(value) {
+
+  const input =
+    String(value).trim();
+
+  return {
+
+    input,
+
+    type:
+      "company",
+
+    note:
+      "Company lookup provider is not configured yet.",
+
+    available:
+      false
+
+  };
+}
+
+
+// ================================
 // CRM
-// ==========================================
+// ================================
 
-async function crmLookup(
-  value
-) {
+async function crmLookup(value) {
 
-  const token =
-    process.env.ZOHO_ACCESS_TOKEN;
+  if (!process.env.CRM_API_URL) {
 
+    return {
 
-  if (!token) {
+      input: value,
 
-    return result(
-      "CRM",
-      "Zoho CRM",
-      {
-        configured:
-          false,
+      available: false,
 
-        query:
-          value,
+      note:
+        "Authorized CRM provider is not configured."
 
-        note:
-          "Set ZOHO_ACCESS_TOKEN to enable authorized Zoho CRM search."
-      },
-      "not_configured"
+    };
+
+  }
+
+  const url =
+    process.env.CRM_API_URL.replace(
+      "{query}",
+      encodeURIComponent(value)
     );
 
-  }
+  const headers = {};
 
+  if (process.env.CRM_API_KEY) {
 
-  const base =
-    (
-      process.env.ZOHO_API_BASE ||
-      "https://www.zohoapis.in/crm/v8"
-    )
-      .replace(
-        /\/+$/,
-        ""
-      );
+    const header =
+      process.env.CRM_API_HEADER ||
+      "Authorization";
 
-
-  const modules = [
-    "Contacts",
-    "Leads",
-    "Accounts",
-    "Deals"
-  ];
-
-
-  const matches = [];
-
-
-  for (
-    const module of modules
-  ) {
-
-    try {
-
-      const url =
-        `${base}/${module}/search?word=${encodeURIComponent(value)}`;
-
-
-      const r =
-        await request(
-          url,
-          {
-            headers: {
-              Authorization:
-                `Zoho-oauthtoken ${token}`
-            }
-          }
-        );
-
-
-      matches.push({
-        module,
-
-        http_status:
-          r.status,
-
-        data:
-          r.data
-      });
-
-    } catch (e) {
-
-      matches.push({
-        module,
-
-        error:
-          e.message
-      });
-
-    }
+    headers[header] =
+      header === "Authorization"
+        ? "Bearer " +
+          process.env.CRM_API_KEY
+        : process.env.CRM_API_KEY;
 
   }
 
+  const response =
+    await fetchJSON(
+      url,
+      {
+        headers
+      }
+    );
 
-  return result(
-    "CRM",
-    "Zoho CRM",
-    {
-      query:
-        value,
+  return {
 
-      matches
-    }
-  );
+    input: value,
 
+    authorized_provider:
+      true,
+
+    data:
+      response.data
+
+  };
 }
 
 
-// ==========================================
-// MAIN HANDLER
-// ==========================================
+// ================================
+// AUTO DETECTION
+// ================================
 
-async function handler(
+function detectType(value) {
+
+  const input =
+    String(value).trim();
+
+  if (/^\d{6}$/.test(input)) {
+    return "pin";
+  }
+
+  if (
+    /^[A-Z]{4}0[A-Z0-9]{6}$/i
+      .test(input)
+  ) {
+    return "ifsc";
+  }
+
+  if (
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      .test(input)
+  ) {
+    return "email";
+  }
+
+  if (
+    /^\+?\d{10,15}$/
+      .test(input)
+  ) {
+    return "mobile";
+  }
+
+  if (net.isIP(input)) {
+    return "ip";
+  }
+
+  if (
+    /^https?:\/\//i.test(input) ||
+    /^[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
+      .test(input)
+  ) {
+    return "url";
+  }
+
+  if (
+    /^[A-Za-z0-9._-]+@[A-Za-z0-9._-]+$/
+      .test(input)
+  ) {
+    return "upi";
+  }
+
+  return "company";
+}
+
+
+// ================================
+// MAIN HANDLER
+// ================================
+
+module.exports = async function handler(
   req,
   res
 ) {
 
   try {
 
-    // ======================================
-    // METHOD
-    // ======================================
+    if (req.method !== "GET") {
 
-    if (
-      req.method !==
-      "GET"
-    ) {
-
-      res.setHeader(
-        "Allow",
-        "GET"
+      return send(
+        res,
+        405,
+        {
+          success: false,
+          error: "GET method required"
+        }
       );
 
-
-      return res
-        .status(405)
-        .json({
-          success:
-            false,
-
-          error:
-            "Method not allowed"
-        });
-
     }
-
-
-    // ======================================
-    // AUTH
-    // ======================================
-
-    if (
-      !isAuthenticated(req)
-    ) {
-
-      return res
-        .status(401)
-        .json({
-          success:
-            false,
-
-          error:
-            "Login required"
-        });
-
-    }
-
-
-    // ======================================
-    // INPUT
-    // ======================================
 
     const value =
-      clean(
-        req.query?.value
-      );
-
+      String(
+        req.query?.value || ""
+      ).trim();
 
     let type =
-      clean(
-        req.query?.type
-      )
-        .toLowerCase();
+      String(
+        req.query?.type || "auto"
+      ).toLowerCase();
 
 
     if (!value) {
 
-      return res
-        .status(400)
-        .json({
-          success:
-            false,
-
-          error:
-            "Enter a value"
-        });
-
-    }
-
-
-    // ======================================
-    // AUTO DETECTION
-    // ======================================
-
-    if (
-      !type ||
-      type === "auto"
-    ) {
-
-      if (
-        isEmail(value)
-      ) {
-
-        type =
-          "email";
-
-      } else if (
-        isIP(value)
-      ) {
-
-        type =
-          "ip";
-
-      } else if (
-        isPIN(value)
-      ) {
-
-        type =
-          "pin";
-
-      } else if (
-        isIFSC(value)
-      ) {
-
-        type =
-          "ifsc";
-
-      } else if (
-        isUPI(value)
-      ) {
-
-        type =
-          "upi";
-
-      } else if (
-        isURL(value)
-      ) {
-
-        type =
-          "url";
-
-      } else if (
-        isPhone(value)
-      ) {
-
-        type =
-          "mobile";
-
-      } else {
-
-        type =
-          "company";
-
-      }
-
-    }
-
-
-    // ======================================
-    // RESULTS
-    // ======================================
-
-    const results = [];
-
-
-    async function add(
-      fn
-    ) {
-
-      try {
-
-        const item =
-          await fn();
-
-
-        if (item) {
-
-          results.push(
-            item
-          );
-
+      return send(
+        res,
+        400,
+        {
+          success: false,
+          error: "Value is required"
         }
-
-      } catch (e) {
-
-        results.push(
-          result(
-            "ERROR",
-            "TXG",
-            {
-              message:
-                e?.message ||
-                "Lookup failed"
-            },
-            "error"
-          )
-        );
-
-      }
-
-    }
-
-
-    // ======================================
-    // MOBILE
-    // ======================================
-
-    if (
-      type === "mobile"
-    ) {
-
-      await add(
-        () =>
-          mobileLookup(
-            value
-          )
-      );
-
-
-      await add(
-        () =>
-          crmLookup(
-            value
-          )
       );
 
     }
 
 
-    // ======================================
-    // EMAIL
-    // ======================================
+    if (type === "auto") {
 
-    else if (
-      type === "email"
-    ) {
-
-      await add(
-        () =>
-          emailLookup(
-            value
-          )
-      );
-
-
-      const domain =
-        value.split("@")[1];
-
-
-      if (domain) {
-
-        await add(
-          () =>
-            domainLookup(
-              domain
-            )
-        );
-
-      }
-
-
-      await add(
-        () =>
-          crmLookup(
-            value
-          )
-      );
+      type =
+        detectType(value);
 
     }
 
 
-    // ======================================
-    // IP
-    // ======================================
-
-    else if (
-      type === "ip"
-    ) {
-
-      await add(
-        () =>
-          ipLookup(
-            value
-          )
-      );
-
-    }
+    let result;
 
 
-    // ======================================
-    // PIN
-    // ======================================
+    switch (type) {
 
-    else if (
-      type === "pin"
-    ) {
+      case "mobile":
 
-      await add(
-        () =>
-          pinLookup(
-            value
-          )
-      );
+        result =
+          mobileLookup(value);
 
-    }
+        break;
 
 
-    // ======================================
-    // IFSC
-    // ======================================
+      case "email":
 
-    else if (
-      type === "ifsc"
-    ) {
+        result =
+          await emailLookup(value);
 
-      await add(
-        () =>
-          ifscLookup(
-            value
-          )
-      );
-
-    }
+        break;
 
 
-    // ======================================
-    // UPI
-    // ======================================
+      case "ip":
 
-    else if (
-      type === "upi"
-    ) {
+        result =
+          await ipLookup(value);
 
-      await add(
-        () =>
-          upiLookup(
-            value
-          )
-      );
-
-    }
+        break;
 
 
-    // ======================================
-    // URL
-    // ======================================
+      case "url":
 
-    else if (
-      type === "url" ||
-      type === "domain"
-    ) {
+      case "domain":
 
-      await add(
-        () =>
-          domainLookup(
-            value
-          )
-      );
+        result =
+          await urlLookup(value);
+
+        break;
 
 
-      await add(
-        () =>
-          crmLookup(
-            getHost(value) ||
-            value
-          )
-      );
+      case "pin":
 
-    }
+        result =
+          await pinLookup(value);
+
+        break;
 
 
-    // ======================================
-    // VEHICLE
-    // ======================================
+      case "ifsc":
 
-    else if (
-      type === "vehicle"
-    ) {
+        result =
+          await ifscLookup(value);
 
-      await add(
-        () =>
-          vehicleLookup(
-            value
-          )
-      );
+        break;
+
+
+      case "upi":
+
+        result =
+          upiLookup(value);
+
+        break;
+
+
+      case "vehicle":
+
+        result =
+          await vehicleLookup(value);
+
+        break;
+
+
+      case "company":
+
+        result =
+          companyLookup(value);
+
+        break;
+
+
+      case "crm":
+
+        result =
+          await crmLookup(value);
+
+        break;
+
+
+      default:
+
+        result = {
+
+          input: value,
+
+          type,
+
+          available: false,
+
+          note:
+            "This lookup type is not configured."
+
+        };
 
     }
 
 
-    // ======================================
-    // COMPANY
-    // ======================================
+    return send(
+      res,
+      200,
+      {
+        success: true,
 
-    else if (
-      type === "company"
-    ) {
-
-      await add(
-        () =>
-          companyLookup(
-            value
-          )
-      );
-
-
-      await add(
-        () =>
-          crmLookup(
-            value
-          )
-      );
-
-    }
-
-
-    // ======================================
-    // CRM
-    // ======================================
-
-    else if (
-      type === "crm"
-    ) {
-
-      await add(
-        () =>
-          crmLookup(
-            value
-          )
-      );
-
-    }
-
-
-    // ======================================
-    // UNKNOWN
-    // ======================================
-
-    else {
-
-      await add(
-        () =>
-          companyLookup(
-            value
-          )
-      );
-
-    }
-
-
-    // ======================================
-    // FINAL RESPONSE
-    // ======================================
-
-    return res
-      .status(200)
-      .json({
-        success:
-          true,
-
-        query:
-          value,
+        query: value,
 
         type,
 
-        result_count:
-          Math.min(
-            results.length,
-            MAX_RESULTS
-          ),
+        result_count: 1,
 
-        results:
-          results.slice(
-            0,
-            MAX_RESULTS
-          )
-      });
+        results: [
+          result
+        ]
+      }
+    );
 
 
   } catch (error) {
 
-    // ======================================
-    // NEVER CRASH VERCEL FUNCTION
-    // ======================================
-
     console.error(
-      "TXG LOOKUP ERROR:",
+      "TXG lookup error:",
       error
     );
 
-
-    return res
-      .status(500)
-      .json({
-        success:
-          false,
+    return send(
+      res,
+      500,
+      {
+        success: false,
 
         error:
-          error?.message ||
-          "Lookup server error"
-      });
+          error.name === "AbortError"
+            ? "External API timeout"
+            : (
+                error.message ||
+                "Lookup failed"
+              )
+      }
+    );
 
   }
 
-}
-
-
-module.exports =
-  handler;
+};
