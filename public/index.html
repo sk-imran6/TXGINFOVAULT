@@ -22,8 +22,16 @@
     body {
       min-height: 100vh;
       background:
-        radial-gradient(circle at 15% 10%, rgba(50,80,130,.12), transparent 30%),
-        radial-gradient(circle at 85% 90%, rgba(80,60,130,.10), transparent 30%),
+        radial-gradient(
+          circle at 15% 10%,
+          rgba(50,80,130,.12),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 85% 90%,
+          rgba(80,60,130,.10),
+          transparent 30%
+        ),
         #07090d;
     }
 
@@ -44,7 +52,9 @@
       padding: 28px 0 50px;
     }
 
-    /* LOGIN */
+    /* =========================
+       LOGIN
+    ========================= */
 
     .login-wrap {
       min-height: 100vh;
@@ -164,7 +174,9 @@
       margin-top: 12px;
     }
 
-    /* HEADER */
+    /* =========================
+       HEADER
+    ========================= */
 
     .header {
       display: flex;
@@ -189,7 +201,9 @@
       white-space: nowrap;
     }
 
-    /* SEARCH */
+    /* =========================
+       SEARCH
+    ========================= */
 
     .search-card {
       background: rgba(14,18,25,.95);
@@ -205,8 +219,6 @@
       gap: 10px;
     }
 
-    /* TOOLS */
-
     .section-title {
       font-size: 15px;
       font-weight: 700;
@@ -214,9 +226,13 @@
       margin: 25px 0 12px;
     }
 
+    /* =========================
+       TOOLS
+    ========================= */
+
     .tools {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0,1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
     }
 
@@ -230,11 +246,13 @@
       color: #fff;
       cursor: pointer;
       font-weight: 700;
+      transition: .15s;
     }
 
     .tool:hover {
       border-color: #3b4658;
       background: #121923;
+      transform: translateY(-1px);
     }
 
     .tool small {
@@ -245,7 +263,9 @@
       font-size: 11px;
     }
 
-    /* CUSTOM APIs */
+    /* =========================
+       CUSTOM API MANAGER
+    ========================= */
 
     .manager {
       background: rgba(14,18,25,.95);
@@ -323,7 +343,9 @@
       font-size: 13px;
     }
 
-    /* RESULT */
+    /* =========================
+       RESULTS
+    ========================= */
 
     .results {
       margin-top: 20px;
@@ -368,7 +390,12 @@
       font-size: 12px;
     }
 
-    @media (max-width: 700px) {
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width:700px) {
+
       .page {
         width: 92%;
         padding-top: 20px;
@@ -383,7 +410,7 @@
       }
 
       .tools {
-        grid-template-columns: repeat(2, minmax(0,1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .saved-api {
@@ -393,13 +420,17 @@
       .remove-btn {
         padding: 8px;
       }
+
     }
   </style>
 </head>
 
 <body>
 
-  <!-- LOGIN -->
+  <!-- =========================
+       LOGIN
+  ========================= -->
+
   <section id="loginScreen" class="login-wrap">
 
     <div class="login-card">
@@ -408,7 +439,9 @@
         TXG
       </div>
 
-      <h1>TXG Information</h1>
+      <h1>
+        TXG Information
+      </h1>
 
       <p class="muted">
         Secure admin information center
@@ -417,7 +450,10 @@
       <form id="loginForm">
 
         <div class="field">
-          <label>Admin Password</label>
+
+          <label>
+            Admin Password
+          </label>
 
           <input
             id="password"
@@ -426,6 +462,7 @@
             autocomplete="current-password"
             required
           >
+
         </div>
 
         <button
@@ -447,12 +484,19 @@
   </section>
 
 
-  <!-- APP -->
-  <main id="app" class="page hidden">
+  <!-- =========================
+       MAIN APP
+  ========================= -->
+
+  <main
+    id="app"
+    class="page hidden"
+  >
 
     <header class="header">
 
       <div>
+
         <div class="brand-title">
           TXG Information Center
         </div>
@@ -460,6 +504,7 @@
         <div class="brand-sub">
           Information & API lookup dashboard
         </div>
+
       </div>
 
       <button
@@ -473,7 +518,10 @@
     </header>
 
 
-    <!-- SEARCH -->
+    <!-- =========================
+         SEARCH
+    ========================= -->
+
     <section class="search-card">
 
       <div class="search-row">
@@ -544,6 +592,7 @@
 
       </div>
 
+
       <div
         id="searchMessage"
         class="notice hidden"
@@ -552,81 +601,169 @@
     </section>
 
 
-    <!-- FIXED TOOLS -->
+    <!-- =========================
+         TOOLS
+    ========================= -->
+
     <div class="section-title">
       Tools
     </div>
 
-    <section class="tools">
 
-      <button class="tool" data-type="auto">
-        Auto
-        <small>Automatic detection</small>
-      </button>
+    <section
+      id="toolsGrid"
+      class="tools"
+    >
 
-      <button class="tool" data-type="mobile">
-        Mobile
-        <small>Mobile information</small>
-      </button>
-
-      <button class="tool" data-type="email">
-        Email
-        <small>Email & domain information</small>
-      </button>
-
-      <button class="tool" data-type="vehicle">
-        Vehicle
-        <small>Vehicle information</small>
-      </button>
-
-      <button class="tool" data-type="ip">
-        IP
-        <small>IP information</small>
-      </button>
-
-      <button class="tool" data-type="url">
-        URL
-        <small>URL & domain analysis</small>
-      </button>
-
-      <button class="tool" data-type="pin">
-        PIN
-        <small>Postal information</small>
-      </button>
-
-      <button class="tool" data-type="ifsc">
-        IFSC
-        <small>Bank & branch information</small>
-      </button>
-
-      <button class="tool" data-type="upi">
-        UPI
-        <small>UPI format validation</small>
-      </button>
-
-      <button class="tool" data-type="company">
-        Company
-        <small>Company information</small>
-      </button>
-
-      <button class="tool" data-type="crm">
-        CRM
-        <small>Connected CRM search</small>
-      </button>
+      <!-- FIXED TOOLS -->
 
       <button
         class="tool"
+        data-type="auto"
+      >
+        Auto
+        <small>
+          Automatic detection
+        </small>
+      </button>
+
+
+      <button
+        class="tool"
+        data-type="mobile"
+      >
+        Mobile
+        <small>
+          Mobile information
+        </small>
+      </button>
+
+
+      <button
+        class="tool"
+        data-type="email"
+      >
+        Email
+        <small>
+          Email & domain information
+        </small>
+      </button>
+
+
+      <button
+        class="tool"
+        data-type="vehicle"
+      >
+        Vehicle
+        <small>
+          Vehicle information
+        </small>
+      </button>
+
+
+      <button
+        class="tool"
+        data-type="ip"
+      >
+        IP
+        <small>
+          IP information
+        </small>
+      </button>
+
+
+      <button
+        class="tool"
+        data-type="url"
+      >
+        URL
+        <small>
+          URL & domain analysis
+        </small>
+      </button>
+
+
+      <button
+        class="tool"
+        data-type="pin"
+      >
+        PIN
+        <small>
+          Postal information
+        </small>
+      </button>
+
+
+      <button
+        class="tool"
+        data-type="ifsc"
+      >
+        IFSC
+        <small>
+          Bank & branch information
+        </small>
+      </button>
+
+
+      <button
+        class="tool"
+        data-type="upi"
+      >
+        UPI
+        <small>
+          UPI format validation
+        </small>
+      </button>
+
+
+      <button
+        class="tool"
+        data-type="company"
+      >
+        Company
+        <small>
+          Company information
+        </small>
+      </button>
+
+
+      <button
+        class="tool"
+        data-type="crm"
+      >
+        CRM
+        <small>
+          Connected CRM search
+        </small>
+      </button>
+
+
+      <!--
+        SAVED CUSTOM API BUTTONS
+        WILL BE INSERTED HERE
+      -->
+
+
+      <!-- CUSTOM API ALWAYS LAST -->
+
+      <button
+        id="customApiButton"
+        class="tool"
         type="button"
-        onclick="openCustomManager()"
       >
         Custom API
-        <small>Manage your saved APIs</small>
+        <small>
+          Manage your saved APIs
+        </small>
       </button>
 
     </section>
 
 
-    <!-- CUSTOM API MANAGER -->
+    <!-- =========================
+         CUSTOM API MANAGER
+    ========================= -->
+
     <section
       id="customManager"
       class="manager hidden"
@@ -652,7 +789,10 @@
       <form id="customApiForm">
 
         <div class="field">
-          <label>API Name</label>
+
+          <label>
+            API Name
+          </label>
 
           <input
             id="apiName"
@@ -660,11 +800,15 @@
             placeholder="Example: Phone API"
             required
           >
+
         </div>
 
 
         <div class="field">
-          <label>API URL</label>
+
+          <label>
+            API URL
+          </label>
 
           <input
             id="apiUrl"
@@ -672,11 +816,15 @@
             placeholder="https://example.com/api?value={message}"
             required
           >
+
         </div>
 
 
         <div class="field">
-          <label>Method</label>
+
+          <label>
+            Method
+          </label>
 
           <select id="apiMethod">
 
@@ -701,16 +849,21 @@
             </option>
 
           </select>
+
         </div>
 
 
         <div class="field">
-          <label>Description</label>
+
+          <label>
+            Description
+          </label>
 
           <textarea
             id="apiDescription"
             placeholder="Optional description"
           ></textarea>
+
         </div>
 
 
@@ -728,6 +881,7 @@
         Saved APIs
       </div>
 
+
       <div
         id="savedApis"
         class="api-list"
@@ -736,7 +890,10 @@
     </section>
 
 
-    <!-- RESULTS -->
+    <!-- =========================
+         RESULTS
+    ========================= -->
+
     <section
       id="results"
       class="results"
@@ -746,11 +903,12 @@
 
 
 <script>
+
 "use strict";
 
 
 /* ==========================================
-   GLOBAL HELPERS
+   HELPERS
 ========================================== */
 
 const $ = (id) =>
@@ -761,7 +919,7 @@ let loggedIn = false;
 
 
 /* ==========================================
-   SAFE JSON RESPONSE
+   SAFE RESPONSE
 ========================================== */
 
 async function readResponse(response) {
@@ -787,6 +945,7 @@ async function readResponse(response) {
 
   }
 
+
   if (!response.ok) {
 
     throw new Error(
@@ -797,12 +956,14 @@ async function readResponse(response) {
 
   }
 
+
   return data;
+
 }
 
 
 /* ==========================================
-   SHOW MESSAGE
+   MESSAGE
 ========================================== */
 
 function showMessage(
@@ -824,11 +985,12 @@ function showMessage(
     isError
       ? "#ff8e98"
       : "#9ba5b5";
+
 }
 
 
 /* ==========================================
-   AUTH CHECK
+   LOGIN CHECK
 ========================================== */
 
 async function checkLogin() {
@@ -845,10 +1007,12 @@ async function checkLogin() {
         }
       );
 
+
     const data =
       await readResponse(
         response
       );
+
 
     if (
       data.authenticated
@@ -867,6 +1031,7 @@ async function checkLogin() {
     showLogin();
 
   }
+
 }
 
 
@@ -876,17 +1041,17 @@ async function checkLogin() {
 
 function showLogin() {
 
-  loggedIn = false;
+  loggedIn =
+    false;
 
   $("loginScreen")
-    .classList.remove(
-      "hidden"
-    );
+    .classList
+    .remove("hidden");
 
   $("app")
-    .classList.add(
-      "hidden"
-    );
+    .classList
+    .add("hidden");
+
 }
 
 
@@ -896,19 +1061,19 @@ function showLogin() {
 
 function showApp() {
 
-  loggedIn = true;
+  loggedIn =
+    true;
 
   $("loginScreen")
-    .classList.add(
-      "hidden"
-    );
+    .classList
+    .add("hidden");
 
   $("app")
-    .classList.remove(
-      "hidden"
-    );
+    .classList
+    .remove("hidden");
 
   loadSavedApis();
+
 }
 
 
@@ -923,12 +1088,16 @@ $("loginForm")
 
       event.preventDefault();
 
+
       const password =
-        $("password").value;
+        $("password")
+          .value;
+
 
       $("loginError")
         .textContent =
         "Logging in...";
+
 
       try {
 
@@ -942,17 +1111,21 @@ $("loginForm")
                 "Content-Type":
                   "application/json"
               },
-              body: JSON.stringify({
-                action: "login",
-                password
-              })
+              body:
+                JSON.stringify({
+                  action:
+                    "login",
+                  password
+                })
             }
           );
+
 
         const data =
           await readResponse(
             response
           );
+
 
         if (
           data.authenticated
@@ -1007,13 +1180,16 @@ $("logoutBtn")
               "Content-Type":
                 "application/json"
             },
-            body: JSON.stringify({
-              action: "logout"
-            })
+            body:
+              JSON.stringify({
+                action:
+                  "logout"
+              })
           }
         );
 
       } catch {}
+
 
       $("results")
         .innerHTML = "";
@@ -1025,7 +1201,7 @@ $("logoutBtn")
 
 
 /* ==========================================
-   TOOL BUTTONS
+   FIXED TOOL BUTTONS
 ========================================== */
 
 document
@@ -1042,15 +1218,18 @@ document
           const type =
             button.dataset.type;
 
+
           $("searchType")
             .value =
             type;
 
+
           $("searchInput")
             .focus();
 
+
           showMessage(
-            `Selected: ${type}`
+            `Selected: ${button.textContent.trim().split("\n")[0]}`
           );
 
         }
@@ -1077,7 +1256,8 @@ $("searchInput")
     (event) => {
 
       if (
-        event.key === "Enter"
+        event.key ===
+        "Enter"
       ) {
 
         event.preventDefault();
@@ -1093,12 +1273,15 @@ $("searchInput")
 async function runSearch() {
 
   const type =
-    $("searchType").value;
+    $("searchType")
+      .value;
+
 
   const value =
     $("searchInput")
       .value
       .trim();
+
 
   if (!value) {
 
@@ -1108,14 +1291,18 @@ async function runSearch() {
     );
 
     return;
+
   }
+
 
   showMessage(
     "Searching..."
   );
 
+
   $("results")
     .innerHTML = "";
+
 
   try {
 
@@ -1125,6 +1312,7 @@ async function runSearch() {
       encodeURIComponent(type) +
       "&value=" +
       encodeURIComponent(value);
+
 
     const response =
       await fetch(
@@ -1136,18 +1324,22 @@ async function runSearch() {
         }
       );
 
+
     const data =
       await readResponse(
         response
       );
 
+
     renderResults(
       data
     );
 
+
     showMessage(
       "Search completed."
     );
+
 
   } catch (error) {
 
@@ -1156,6 +1348,7 @@ async function runSearch() {
       "Search failed.",
       true
     );
+
 
     $("results")
       .innerHTML =
@@ -1174,7 +1367,7 @@ async function runSearch() {
 
 
 /* ==========================================
-   RESULT RENDER
+   RESULT CARD
 ========================================== */
 
 function createResultCard(
@@ -1185,15 +1378,20 @@ function createResultCard(
 
   const safeTitle =
     escapeHtml(
-      title || "Result"
+      title ||
+      "Result"
     );
+
 
   const safeStatus =
     escapeHtml(
-      status || "Result"
+      status ||
+      "Result"
     );
 
+
   let formatted;
+
 
   try {
 
@@ -1211,6 +1409,7 @@ function createResultCard(
 
   }
 
+
   return `
     <div class="result-card">
 
@@ -1222,9 +1421,9 @@ function createResultCard(
         ${safeStatus}
       </div>
 
-      <pre>${escapeHtml(
-        formatted
-      )}</pre>
+      <pre>
+${escapeHtml(formatted)}
+      </pre>
 
     </div>
   `;
@@ -1232,12 +1431,21 @@ function createResultCard(
 }
 
 
-function renderResults(data) {
+/* ==========================================
+   RENDER RESULTS
+========================================== */
+
+function renderResults(
+  data
+) {
 
   const results =
     $("results");
 
-  results.innerHTML = "";
+
+  results.innerHTML =
+    "";
+
 
   if (!data) {
 
@@ -1249,6 +1457,7 @@ function renderResults(data) {
       );
 
     return;
+
   }
 
 
@@ -1258,26 +1467,28 @@ function renderResults(data) {
     )
   ) {
 
-    data.results.forEach(
-      (item) => {
+    data.results
+      .forEach(
+        (item) => {
 
-        results.innerHTML +=
-          createResultCard(
-            item.name ||
-            item.type ||
-            "Result",
+          results.innerHTML +=
+            createResultCard(
+              item.name ||
+                item.type ||
+                "Result",
 
-            item.status ||
-            "Completed",
+              item.status ||
+                "Completed",
 
-            item.data ||
-            item
-          );
+              item.data ||
+                item
+            );
 
-      }
-    );
+        }
+      );
 
     return;
+
   }
 
 
@@ -1287,24 +1498,26 @@ function renderResults(data) {
     )
   ) {
 
-    data.data.forEach(
-      (item) => {
+    data.data
+      .forEach(
+        (item) => {
 
-        results.innerHTML +=
-          createResultCard(
-            item.name ||
-            "Result",
+          results.innerHTML +=
+            createResultCard(
+              item.name ||
+                "Result",
 
-            item.status ||
-            "Completed",
+              item.status ||
+                "Completed",
 
-            item
-          );
+              item
+            );
 
-      }
-    );
+        }
+      );
 
     return;
+
   }
 
 
@@ -1321,17 +1534,18 @@ function renderResults(data) {
 
 
 /* ==========================================
-   CUSTOM MANAGER
+   CUSTOM API MANAGER
 ========================================== */
 
 function openCustomManager() {
 
   $("customManager")
-    .classList.remove(
-      "hidden"
-    );
+    .classList
+    .remove("hidden");
+
 
   loadSavedApis();
+
 
   $("customManager")
     .scrollIntoView({
@@ -1342,8 +1556,11 @@ function openCustomManager() {
 }
 
 
-window.openCustomManager =
-  openCustomManager;
+$("customApiButton")
+  .addEventListener(
+    "click",
+    openCustomManager
+  );
 
 
 $("closeManagerBtn")
@@ -1352,16 +1569,15 @@ $("closeManagerBtn")
     () => {
 
       $("customManager")
-        .classList.add(
-          "hidden"
-        );
+        .classList
+        .add("hidden");
 
     }
   );
 
 
 /* ==========================================
-   LOAD SAVED APIS
+   LOAD SAVED APIs
 ========================================== */
 
 async function loadSavedApis() {
@@ -1369,10 +1585,12 @@ async function loadSavedApis() {
   const container =
     $("savedApis");
 
+
   container.innerHTML =
     `<div class="empty">
       Loading saved APIs...
     </div>`;
+
 
   try {
 
@@ -1386,10 +1604,12 @@ async function loadSavedApis() {
         }
       );
 
+
     const data =
       await readResponse(
         response
       );
+
 
     const apis =
       Array.isArray(
@@ -1398,9 +1618,23 @@ async function loadSavedApis() {
         ? data.apis
         : [];
 
+
+    /*
+      IMPORTANT:
+
+      Saved APIs are now also
+      added to the main Tools grid.
+    */
+
+    renderCustomToolButtons(
+      apis
+    );
+
+
     renderSavedApis(
       apis
     );
+
 
   } catch (error) {
 
@@ -1412,13 +1646,517 @@ async function loadSavedApis() {
         )}
       </div>`;
 
+
+    renderCustomToolButtons(
+      []
+    );
+
   }
 
 }
 
 
 /* ==========================================
-   RENDER SAVED APIS
+   CREATE SAVED API BUTTONS
+========================================== */
+
+function renderCustomToolButtons(
+  apis
+) {
+
+  const grid =
+    $("toolsGrid");
+
+
+  const customButton =
+    $("customApiButton");
+
+
+  /*
+    Remove previously created
+    custom API buttons.
+  */
+
+  grid
+    .querySelectorAll(
+      ".saved-custom-tool"
+    )
+    .forEach(
+      (button) => {
+
+        button.remove();
+
+      }
+    );
+
+
+  if (
+    !Array.isArray(apis)
+  ) {
+
+    return;
+
+  }
+
+
+  /*
+    Add every saved API
+    BEFORE Custom API button.
+  */
+
+  apis.forEach(
+    (api) => {
+
+      if (!api || !api.id) {
+        return;
+      }
+
+
+      const button =
+        document.createElement(
+          "button"
+        );
+
+
+      button.type =
+        "button";
+
+
+      button.className =
+        "tool saved-custom-tool";
+
+
+      const name =
+        api.name ||
+        "Custom API";
+
+
+      const method =
+        api.method ||
+        "GET";
+
+
+      const description =
+        api.description ||
+        `${method} API`;
+
+
+      button.innerHTML =
+        `
+          ${escapeHtml(name)}
+
+          <small>
+            ${escapeHtml(description)}
+          </small>
+        `;
+
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          useSavedApi(
+            api
+          );
+
+        }
+      );
+
+
+      grid.insertBefore(
+        button,
+        customButton
+      );
+
+    }
+  );
+
+}
+
+
+/* ==========================================
+   USE SAVED API
+========================================== */
+
+function useSavedApi(
+  api
+) {
+
+  if (!api || !api.url) {
+
+    showMessage(
+      "Saved API URL is missing.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  /*
+    Custom APIs are stored as
+    normal tool buttons.
+
+    The URL is used as the
+    endpoint template.
+
+    {message}
+    {value}
+    {query}
+
+    are replaced with the
+    user's search value.
+  */
+
+
+  const input =
+    $("searchInput")
+      .value
+      .trim();
+
+
+  if (!input) {
+
+    $("searchInput")
+      .focus();
+
+
+    showMessage(
+      `Enter a value for ${api.name || "this API"}.`,
+      false
+    );
+
+
+    /*
+      Save the selected API
+      type temporarily.
+    */
+
+    window.__selectedCustomApi =
+      api;
+
+
+    return;
+
+  }
+
+
+  runSavedApi(
+    api,
+    input
+  );
+
+}
+
+
+/* ==========================================
+   SEARCH INPUT CHANGE
+========================================== */
+
+$("searchInput")
+  .addEventListener(
+    "input",
+    () => {
+
+      const api =
+        window.__selectedCustomApi;
+
+
+      if (
+        api &&
+        $("searchInput")
+          .value
+          .trim()
+      ) {
+
+        /*
+          Do not auto-run.
+
+          User can press Search.
+        */
+
+      }
+
+    }
+  );
+
+
+/* ==========================================
+   SEARCH BUTTON
+   SUPPORT SAVED CUSTOM API
+========================================== */
+
+const originalSearchButton =
+  $("searchBtn");
+
+
+originalSearchButton
+  .addEventListener(
+    "click",
+    async () => {
+
+      const api =
+        window.__selectedCustomApi;
+
+
+      if (
+        api &&
+        $("searchType")
+          .value ===
+          "__custom_api__"
+      ) {
+
+        const value =
+          $("searchInput")
+            .value
+            .trim();
+
+
+        if (!value) {
+
+          showMessage(
+            "Enter a value to search.",
+            true
+          );
+
+          return;
+
+        }
+
+
+        await runSavedApi(
+          api,
+          value
+        );
+
+
+        return;
+
+      }
+
+    },
+    true
+  );
+
+
+/* ==========================================
+   RUN SAVED API
+========================================== */
+
+async function runSavedApi(
+  api,
+  value
+) {
+
+  if (
+    !api ||
+    !api.url
+  ) {
+
+    showMessage(
+      "Invalid saved API.",
+      true
+    );
+
+    return;
+
+  }
+
+
+  showMessage(
+    `Running ${api.name || "API"}...`
+  );
+
+
+  $("results")
+    .innerHTML =
+    "";
+
+
+  let endpoint =
+    String(api.url);
+
+
+  /*
+    Replace common placeholders.
+  */
+
+  endpoint =
+    endpoint
+      .replace(
+        /\{message\}/gi,
+        encodeURIComponent(value)
+      )
+      .replace(
+        /\{value\}/gi,
+        encodeURIComponent(value)
+      )
+      .replace(
+        /\{query\}/gi,
+        encodeURIComponent(value)
+      );
+
+
+  /*
+    If there is no placeholder
+    and GET is being used,
+    append ?message=value
+    or &message=value.
+  */
+
+  const method =
+    String(
+      api.method ||
+      "GET"
+    ).toUpperCase();
+
+
+  try {
+
+    let response;
+
+
+    if (
+      method === "GET" ||
+      method === "DELETE"
+    ) {
+
+      response =
+        await fetch(
+          endpoint,
+          {
+            method,
+            credentials:
+              "include",
+            cache:
+              "no-store"
+          }
+        );
+
+    } else {
+
+      response =
+        await fetch(
+          endpoint,
+          {
+            method,
+            credentials:
+              "include",
+            cache:
+              "no-store",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+                message:
+                  value,
+
+                value:
+                  value,
+
+                query:
+                  value
+              })
+          }
+        );
+
+    }
+
+
+    const text =
+      await response.text();
+
+
+    let data;
+
+
+    try {
+
+      data =
+        text
+          ? JSON.parse(text)
+          : {};
+
+    } catch {
+
+      data = {
+        response:
+          text
+      };
+
+    }
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data?.error ||
+        data?.message ||
+        `API returned HTTP ${response.status}`
+      );
+
+    }
+
+
+    renderResults({
+      ok: true,
+
+      results: [
+        {
+          name:
+            api.name ||
+            "Custom API",
+
+          status:
+            "Completed",
+
+          data
+        }
+      ]
+
+    });
+
+
+    showMessage(
+      `${api.name || "API"} completed.`
+    );
+
+
+  } catch (error) {
+
+    $("results")
+      .innerHTML =
+      createResultCard(
+        api.name ||
+          "Custom API",
+
+        "Failed",
+
+        {
+          error:
+            error.message
+        }
+      );
+
+
+    showMessage(
+      error.message ||
+      "Custom API failed.",
+      true
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   RENDER SAVED API MANAGER
 ========================================== */
 
 function renderSavedApis(
@@ -1428,9 +2166,14 @@ function renderSavedApis(
   const container =
     $("savedApis");
 
-  container.innerHTML = "";
 
-  if (!apis.length) {
+  container.innerHTML =
+    "";
+
+
+  if (
+    !apis.length
+  ) {
 
     container.innerHTML =
       `<div class="empty">
@@ -1438,6 +2181,7 @@ function renderSavedApis(
       </div>`;
 
     return;
+
   }
 
 
@@ -1449,6 +2193,7 @@ function renderSavedApis(
           "div"
         );
 
+
       row.className =
         "saved-api";
 
@@ -1457,6 +2202,7 @@ function renderSavedApis(
         document.createElement(
           "div"
         );
+
 
       info.className =
         "saved-api-info";
@@ -1467,8 +2213,10 @@ function renderSavedApis(
           "div"
         );
 
+
       name.className =
         "saved-api-name";
+
 
       name.textContent =
         api.name ||
@@ -1480,18 +2228,19 @@ function renderSavedApis(
           "div"
         );
 
+
       url.className =
         "saved-api-url";
 
+
       url.textContent =
-        `${api.method || "GET"} • ${
-          api.url || ""
-        }`;
+        `${api.method || "GET"} • ${api.url || ""}`;
 
 
       info.appendChild(
         name
       );
+
 
       info.appendChild(
         url
@@ -1503,11 +2252,14 @@ function renderSavedApis(
           "button"
         );
 
+
       remove.type =
         "button";
 
+
       remove.className =
         "remove-btn";
+
 
       remove.textContent =
         "× Remove";
@@ -1530,9 +2282,11 @@ function renderSavedApis(
         info
       );
 
+
       row.appendChild(
         remove
       );
+
 
       container.appendChild(
         row
@@ -1561,6 +2315,7 @@ async function removeSavedApi(
     );
 
     return;
+
   }
 
 
@@ -1568,6 +2323,7 @@ async function removeSavedApi(
     window.confirm(
       `Remove "${name || "this API"}"?`
     );
+
 
   if (!confirmed) {
     return;
@@ -1586,9 +2342,14 @@ async function removeSavedApi(
         "/api/custom-apis?id=" +
         encodeURIComponent(id),
         {
-          method: "DELETE",
-          credentials: "include",
-          cache: "no-store"
+          method:
+            "DELETE",
+
+          credentials:
+            "include",
+
+          cache:
+            "no-store"
         }
       );
 
@@ -1599,15 +2360,51 @@ async function removeSavedApi(
       );
 
 
-    if (
-      data.ok
-    ) {
+    if (data.ok) {
+
+      /*
+        Remove selected API
+        immediately from the
+        main grid.
+      */
+
+      const buttons =
+        $("toolsGrid")
+          .querySelectorAll(
+            ".saved-custom-tool"
+          );
+
+
+      buttons.forEach(
+        (button) => {
+
+          const text =
+            button.textContent
+              .trim()
+              .split("\n")[0]
+              .trim();
+
+
+          if (
+            text ===
+            String(name)
+          ) {
+
+            button.remove();
+
+          }
+
+        }
+      );
+
 
       showMessage(
         "API removed successfully."
       );
 
+
       await loadSavedApis();
+
 
     } else {
 
@@ -1617,6 +2414,7 @@ async function removeSavedApi(
       );
 
     }
+
 
   } catch (error) {
 
@@ -1632,7 +2430,7 @@ async function removeSavedApi(
 
 
 /* ==========================================
-   ADD CUSTOM API
+   SAVE CUSTOM API
 ========================================== */
 
 $("customApiForm")
@@ -1666,7 +2464,10 @@ $("customApiForm")
           .trim();
 
 
-      if (!name || !url) {
+      if (
+        !name ||
+        !url
+      ) {
 
         showMessage(
           "API name and URL are required.",
@@ -1674,6 +2475,7 @@ $("customApiForm")
         );
 
         return;
+
       }
 
 
@@ -1688,12 +2490,17 @@ $("customApiForm")
           await fetch(
             "/api/custom-apis",
             {
-              method: "POST",
-              credentials: "include",
+              method:
+                "POST",
+
+              credentials:
+                "include",
+
               headers: {
                 "Content-Type":
                   "application/json"
               },
+
               body:
                 JSON.stringify({
                   name,
@@ -1726,12 +2533,21 @@ $("customApiForm")
         $("apiName")
           .value = "";
 
+
         $("apiUrl")
           .value = "";
+
 
         $("apiDescription")
           .value = "";
 
+
+        /*
+          Reload both:
+
+          1. Main tool buttons
+          2. Manager list
+        */
 
         await loadSavedApis();
 
@@ -1756,7 +2572,7 @@ $("customApiForm")
 
 
 /* ==========================================
-   HTML ESCAPE
+   ESCAPE HTML
 ========================================== */
 
 function escapeHtml(
@@ -1766,22 +2582,27 @@ function escapeHtml(
   return String(
     value ?? ""
   )
+
     .replace(
       /&/g,
       "&amp;"
     )
+
     .replace(
       /</g,
       "&lt;"
     )
+
     .replace(
       />/g,
       "&gt;"
     )
+
     .replace(
       /"/g,
       "&quot;"
     )
+
     .replace(
       /'/g,
       "&#039;"
