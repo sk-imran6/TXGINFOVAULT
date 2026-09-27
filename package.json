@@ -1,8 +1,11 @@
 {
   "name": "txg-information-center",
-  "version": "9.0.0",
+  "version": "10.0.0",
   "private": true,
   "engines": {
     "node": "24.x"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2"
   }
 }
