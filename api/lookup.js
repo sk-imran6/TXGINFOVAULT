@@ -1,4 +1,5 @@
 const auth = require("./auth");
+const customApis = require("./custom-apis");
 
 const TIMEOUT = 10000;
 const MAX_RESULTS = 15;
@@ -383,46 +384,37 @@ async function crmLookup(value) {
   });
 }
 
-async function customLookup(value) {
-  const template = process.env.CUSTOM_API_URL;
+async function customLookup(value, apiId, req) {
+  const apis = customApis.getApis(req);
+  const api = apis.find(x => x.id === apiId);
 
-  if (!template) {
-    return result(
-      "CUSTOM API",
-      "Custom API",
-      {
-        configured: false,
-        note:
-          "Set CUSTOM_API_URL to enable your own API."
-      },
-      "not_configured"
-    );
+  if (!api) {
+    return result("CUSTOM API", "Custom API", {
+      configured: false,
+      note: "Select a saved Custom API first."
+    }, "not_configured");
   }
 
-  const url = template.replace(
-    "{message}",
-    encodeURIComponent(value)
-  );
+  const encoded = encodeURIComponent(value);
+  const url = api.url.includes("{message}")
+    ? api.url.replace(/\{message\}/g, encoded)
+    : `${api.url}${api.url.includes("?") ? "&" : "?"}message=${encoded}`;
 
   const headers = {};
+  if (api.key) headers[api.header || "Authorization"] = api.key;
 
-  if (process.env.CUSTOM_API_KEY) {
-    headers[
-      process.env.CUSTOM_API_HEADER || "Authorization"
-    ] = process.env.CUSTOM_API_KEY;
+  const options = { headers };
+  if (api.method === "POST") {
+    options.method = "POST";
+    options.headers["Content-Type"] = "application/json";
+    options.body = JSON.stringify({ message: value });
   }
 
-  const r = await request(url, { headers });
-
-  return result(
-    "CUSTOM API",
-    "Custom API",
-    {
-      http_status: r.status,
-      response: r.data
-    },
-    r.ok ? "success" : "error"
-  );
+  const r = await request(url, options);
+  return result("CUSTOM API", api.name, {
+    http_status: r.status,
+    response: r.data
+  }, r.ok ? "success" : "error");
 }
 
 async function handler(req, res) {
@@ -525,7 +517,7 @@ async function handler(req, res) {
   }
 
   else if (type === "custom") {
-    await add(() => customLookup(value));
+    await add(() => customLookup(value, String(req.query.api_id || ""), req));
   }
 
   else {
