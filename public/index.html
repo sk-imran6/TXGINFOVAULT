@@ -1,563 +1,883 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TXG Information Center</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TXG Information Center</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #080b10;
-      color: #f4f7fb;
-      min-height: 100vh;
-    }
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #070b12;
+  color: #f5f7fa;
+}
 
-    .wrap {
-      width: min(1100px, 94%);
-      margin: auto;
-      padding: 28px 0 50px;
-    }
+body {
+  padding: 18px;
+}
 
-    .header {
-      margin-bottom: 22px;
-    }
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
 
-    .title {
-      font-size: 28px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
+button {
+  cursor: pointer;
+}
 
-    .subtitle {
-      color: #8d98a8;
-      font-size: 14px;
-    }
+.hidden {
+  display: none !important;
+}
 
-    .panel {
-      background: #0f141c;
-      border: 1px solid #202938;
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 18px;
-    }
+/* =========================
+   LOGIN
+========================= */
 
-    .login {
-      max-width: 430px;
-      margin: 70px auto;
-    }
+#loginPage {
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    input,
-    select,
-    textarea {
-      width: 100%;
-      background: #090d13;
-      border: 1px solid #293344;
-      border-radius: 11px;
-      padding: 13px 14px;
-      color: #fff;
-      outline: none;
-      font-size: 15px;
-      margin-bottom: 11px;
-    }
+.login-box {
+  width: 100%;
+  max-width: 390px;
+  background: #0d131d;
+  border: 1px solid #202a39;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 15px 45px rgba(0,0,0,.35);
+}
 
-    textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
+.login-title {
+  font-size: 27px;
+  font-weight: 800;
+  margin-bottom: 7px;
+}
 
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: #4d8dff;
-    }
+.login-subtitle {
+  color: #8e9aaa;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
 
-    button {
-      border: 0;
-      border-radius: 11px;
-      padding: 12px 15px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      background: #1b6cff;
-      color: white;
-    }
+.input-label {
+  display: block;
+  font-size: 13px;
+  color: #aab4c3;
+  margin-bottom: 7px;
+}
 
-    button:hover {
-      opacity: .9;
-    }
+.input {
+  width: 100%;
+  border: 1px solid #273344;
+  background: #080d15;
+  color: white;
+  border-radius: 11px;
+  padding: 13px 14px;
+  outline: none;
+}
 
-    button.danger {
-      background: #b72e3c;
-    }
+.input:focus {
+  border-color: #4c8dff;
+}
 
-    button.secondary {
-      background: #1a2230;
-      border: 1px solid #2c384a;
-    }
+.login-btn {
+  width: 100%;
+  margin-top: 15px;
+  padding: 13px;
+  border: 0;
+  border-radius: 11px;
+  background: #347cff;
+  color: white;
+  font-weight: 700;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
+.login-btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
 
-    .tool {
-      width: 100%;
-      min-height: 48px;
-      text-align: left;
-      background: #131a24;
-      border: 1px solid #253143;
-    }
+.login-error {
+  min-height: 20px;
+  margin-top: 12px;
+  color: #ff6978;
+  font-size: 13px;
+}
 
-    .tool:hover {
-      background: #192231;
-    }
+/* =========================
+   MAIN
+========================= */
 
-    .tool.custom {
-      border-color: #395a87;
-    }
+#appPage {
+  max-width: 1100px;
+  margin: 0 auto;
+}
 
-    .section-title {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 12px;
-    }
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
 
-    .search-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-    }
+.brand-title {
+  font-size: 25px;
+  font-weight: 800;
+}
 
-    .search-row input {
-      margin: 0;
-    }
+.brand-subtitle {
+  color: #7f8b9d;
+  font-size: 13px;
+  margin-top: 4px;
+}
 
-    .result {
-      margin-top: 16px;
-      background: #080c12;
-      border: 1px solid #202b3a;
-      border-radius: 13px;
-      padding: 15px;
-      overflow-x: auto;
-    }
+.logout-btn {
+  border: 1px solid #303b4d;
+  background: #101722;
+  color: #e7ebf1;
+  padding: 9px 14px;
+  border-radius: 9px;
+}
 
-    pre {
-      margin: 0;
-      white-space: pre-wrap;
-      word-break: break-word;
-      color: #dce5f2;
-      font-size: 13px;
-      line-height: 1.55;
-    }
+.section {
+  background: #0d131d;
+  border: 1px solid #202a39;
+  border-radius: 17px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
 
-    .saved {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 9px;
-      margin-bottom: 12px;
-    }
+.section-title {
+  font-size: 17px;
+  font-weight: 750;
+  margin-bottom: 14px;
+}
 
-    .saved-item {
-      display: flex;
-      gap: 7px;
-      min-width: 0;
-    }
+.search-row {
+  display: flex;
+  gap: 10px;
+}
 
-    .saved-item .api-btn {
-      flex: 1;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      text-align: left;
-    }
+.search-row .input {
+  flex: 1;
+}
 
-    .remove {
-      width: 44px;
-      padding: 8px;
-      background: #28161a;
-      border: 1px solid #5b252c;
-      color: #ff9ca6;
-    }
+.search-btn {
+  min-width: 105px;
+  border: 0;
+  border-radius: 10px;
+  background: #347cff;
+  color: white;
+  font-weight: 700;
+  padding: 0 18px;
+}
 
-    .hidden {
-      display: none !important;
-    }
+.detected {
+  margin-top: 9px;
+  color: #8490a2;
+  font-size: 12px;
+}
 
-    .status {
-      margin-top: 10px;
-      color: #9eabbc;
-      font-size: 13px;
-    }
+/* =========================
+   TOOLS GRID
+========================= */
 
-    .small {
-      color: #8490a2;
-      font-size: 12px;
-      line-height: 1.5;
-    }
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
 
-    .top-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
+.tool {
+  min-height: 48px;
+  border: 1px solid #263244;
+  background: #101722;
+  color: #eef2f7;
+  border-radius: 11px;
+  padding: 12px 13px;
+  text-align: left;
+  font-weight: 650;
+  transition: .15s ease;
+}
 
-    @media (max-width: 650px) {
-      .grid,
-      .saved {
-        grid-template-columns: 1fr;
-      }
+.tool:hover {
+  border-color: #4a78bd;
+  background: #141d2a;
+}
 
-      .search-row {
-        grid-template-columns: 1fr;
-      }
+.tool.active {
+  border-color: #347cff;
+  background: #142544;
+}
 
-      .search-row button {
-        width: 100%;
-      }
+.custom-tool-row {
+  display: flex;
+  gap: 7px;
+  align-items: stretch;
+}
 
-      .title {
-        font-size: 23px;
-      }
-    }
-  </style>
+.custom-tool-row .tool {
+  flex: 1;
+}
+
+.remove {
+  width: 44px;
+  border: 1px solid #42252c;
+  background: #1c1014;
+  color: #ff7482;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+/* =========================
+   RESULT
+========================= */
+
+.result-box {
+  min-height: 100px;
+  background: #080d15;
+  border: 1px solid #202a39;
+  border-radius: 12px;
+  padding: 15px;
+  overflow: auto;
+}
+
+.result-loading {
+  color: #8da9d8;
+}
+
+.result-error {
+  color: #ff6f7d;
+}
+
+.result-empty {
+  color: #697689;
+}
+
+pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  color: #dfe6ef;
+  font-family: Consolas, monospace;
+  font-size: 13px;
+}
+
+/* =========================
+   CUSTOM API
+========================= */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+}
+
+.form-full {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  display: block;
+  color: #aab4c3;
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+
+.save-api-btn {
+  border: 0;
+  background: #2779e8;
+  color: white;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-weight: 700;
+}
+
+.status {
+  color: #8c99aa;
+  font-size: 12px;
+  margin-top: 10px;
+  min-height: 18px;
+}
+
+.saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 13px;
+}
+
+.saved-item {
+  display: flex;
+  gap: 7px;
+}
+
+.small {
+  color: #737f91;
+  font-size: 12px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 650px) {
+
+  body {
+    padding: 12px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .brand-title {
+    font-size: 21px;
+  }
+
+  .section {
+    padding: 14px;
+    border-radius: 14px;
+  }
+
+  .search-row {
+    flex-direction: column;
+  }
+
+  .search-btn {
+    min-height: 46px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-full {
+    grid-column: auto;
+  }
+}
+</style>
 </head>
 
 <body>
 
-<div id="loginPage" class="wrap">
-  <div class="panel login">
-    <div class="title">TXG Information</div>
-    <div class="subtitle">Admin Login</div>
+<!-- =========================================================
+     LOGIN PAGE
+========================================================= -->
 
-    <br>
+<div id="loginPage">
+
+  <div class="login-box">
+
+    <div class="login-title">
+      TXG Information
+    </div>
+
+    <div class="login-subtitle">
+      Secure Admin Information Center
+    </div>
+
+    <label class="input-label" for="password">
+      Admin Password
+    </label>
 
     <input
       id="password"
+      class="input"
       type="password"
-      placeholder="Admin password"
       autocomplete="current-password"
+      placeholder="Enter password"
     >
 
-    <button id="loginBtn" style="width:100%;">
+    <button
+      id="loginBtn"
+      class="login-btn"
+      type="button"
+    >
       Login
     </button>
 
-    <div id="loginStatus" class="status"></div>
+    <div
+      id="loginError"
+      class="login-error"
+    ></div>
+
   </div>
+
 </div>
 
 
-<div id="appPage" class="wrap hidden">
+<!-- =========================================================
+     MAIN APP
+========================================================= -->
 
-  <div class="header">
-    <div class="title">TXG Information Center</div>
-    <div class="subtitle">
-      Public / authorized information lookup center
-    </div>
-  </div>
+<div id="appPage" class="hidden">
 
+  <div class="topbar">
 
-  <!-- SEARCH -->
-  <div class="panel">
+    <div>
+      <div class="brand-title">
+        TXG Information Center
+      </div>
 
-    <div class="section-title">
-      Search
-    </div>
-
-    <div class="search-row">
-      <input
-        id="searchInput"
-        placeholder="Enter mobile, email, IP, PIN, IFSC, UPI, URL..."
-        autocomplete="off"
-      >
-
-      <button id="searchBtn">
-        Search
-      </button>
+      <div class="brand-subtitle">
+        Search & information tools
+      </div>
     </div>
 
-    <div id="selectedTool" class="status">
-      Auto detection enabled
-    </div>
-
-    <div id="result" class="result hidden">
-      <pre id="resultText"></pre>
-    </div>
-
-  </div>
-
-
-  <!-- MAIN TOOLS -->
-  <div class="panel">
-
-    <div class="section-title">
-      Information Tools
-    </div>
-
-    <div class="grid">
-
-      <button class="tool" data-type="auto">
-        Auto
-      </button>
-
-      <button class="tool" data-type="mobile">
-        Mobile
-      </button>
-
-      <button class="tool" data-type="email">
-        Email
-      </button>
-
-      <button class="tool" data-type="vehicle">
-        Vehicle
-      </button>
-
-      <button class="tool" data-type="ip">
-        IP
-      </button>
-
-      <button class="tool" data-type="url">
-        URL / Domain
-      </button>
-
-      <button class="tool" data-type="pin">
-        PIN
-      </button>
-
-      <button class="tool" data-type="ifsc">
-        IFSC
-      </button>
-
-      <button class="tool" data-type="upi">
-        UPI
-      </button>
-
-      <button class="tool" data-type="company">
-        Company
-      </button>
-
-      <button class="tool" data-type="crm">
-        CRM
-      </button>
-
-    </div>
-
-  </div>
-
-
-  <!-- SAVED APIS -->
-  <div class="panel">
-
-    <div class="section-title">
-      My APIs
-    </div>
-
-    <div class="small" style="margin-bottom:12px;">
-      Saved API buttons use the secure server-side proxy.
-      API keys are not sent to the browser.
-    </div>
-
-    <div id="savedApis" class="saved"></div>
-
-    <button id="openCustom" class="tool custom">
-      + Custom API
+    <button
+      id="logoutBtn"
+      class="logout-btn"
+      type="button"
+    >
+      Logout
     </button>
 
   </div>
 
 
-  <!-- CUSTOM API MANAGER -->
-  <div id="customPanel" class="panel hidden">
+  <!-- =======================================================
+       SEARCH
+  ======================================================== -->
+
+  <div class="section">
 
     <div class="section-title">
-      Add Custom API
+      Information Search
     </div>
 
-    <input
-      id="apiName"
-      placeholder="API name"
-      maxlength="100"
-    >
+    <div class="search-row">
 
-    <input
-      id="apiUrl"
-      placeholder="https://example.com/api?query={query}"
-      maxlength="2000"
-    >
+      <input
+        id="searchInput"
+        class="input"
+        type="text"
+        autocomplete="off"
+        placeholder="Enter mobile, email, IP, PIN, IFSC, UPI, URL..."
+      >
 
-    <select id="apiMethod">
-      <option value="GET">GET</option>
-      <option value="POST">POST</option>
-      <option value="PUT">PUT</option>
-      <option value="PATCH">PATCH</option>
-      <option value="DELETE">DELETE</option>
-    </select>
-
-    <input
-      id="apiKey"
-      type="password"
-      placeholder="API key (optional)"
-      autocomplete="off"
-    >
-
-    <input
-      id="apiHeader"
-      value="Authorization"
-      placeholder="API key header"
-    >
-
-    <textarea
-      id="apiHeaders"
-      placeholder='Extra headers JSON (optional), example:
-{"X-API-Version":"1"}'
-    ></textarea>
-
-    <input
-      id="apiDescription"
-      placeholder="Description (optional)"
-      maxlength="500"
-    >
-
-    <input
-      id="apiCategory"
-      placeholder="Category"
-      value="Custom API"
-      maxlength="100"
-    >
-
-    <div class="top-actions">
-      <button id="saveApi">
-        Save API
+      <button
+        id="searchBtn"
+        class="search-btn"
+        type="button"
+      >
+        Search
       </button>
 
-      <button id="closeCustom" class="secondary">
-        Close
+    </div>
+
+    <div
+      id="detectedType"
+      class="detected"
+    >
+      Auto detection enabled
+    </div>
+
+  </div>
+
+
+  <!-- =======================================================
+       TOOLS
+  ======================================================== -->
+
+  <div class="section">
+
+    <div class="section-title">
+      Tools
+    </div>
+
+    <div
+      id="toolsGrid"
+      class="tools-grid"
+    >
+
+      <button
+        class="tool"
+        data-type="auto"
+        type="button"
+      >
+        Auto
       </button>
+
+      <button
+        class="tool"
+        data-type="mobile"
+        type="button"
+      >
+        Mobile
+      </button>
+
+      <button
+        class="tool"
+        data-type="email"
+        type="button"
+      >
+        Email
+      </button>
+
+      <button
+        class="tool"
+        data-type="vehicle"
+        type="button"
+      >
+        Vehicle
+      </button>
+
+      <button
+        class="tool"
+        data-type="ip"
+        type="button"
+      >
+        IP
+      </button>
+
+      <button
+        class="tool"
+        data-type="url"
+        type="button"
+      >
+        URL
+      </button>
+
+      <button
+        class="tool"
+        data-type="pin"
+        type="button"
+      >
+        PIN
+      </button>
+
+      <button
+        class="tool"
+        data-type="ifsc"
+        type="button"
+      >
+        IFSC
+      </button>
+
+      <button
+        class="tool"
+        data-type="upi"
+        type="button"
+      >
+        UPI
+      </button>
+
+      <button
+        class="tool"
+        data-type="company"
+        type="button"
+      >
+        Company
+      </button>
+
+      <button
+        class="tool"
+        data-type="crm"
+        type="button"
+      >
+        CRM
+      </button>
+
+
+      <!-- Saved APIs are inserted here -->
+
+
+      <button
+        id="customApiTool"
+        class="tool"
+        data-type="custom-manager"
+        type="button"
+      >
+        Custom API
+      </button>
+
     </div>
 
-    <div class="small">
-      Supported URL variables:
-      <b>{message}</b>,
-      <b>{value}</b>,
-      <b>{query}</b>
+  </div>
+
+
+  <!-- =======================================================
+       RESULT
+  ======================================================== -->
+
+  <div class="section">
+
+    <div class="section-title">
+      Result
     </div>
 
-    <div id="customStatus" class="status"></div>
+    <div
+      id="resultBox"
+      class="result-box"
+    >
+      <div class="result-empty">
+        Search result will appear here.
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- =======================================================
+       CUSTOM API MANAGER
+  ======================================================== -->
+
+  <div
+    id="customApiSection"
+    class="section hidden"
+  >
+
+    <div class="section-title">
+      Custom API
+    </div>
+
+    <div class="small" style="margin-bottom:14px;">
+      Use <b>{message}</b> in the URL. Whatever you type in the search box will replace it.
+    </div>
+
+
+    <div class="form-grid">
+
+
+      <div class="field">
+
+        <label for="apiName">
+          API Name
+        </label>
+
+        <input
+          id="apiName"
+          class="input"
+          type="text"
+          placeholder="My API"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="apiMethod">
+          Method
+        </label>
+
+        <select
+          id="apiMethod"
+          class="input"
+        >
+
+          <option value="GET">
+            GET
+          </option>
+
+          <option value="POST">
+            POST
+          </option>
+
+          <option value="PUT">
+            PUT
+          </option>
+
+          <option value="PATCH">
+            PATCH
+          </option>
+
+          <option value="DELETE">
+            DELETE
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="field form-full">
+
+        <label for="apiUrl">
+          API URL
+        </label>
+
+        <input
+          id="apiUrl"
+          class="input"
+          type="text"
+          placeholder="https://example.com/search?query={message}"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="apiKey">
+          API Key
+        </label>
+
+        <input
+          id="apiKey"
+          class="input"
+          type="password"
+          placeholder="Optional"
+          autocomplete="off"
+        >
+
+      </div>
+
+
+      <div class="field">
+
+        <label for="apiHeader">
+          API Key Header
+        </label>
+
+        <input
+          id="apiHeader"
+          class="input"
+          type="text"
+          value="Authorization"
+          placeholder="Authorization"
+        >
+
+      </div>
+
+
+      <div class="field form-full">
+
+        <label for="apiDescription">
+          Description
+        </label>
+
+        <input
+          id="apiDescription"
+          class="input"
+          type="text"
+          placeholder="Optional description"
+        >
+
+      </div>
+
+
+      <div class="form-full">
+
+        <button
+          id="saveApi"
+          class="save-api-btn"
+          type="button"
+        >
+          Save API
+        </button>
+
+        <div
+          id="customStatus"
+          class="status"
+        ></div>
+
+      </div>
+
+    </div>
+
+
+    <div
+      id="savedApis"
+      class="saved-list"
+    >
+      <div class="small">
+        Loading saved APIs...
+      </div>
+    </div>
 
   </div>
 
 </div>
 
 
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
 <script>
-(function () {
 
-  "use strict";
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
 
-  let selectedType = "auto";
-  let savedApis = [];
-
-  const loginPage = document.getElementById("loginPage");
-  const appPage = document.getElementById("appPage");
-
-  const password = document.getElementById("password");
-  const loginBtn = document.getElementById("loginBtn");
-  const loginStatus = document.getElementById("loginStatus");
-
-  const searchInput = document.getElementById("searchInput");
-  const searchBtn = document.getElementById("searchBtn");
-
-  const selectedTool = document.getElementById("selectedTool");
-  const result = document.getElementById("result");
-  const resultText = document.getElementById("resultText");
-
-  const savedApisBox = document.getElementById("savedApis");
-
-  const customPanel = document.getElementById("customPanel");
-  const openCustom = document.getElementById("openCustom");
-  const closeCustom = document.getElementById("closeCustom");
-
-  const apiName = document.getElementById("apiName");
-  const apiUrl = document.getElementById("apiUrl");
-  const apiMethod = document.getElementById("apiMethod");
-  const apiKey = document.getElementById("apiKey");
-  const apiHeader = document.getElementById("apiHeader");
-  const apiHeaders = document.getElementById("apiHeaders");
-  const apiDescription = document.getElementById("apiDescription");
-  const apiCategory = document.getElementById("apiCategory");
-
-  const saveApi = document.getElementById("saveApi");
-  const customStatus = document.getElementById("customStatus");
+let selectedType = "auto";
 
 
-  function setLoginStatus(text) {
-    loginStatus.textContent = text || "";
-  }
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const loginPage =
+  document.getElementById("loginPage");
+
+const appPage =
+  document.getElementById("appPage");
+
+const passwordInput =
+  document.getElementById("password");
+
+const loginBtn =
+  document.getElementById("loginBtn");
+
+const loginError =
+  document.getElementById("loginError");
+
+const logoutBtn =
+  document.getElementById("logoutBtn");
+
+const searchInput =
+  document.getElementById("searchInput");
+
+const searchBtn =
+  document.getElementById("searchBtn");
+
+const resultBox =
+  document.getElementById("resultBox");
+
+const detectedType =
+  document.getElementById("detectedType");
+
+const customApiSection =
+  document.getElementById("customApiSection");
+
+const customApiTool =
+  document.getElementById("customApiTool");
+
+const toolsGrid =
+  document.getElementById("toolsGrid");
+
+const savedApisBox =
+  document.getElementById("savedApis");
+
+const customStatus =
+  document.getElementById("customStatus");
 
 
-  function setCustomStatus(text) {
-    customStatus.textContent = text || "";
-  }
+/* =========================================================
+   LOGIN
+========================================================= */
 
+async function checkLogin() {
 
-  function showResult(data) {
-    result.classList.remove("hidden");
+  try {
 
-    if (typeof data === "string") {
-      resultText.textContent = data;
-      return;
-    }
-
-    try {
-      resultText.textContent = JSON.stringify(
-        data,
-        null,
-        2
-      );
-    } catch (e) {
-      resultText.textContent = String(data);
-    }
-  }
-
-
-  function hideResult() {
-    result.classList.add("hidden");
-    resultText.textContent = "";
-  }
-
-
-  async function readJson(response) {
-
-    const text = await response.text();
-
-    if (!text) {
-      return {};
-    }
-
-    try {
-      return JSON.parse(text);
-    } catch (e) {
-      return {
-        raw: text
-      };
-    }
-  }
-
-
-  async function checkAuth() {
-
-    try {
-
-      const response = await fetch(
+    const response =
+      await fetch(
         "/api/auth",
         {
           method: "GET",
@@ -566,161 +886,561 @@
         }
       );
 
-      if (!response.ok) {
-        showLogin();
-        return false;
-      }
-
-      const data = await readJson(response);
-
-      if (data.authenticated) {
-        showApp();
-        return true;
-      }
-
+    if (!response.ok) {
       showLogin();
-      return false;
-
-    } catch (error) {
-
-      showLogin();
-      return false;
-
-    }
-
-  }
-
-
-  function showLogin() {
-
-    loginPage.classList.remove("hidden");
-    appPage.classList.add("hidden");
-
-  }
-
-
-  function showApp() {
-
-    loginPage.classList.add("hidden");
-    appPage.classList.remove("hidden");
-
-    loadSavedApis();
-
-  }
-
-
-  async function login() {
-
-    const pass = password.value.trim();
-
-    if (!pass) {
-      setLoginStatus("Enter admin password.");
       return;
     }
 
-    loginBtn.disabled = true;
-    setLoginStatus("Logging in...");
+    const data =
+      await response.json();
 
-    try {
+    if (
+      data.authenticated === true ||
+      data.loggedIn === true ||
+      data.success === true
+    ) {
 
-      const response = await fetch(
+      showApp();
+
+    } else {
+
+      showLogin();
+
+    }
+
+  } catch (error) {
+
+    showLogin();
+
+  }
+}
+
+
+function showLogin() {
+
+  loginPage.classList.remove("hidden");
+  appPage.classList.add("hidden");
+
+}
+
+
+function showApp() {
+
+  loginPage.classList.add("hidden");
+  appPage.classList.remove("hidden");
+
+  loadSavedApis();
+
+}
+
+
+/* =========================================================
+   LOGIN BUTTON
+========================================================= */
+
+loginBtn.addEventListener(
+  "click",
+  login
+);
+
+
+passwordInput.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (event.key === "Enter") {
+      login();
+    }
+
+  }
+);
+
+
+async function login() {
+
+  const password =
+    passwordInput.value;
+
+  loginError.textContent = "";
+
+  if (!password) {
+
+    loginError.textContent =
+      "Enter admin password.";
+
+    return;
+  }
+
+
+  loginBtn.disabled = true;
+  loginBtn.textContent = "Logging in...";
+
+
+  try {
+
+    const response =
+      await fetch(
         "/api/auth",
         {
           method: "POST",
           credentials: "include",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type":
+              "application/json"
           },
           body: JSON.stringify({
             action: "login",
-            password: pass
+            password: password
           })
         }
       );
 
-      const data = await readJson(response);
 
-      if (!response.ok || !data.authenticated) {
-        setLoginStatus(
-          data.error || "Login failed."
-        );
-        return;
-      }
+    let data = {};
 
-      password.value = "";
-      setLoginStatus("");
-
-      showApp();
-
-    } catch (error) {
-
-      setLoginStatus(
-        "Login request failed."
-      );
-
-    } finally {
-
-      loginBtn.disabled = false;
-
+    try {
+      data = await response.json();
+    } catch (_) {
+      data = {};
     }
 
-  }
 
+    if (!response.ok) {
 
-  function selectTool(type) {
+      loginError.textContent =
+        data.error ||
+        data.message ||
+        "Invalid password.";
 
-    selectedType = type;
+      passwordInput.select();
 
-    if (type === "auto") {
-      selectedTool.textContent =
-        "Auto detection enabled";
       return;
     }
 
-    const names = {
-      mobile: "Mobile lookup",
-      email: "Email lookup",
-      vehicle: "Vehicle lookup",
-      ip: "IP lookup",
-      url: "URL / Domain lookup",
-      pin: "PIN lookup",
-      ifsc: "IFSC lookup",
-      upi: "UPI lookup",
-      company: "Company lookup",
-      crm: "CRM lookup"
-    };
 
-    selectedTool.textContent =
-      names[type] || "Custom lookup";
+    if (
+      data.success === false ||
+      data.authenticated === false
+    ) {
 
-  }
+      loginError.textContent =
+        data.error ||
+        data.message ||
+        "Invalid password.";
 
-
-  async function normalLookup() {
-
-    const value = searchInput.value.trim();
-
-    if (!value) {
-      showResult({
-        success: false,
-        error: "Enter a search value."
-      });
       return;
     }
 
-    searchBtn.disabled = true;
-    searchBtn.textContent = "Searching...";
-    hideResult();
+
+    passwordInput.value = "";
+
+    showApp();
+
+
+  } catch (error) {
+
+    loginError.textContent =
+      "Login request failed. Please try again.";
+
+  } finally {
+
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Login";
+
+  }
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+logoutBtn.addEventListener(
+  "click",
+  async function() {
 
     try {
 
-      const params = new URLSearchParams();
+      await fetch(
+        "/api/auth",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+          body: JSON.stringify({
+            action: "logout"
+          })
+        }
+      );
 
-      params.set("value", value);
-      params.set("type", selectedType);
+    } catch (_) {}
 
-      const response = await fetch(
-        "/api/lookup?" + params.toString(),
+    showLogin();
+
+  }
+);
+
+
+/* =========================================================
+   TYPE DETECTION
+========================================================= */
+
+function detectType(value) {
+
+  const v =
+    String(value || "").trim();
+
+
+  if (!v) {
+    return "auto";
+  }
+
+
+  /* URL */
+
+  if (
+    /^https?:\/\//i.test(v) ||
+    /^www\./i.test(v)
+  ) {
+
+    return "url";
+
+  }
+
+
+  /* Email */
+
+  if (
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+  ) {
+
+    return "email";
+
+  }
+
+
+  /* IP */
+
+  if (
+    /^(?:\d{1,3}\.){3}\d{1,3}$/.test(v) ||
+    v.includes(":")
+  ) {
+
+    return "ip";
+
+  }
+
+
+  /* IFSC */
+
+  if (
+    /^[A-Z]{4}0[A-Z0-9]{6}$/i.test(v)
+  ) {
+
+    return "ifsc";
+
+  }
+
+
+  /* UPI */
+
+  if (
+    /^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+$/.test(v)
+  ) {
+
+    return "upi";
+
+  }
+
+
+  /* PIN */
+
+  if (
+    /^\d{6}$/.test(v)
+  ) {
+
+    return "pin";
+
+  }
+
+
+  /* Mobile */
+
+  if (
+    /^\+?[0-9][0-9\s-]{7,14}$/.test(v)
+  ) {
+
+    return "mobile";
+
+  }
+
+
+  return "auto";
+}
+
+
+/* =========================================================
+   SELECT TOOL
+========================================================= */
+
+function selectTool(type) {
+
+  selectedType = type;
+
+  const buttons =
+    toolsGrid.querySelectorAll(
+      ".tool"
+    );
+
+  buttons.forEach(
+    function(button) {
+
+      button.classList.remove(
+        "active"
+      );
+
+      if (
+        button.dataset.type === type
+      ) {
+
+        button.classList.add(
+          "active"
+        );
+
+      }
+
+    }
+  );
+
+
+  if (type === "custom-manager") {
+
+    customApiSection.classList.remove(
+      "hidden"
+    );
+
+  } else {
+
+    customApiSection.classList.add(
+      "hidden"
+    );
+
+  }
+
+
+  if (type === "auto") {
+
+    detectedType.textContent =
+      "Auto detection enabled";
+
+  } else if (type !== "custom-manager") {
+
+    detectedType.textContent =
+      "Selected: " + type.toUpperCase();
+
+  }
+
+}
+
+
+/* =========================================================
+   TOOL BUTTONS
+========================================================= */
+
+toolsGrid.addEventListener(
+  "click",
+  function(event) {
+
+    const button =
+      event.target.closest(
+        ".tool"
+      );
+
+    if (!button) {
+      return;
+    }
+
+
+    if (
+      button.id === "customApiTool"
+    ) {
+
+      selectTool(
+        "custom-manager"
+      );
+
+      customApiSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      });
+
+      return;
+    }
+
+
+    if (
+      button.dataset.savedApi === "true"
+    ) {
+
+      const apiId =
+        button.dataset.apiId;
+
+      const api =
+        window.savedApisCache.find(
+          function(item) {
+            return String(item.id) ===
+              String(apiId);
+          }
+        );
+
+      if (api) {
+        runSavedApi(api);
+      }
+
+      return;
+    }
+
+
+    selectTool(
+      button.dataset.type || "auto"
+    );
+
+    if (
+      button.dataset.type !==
+      "custom-manager"
+    ) {
+
+      runLookup();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   SEARCH INPUT
+========================================================= */
+
+searchInput.addEventListener(
+  "input",
+  function() {
+
+    if (
+      selectedType === "auto"
+    ) {
+
+      const detected =
+        detectType(
+          searchInput.value
+        );
+
+      if (detected !== "auto") {
+
+        detectedType.textContent =
+          "Detected: " +
+          detected.toUpperCase();
+
+      } else {
+
+        detectedType.textContent =
+          "Auto detection enabled";
+
+      }
+
+    }
+
+  }
+);
+
+
+searchInput.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (event.key === "Enter") {
+
+      if (
+        selectedType ===
+        "custom-manager"
+      ) {
+        return;
+      }
+
+      runLookup();
+
+    }
+
+  }
+);
+
+
+searchBtn.addEventListener(
+  "click",
+  runLookup
+);
+
+
+/* =========================================================
+   NORMAL LOOKUP
+========================================================= */
+
+async function runLookup() {
+
+  const value =
+    searchInput.value.trim();
+
+
+  if (!value) {
+
+    showResult({
+      success: false,
+      error: "Enter a value first."
+    });
+
+    return;
+  }
+
+
+  let type =
+    selectedType;
+
+
+  if (
+    type === "auto" ||
+    type === "custom-manager"
+  ) {
+
+    type =
+      detectType(value);
+
+  }
+
+
+  showResult({
+    status: "loading",
+    message:
+      "Searching " +
+      type.toUpperCase() +
+      "..."
+  });
+
+
+  try {
+
+    const url =
+      "/api/lookup?type=" +
+      encodeURIComponent(type) +
+      "&value=" +
+      encodeURIComponent(value);
+
+
+    const response =
+      await fetch(
+        url,
         {
           method: "GET",
           credentials: "include",
@@ -728,50 +1448,167 @@
         }
       );
 
-      const data = await readJson(response);
 
-      if (!response.ok) {
+    let data = {};
 
-        showResult({
-          success: false,
-          status: response.status,
-          error:
-            data.error ||
-            "Lookup request failed."
-        });
+    try {
+      data = await response.json();
+    } catch (_) {
 
-        return;
-      }
+      data = {
+        success: false,
+        error:
+          "Server returned invalid response."
+      };
 
-      showResult(data);
+    }
 
-    } catch (error) {
+
+    if (
+      response.status === 401
+    ) {
+
+      showLogin();
+
+      return;
+    }
+
+
+    if (!response.ok) {
 
       showResult({
         success: false,
         error:
-          error.message ||
-          "Failed to fetch."
+          data.error ||
+          "Lookup failed."
       });
 
-    } finally {
+      return;
+    }
 
-      searchBtn.disabled = false;
-      searchBtn.textContent = "Search";
+
+    showResult(data);
+
+
+  } catch (error) {
+
+    showResult({
+      success: false,
+      error:
+        error.message ||
+        "Request failed."
+    });
+
+  }
+
+}
+
+
+/* =========================================================
+   RESULT DISPLAY
+========================================================= */
+
+function showResult(data) {
+
+  resultBox.innerHTML = "";
+
+
+  if (
+    data &&
+    data.status === "loading"
+  ) {
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "result-loading";
+
+    div.textContent =
+      data.message ||
+      "Loading...";
+
+    resultBox.appendChild(div);
+
+    return;
+  }
+
+
+  if (
+    data &&
+    data.success === false
+  ) {
+
+    const div =
+      document.createElement("div");
+
+    div.className =
+      "result-error";
+
+    div.textContent =
+      data.error ||
+      "Something went wrong.";
+
+    resultBox.appendChild(div);
+
+    return;
+  }
+
+
+  const pre =
+    document.createElement("pre");
+
+
+  try {
+
+    if (
+      typeof data === "string"
+    ) {
+
+      pre.textContent =
+        data;
+
+    } else {
+
+      pre.textContent =
+        JSON.stringify(
+          data,
+          null,
+          2
+        );
 
     }
+
+  } catch (_) {
+
+    pre.textContent =
+      String(data);
 
   }
 
 
-  async function loadSavedApis() {
+  resultBox.appendChild(pre);
 
-    savedApisBox.innerHTML =
-      '<div class="small">Loading APIs...</div>';
+}
 
-    try {
 
-      const response = await fetch(
+/* =========================================================
+   SAVED API
+========================================================= */
+
+window.savedApisCache = [];
+
+
+async function loadSavedApis() {
+
+  savedApisBox.innerHTML =
+    "<div class='small'>Loading APIs...</div>";
+
+
+  try {
+
+    const response =
+      await fetch(
         "/api/custom-apis",
         {
           method: "GET",
@@ -780,220 +1617,399 @@
         }
       );
 
-      const data = await readJson(response);
 
-      if (!response.ok) {
-        savedApisBox.innerHTML =
-          '<div class="small">Unable to load saved APIs.</div>';
-        return;
-      }
+    if (
+      response.status === 401
+    ) {
 
-      savedApis = Array.isArray(data.apis)
+      showLogin();
+
+      return;
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        data.error ||
+        "Could not load APIs."
+      );
+
+    }
+
+
+    const apis =
+      Array.isArray(data.apis)
         ? data.apis
         : [];
 
-      renderSavedApis();
 
-    } catch (error) {
-
-      savedApisBox.innerHTML =
-        '<div class="small">Failed to load saved APIs.</div>';
-
-    }
-
-  }
+    window.savedApisCache =
+      apis;
 
 
-  function renderSavedApis() {
+    /*
+     * Remove old saved buttons.
+     */
+
+    toolsGrid
+      .querySelectorAll(
+        ".saved-api-button"
+      )
+      .forEach(
+        function(element) {
+          element.parentElement.remove();
+        }
+      );
+
 
     savedApisBox.innerHTML = "";
 
-    if (!savedApis.length) {
 
-      const empty = document.createElement("div");
+    if (!apis.length) {
 
-      empty.className = "small";
-      empty.textContent =
-        "No saved APIs yet.";
-
-      savedApisBox.appendChild(empty);
+      savedApisBox.innerHTML =
+        "<div class='small'>No saved APIs.</div>";
 
       return;
     }
 
 
-    savedApis.forEach(function (api) {
+    apis.forEach(
+      function(api) {
 
-      const row = document.createElement("div");
+        /*
+         * Add button before
+         * Custom API button.
+         */
 
-      row.className = "saved-item";
+        const row =
+          document.createElement(
+            "div"
+          );
 
-
-      const button = document.createElement("button");
-
-      button.className =
-        "tool api-btn";
-
-      button.type = "button";
-
-      button.textContent =
-        api.name || "Custom API";
-
-      button.title =
-        api.description ||
-        api.url ||
-        "";
+        row.className =
+          "custom-tool-row saved-api-button";
 
 
-      button.addEventListener(
-        "click",
-        function () {
-          runSavedApi(api);
-        }
-      );
+        const button =
+          document.createElement(
+            "button"
+          );
+
+        button.type = "button";
+
+        button.className =
+          "tool";
+
+        button.dataset.savedApi =
+          "true";
+
+        button.dataset.apiId =
+          String(api.id);
+
+        button.textContent =
+          api.name || "Saved API";
 
 
-      const remove = document.createElement("button");
-
-      remove.className =
-        "remove";
-
-      remove.type = "button";
-      remove.textContent = "×";
-      remove.title = "Remove API";
+        button.addEventListener(
+          "click",
+          function() {
+            runSavedApi(api);
+          }
+        );
 
 
-      remove.addEventListener(
-        "click",
-        function () {
-          removeSavedApi(api.id);
-        }
-      );
+        const remove =
+          document.createElement(
+            "button"
+          );
+
+        remove.type = "button";
+
+        remove.className =
+          "remove";
+
+        remove.textContent =
+          "×";
+
+        remove.title =
+          "Remove API";
 
 
-      row.appendChild(button);
-      row.appendChild(remove);
+        remove.addEventListener(
+          "click",
+          function(event) {
 
-      savedApisBox.appendChild(row);
+            event.stopPropagation();
 
-    });
+            removeSavedApi(
+              api.id
+            );
+
+          }
+        );
+
+
+        row.appendChild(button);
+        row.appendChild(remove);
+
+
+        toolsGrid.insertBefore(
+          row,
+          customApiTool
+            .parentElement ||
+          customApiTool
+        );
+
+
+        /*
+         * Saved API manager list
+         */
+
+        const managerRow =
+          document.createElement(
+            "div"
+          );
+
+        managerRow.className =
+          "custom-tool-row";
+
+
+        const managerButton =
+          document.createElement(
+            "button"
+          );
+
+        managerButton.type =
+          "button";
+
+        managerButton.className =
+          "tool";
+
+        managerButton.textContent =
+          api.name || "Saved API";
+
+
+        managerButton.addEventListener(
+          "click",
+          function() {
+
+            runSavedApi(api);
+
+          }
+        );
+
+
+        const managerRemove =
+          document.createElement(
+            "button"
+          );
+
+        managerRemove.type =
+          "button";
+
+        managerRemove.className =
+          "remove";
+
+        managerRemove.textContent =
+          "×";
+
+
+        managerRemove.addEventListener(
+          "click",
+          function() {
+
+            removeSavedApi(
+              api.id
+            );
+
+          }
+        );
+
+
+        managerRow.appendChild(
+          managerButton
+        );
+
+        managerRow.appendChild(
+          managerRemove
+        );
+
+
+        savedApisBox.appendChild(
+          managerRow
+        );
+
+      }
+    );
+
+
+  } catch (error) {
+
+    savedApisBox.innerHTML =
+      "<div class='small'>" +
+      escapeHtml(
+        error.message ||
+        "Failed to load APIs."
+      ) +
+      "</div>";
 
   }
 
-
-  async function runSavedApi(api) {
-
-    const value = searchInput.value.trim();
-
-    if (!value) {
-
-      showResult({
-        success: false,
-        error:
-          "Enter a value before using this API."
-      });
-
-      return;
-    }
+}
 
 
-    hideResult();
+/* =========================================================
+   RUN SAVED API
+========================================================= */
+
+async function runSavedApi(api) {
+
+  const value =
+    searchInput.value.trim();
+
+
+  if (!value) {
 
     showResult({
-      loading: true,
-      api: api.name || "Custom API",
-      message: "Calling API..."
+      success: false,
+      error:
+        "Enter something in the search box first."
     });
 
+    searchInput.focus();
 
-    try {
+    return;
+  }
 
-      /*
-       * IMPORTANT:
-       * We do NOT call api.url directly.
-       *
-       * Browser
-       *   ↓
-       * /api/custom-proxy
-       *   ↓
-       * External API
-       */
 
-      const response = await fetch(
+  showResult({
+    status: "loading",
+    message:
+      "Calling " +
+      (api.name || "API") +
+      "..."
+  });
+
+
+  try {
+
+    const response =
+      await fetch(
         "/api/custom-proxy",
         {
           method: "POST",
           credentials: "include",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type":
+              "application/json"
           },
           body: JSON.stringify({
             id: api.id,
-            message: value,
-            value: value,
-            query: value
+            message: value
           })
         }
       );
 
 
-      const data = await readJson(response);
+    let data = {};
+
+    try {
+
+      data =
+        await response.json();
+
+    } catch (_) {
+
+      data = {
+        success: false,
+        error:
+          "Invalid server response."
+      };
+
+    }
 
 
-      if (!response.ok) {
+    if (
+      response.status === 401
+    ) {
 
-        showResult({
-          success: false,
-          status: response.status,
-          error:
-            data.error ||
-            "API request failed.",
-          api:
-            api.name ||
-            "Custom API"
-        });
+      showLogin();
 
-        return;
-      }
+      return;
+    }
 
 
-      showResult(data);
-
-    } catch (error) {
+    if (!response.ok) {
 
       showResult({
         success: false,
         error:
-          error.message ||
-          "Failed to fetch.",
-        api:
-          api.name ||
-          "Custom API"
+          data.error ||
+          "API request failed."
       });
 
+      return;
     }
+
+
+    /*
+     * Whatever the API returns,
+     * show it here.
+     */
+
+    showResult(
+      data.response
+    );
+
+
+  } catch (error) {
+
+    showResult({
+      success: false,
+      error:
+        error.message ||
+        "Failed to call API."
+    });
 
   }
 
+}
 
-  async function removeSavedApi(id) {
 
-    const ok = confirm(
+/* =========================================================
+   REMOVE SAVED API
+========================================================= */
+
+async function removeSavedApi(id) {
+
+  const ok =
+    confirm(
       "Remove this saved API?"
     );
 
-    if (!ok) return;
+
+  if (!ok) {
+    return;
+  }
 
 
-    try {
+  try {
 
-      const response = await fetch(
+    const response =
+      await fetch(
         "/api/custom-apis",
         {
           method: "DELETE",
           credentials: "include",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type":
+              "application/json"
           },
           body: JSON.stringify({
             id: id
@@ -1002,291 +2018,262 @@
       );
 
 
-      const data = await readJson(response);
+    const data =
+      await response.json();
 
 
-      if (!response.ok) {
+    if (
+      response.status === 401
+    ) {
 
-        setCustomStatus(
-          data.error ||
-          "Could not remove API."
-        );
+      showLogin();
 
-        return;
-      }
-
-
-      await loadSavedApis();
-
-    } catch (error) {
-
-      setCustomStatus(
-        error.message ||
-        "Failed to remove API."
-      );
-
+      return;
     }
 
-  }
 
+    if (!response.ok) {
 
-  async function saveCustomApi() {
-
-    const name =
-      apiName.value.trim();
-
-    const url =
-      apiUrl.value.trim();
-
-    const method =
-      apiMethod.value;
-
-    const key =
-      apiKey.value.trim();
-
-    const header =
-      apiHeader.value.trim() ||
-      "Authorization";
-
-    const description =
-      apiDescription.value.trim();
-
-    const category =
-      apiCategory.value.trim() ||
-      "Custom API";
-
-
-    if (!name) {
-
-      setCustomStatus(
-        "Enter API name."
+      alert(
+        data.error ||
+        "Could not remove API."
       );
 
       return;
     }
 
 
-    if (!/^https?:\/\//i.test(url)) {
-
-      setCustomStatus(
-        "API URL must start with http:// or https://"
-      );
-
-      return;
-    }
+    await loadSavedApis();
 
 
-    let headersObject = {};
+  } catch (error) {
 
-
-    if (apiHeaders.value.trim()) {
-
-      try {
-
-        headersObject =
-          JSON.parse(
-            apiHeaders.value
-          );
-
-        if (
-          !headersObject ||
-          typeof headersObject !== "object" ||
-          Array.isArray(headersObject)
-        ) {
-          throw new Error();
-        }
-
-      } catch (e) {
-
-        setCustomStatus(
-          "Extra headers must be valid JSON."
-        );
-
-        return;
-      }
-
-    }
-
-
-    saveApi.disabled = true;
-    setCustomStatus(
-      "Saving API..."
+    alert(
+      error.message ||
+      "Failed to remove API."
     );
 
-
-    try {
-
-      const response = await fetch(
-        "/api/custom-apis",
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            name: name,
-            url: url,
-            method: method,
-            api_key: key,
-            api_header: header,
-            headers_json:
-              JSON.stringify(headersObject),
-            description: description,
-            category: category
-          })
-        }
-      );
-
-
-      const data = await readJson(response);
-
-
-      if (!response.ok) {
-
-        setCustomStatus(
-          data.error ||
-          "Could not save API."
-        );
-
-        return;
-      }
-
-
-      setCustomStatus(
-        "API saved successfully."
-      );
-
-
-      apiName.value = "";
-      apiUrl.value = "";
-      apiMethod.value = "GET";
-      apiKey.value = "";
-      apiHeader.value = "Authorization";
-      apiHeaders.value = "";
-      apiDescription.value = "";
-      apiCategory.value = "Custom API";
-
-
-      await loadSavedApis();
-
-    } catch (error) {
-
-      setCustomStatus(
-        error.message ||
-        "Failed to save API."
-      );
-
-    } finally {
-
-      saveApi.disabled = false;
-
-    }
-
   }
 
-
-  // =========================
-  // EVENTS
-  // =========================
-
-  loginBtn.addEventListener(
-    "click",
-    login
-  );
+}
 
 
-  password.addEventListener(
-    "keydown",
-    function (event) {
+/* =========================================================
+   SAVE CUSTOM API
+========================================================= */
 
-      if (event.key === "Enter") {
-        login();
-      }
-
-    }
-  );
-
-
-  searchBtn.addEventListener(
-    "click",
-    normalLookup
-  );
-
-
-  searchInput.addEventListener(
-    "keydown",
-    function (event) {
-
-      if (event.key === "Enter") {
-        normalLookup();
-      }
-
-    }
-  );
-
-
-  document
-    .querySelectorAll(".tool[data-type]")
-    .forEach(function (button) {
-
-      button.addEventListener(
-        "click",
-        function () {
-
-          const type =
-            button.getAttribute(
-              "data-type"
-            );
-
-          selectTool(type);
-
-        }
-      );
-
-    });
-
-
-  openCustom.addEventListener(
-    "click",
-    function () {
-
-      customPanel.classList.remove(
-        "hidden"
-      );
-
-      customPanel.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-
-    }
-  );
-
-
-  closeCustom.addEventListener(
-    "click",
-    function () {
-
-      customPanel.classList.add(
-        "hidden"
-      );
-
-    }
-  );
-
-
-  saveApi.addEventListener(
+document
+  .getElementById("saveApi")
+  .addEventListener(
     "click",
     saveCustomApi
   );
 
 
-  // Initial auth check
-  checkAuth();
+async function saveCustomApi() {
 
-})();
+  const name =
+    document
+      .getElementById("apiName")
+      .value
+      .trim();
+
+
+  const url =
+    document
+      .getElementById("apiUrl")
+      .value
+      .trim();
+
+
+  const method =
+    document
+      .getElementById("apiMethod")
+      .value;
+
+
+  const apiKey =
+    document
+      .getElementById("apiKey")
+      .value
+      .trim();
+
+
+  const apiHeader =
+    document
+      .getElementById("apiHeader")
+      .value
+      .trim() ||
+    "Authorization";
+
+
+  const description =
+    document
+      .getElementById("apiDescription")
+      .value
+      .trim();
+
+
+  customStatus.textContent =
+    "";
+
+
+  if (!name) {
+
+    customStatus.textContent =
+      "Enter API name.";
+
+    return;
+  }
+
+
+  if (
+    !/^https?:\/\//i.test(url)
+  ) {
+
+    customStatus.textContent =
+      "Enter a valid API URL.";
+
+    return;
+  }
+
+
+  if (
+    !url.includes("{message}")
+  ) {
+
+    customStatus.textContent =
+      "URL must contain {message}.";
+
+    return;
+  }
+
+
+  customStatus.textContent =
+    "Saving...";
+
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/custom-apis",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+          body: JSON.stringify({
+
+            name: name,
+
+            url: url,
+
+            method: method,
+
+            api_key: apiKey,
+
+            api_header: apiHeader,
+
+            description: description,
+
+            category:
+              "Custom API"
+
+          })
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      response.status === 401
+    ) {
+
+      showLogin();
+
+      return;
+    }
+
+
+    if (!response.ok) {
+
+      customStatus.textContent =
+        data.error ||
+        "Save failed.";
+
+      return;
+    }
+
+
+    customStatus.textContent =
+      "API saved successfully.";
+
+
+    document
+      .getElementById("apiName")
+      .value = "";
+
+
+    document
+      .getElementById("apiUrl")
+      .value = "";
+
+
+    document
+      .getElementById("apiKey")
+      .value = "";
+
+
+    document
+      .getElementById("apiDescription")
+      .value = "";
+
+
+    await loadSavedApis();
+
+
+  } catch (error) {
+
+    customStatus.textContent =
+      error.message ||
+      "Failed to save API.";
+
+  }
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(value) {
+
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+selectTool("auto");
+
+checkLogin();
+
 </script>
 
 </body>
-</html>
+  </html>
