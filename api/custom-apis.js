@@ -13,23 +13,22 @@ function getCookie(req, name) {
 
   for (const part of cookie.split(";")) {
     const item = part.trim();
-    const index = item.indexOf("=");
+    const i = item.indexOf("=");
 
-    if (index === -1) continue;
+    if (i === -1) continue;
 
-    const key = item.slice(0, index);
-    const value = item.slice(index + 1);
-
-    if (key === name) {
-      return decodeURIComponent(value);
+    if (item.slice(0, i) === name) {
+      return decodeURIComponent(item.slice(i + 1));
     }
   }
 
   return "";
 }
 
-function verifySession(token) {
+function authenticated(req) {
   try {
+    const token = getCookie(req, COOKIE_NAME);
+
     if (!token) return false;
 
     const parts = token.split(".");
@@ -50,11 +49,9 @@ function verifySession(token) {
       return false;
     }
 
-    const data = user + "." + timestamp;
-
     const expected = crypto
       .createHmac("sha256", getSecret())
-      .update(data)
+      .update(user + "." + timestamp)
       .digest("hex");
 
     return crypto.timingSafeEqual(
@@ -66,27 +63,24 @@ function verifySession(token) {
   }
 }
 
-function authenticated(req) {
-  return verifySession(getCookie(req, COOKIE_NAME));
-}
-
-function database() {
+function getDatabase() {
   const { neon } = require("@neondatabase/serverless");
 
-  const databaseUrl =
+  const url =
     process.env.DATABASE_URL ||
     process.env.POSTGRES_URL ||
     process.env.STORAGE_DATABASE_URL ||
     process.env.STORAGE_POSTGRES_URL;
 
-  if (!databaseUrl) {
-    throw new Error("Database connection is not configured.");
+  if (!url) {
+    throw new Error("Neon database URL is not configured.");
   }
 
-  return neon(databaseUrl);
+  return neon(url);
 }
 
-async function ensureTable(sql) {
+async function setupTable(sql) {
+
   await sql`
     CREATE TABLE IF NOT EXISTS custom_apis (
       id SERIAL PRIMARY KEY,
@@ -97,7 +91,6 @@ async function ensureTable(sql) {
       category TEXT DEFAULT 'Custom API',
       api_key TEXT DEFAULT '',
       api_header TEXT DEFAULT 'Authorization',
-      headers_json TEXT DEFAULT '{}',
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
@@ -111,51 +104,36 @@ async function ensureTable(sql) {
     ALTER TABLE custom_apis
     ADD COLUMN IF NOT EXISTS api_header TEXT DEFAULT 'Authorization'
   `;
-
-  await sql`
-    ALTER TABLE custom_apis
-    ADD COLUMN IF NOT EXISTS headers_json TEXT DEFAULT '{}'
-  `;
 }
 
-function validUrl(value) {
-  try {
-    const url = new URL(value);
-
-    return (
-      url.protocol === "http:" ||
-      url.protocol === "https:"
-    );
-  } catch (e) {
-    return false;
-  }
-}
-
-function clean(value, max = 5000) {
+function clean(value, max) {
   return String(value || "")
     .replace(/[\r\n]/g, "")
     .trim()
-    .slice(0, max);
+    .slice(0, max || 5000);
 }
 
 async function handler(req, res) {
+
   try {
+
     if (!authenticated(req)) {
       return res.status(401).json({
         success: false,
-        error: "Unauthorized."
+        error: "Unauthorized"
       });
     }
 
-    const sql = database();
+    const sql = getDatabase();
 
-    await ensureTable(sql);
+    await setupTable(sql);
 
-    // =========================
-    // GET
-    // =========================
+    // ==========================
+    // GET SAVED APIs
+    // ==========================
 
     if (req.method === "GET") {
+
       const rows = await sql`
         SELECT
           id,
@@ -176,49 +154,40 @@ async function handler(req, res) {
       });
     }
 
-    // =========================
-    // POST
-    // =========================
+    // ==========================
+    // SAVE API
+    // ==========================
 
     if (req.method === "POST") {
+
       const body = req.body || {};
 
       const name = clean(body.name, 100);
-      const url = clean(body.url, 2000);
-      const method = clean(body.method || "GET", 10).toUpperCase();
-      const description = clean(body.description, 500);
-      const category = clean(body.category || "Custom API", 100);
-      const apiKey = clean(body.api_key, 2000);
+      const url = clean(body.url, 3000);
+      const method = clean(
+        body.method || "GET",
+        10
+      ).toUpperCase();
+
+      const description = clean(
+        body.description,
+        500
+      );
+
+      const category = clean(
+        body.category || "Custom API",
+        100
+      );
+
+      const apiKey = clean(
+        body.api_key,
+        3000
+      );
+
       const apiHeader = clean(
         body.api_header || "Authorization",
         200
       );
-
-      let headersJson = "{}";
-
-      if (body.headers_json) {
-        try {
-          const parsed =
-            typeof body.headers_json === "string"
-              ? JSON.parse(body.headers_json)
-              : body.headers_json;
-
-          if (
-            !parsed ||
-            typeof parsed !== "object" ||
-            Array.isArray(parsed)
-          ) {
-            throw new Error("Headers must be an object.");
-          }
-
-          headersJson = JSON.stringify(parsed);
-        } catch (e) {
-          return res.status(400).json({
-            success: false,
-            error: "Invalid extra headers JSON."
-          });
-        }
-      }
 
       if (!name) {
         return res.status(400).json({
@@ -227,15 +196,21 @@ async function handler(req, res) {
         });
       }
 
-      if (!validUrl(url)) {
+      if (!/^https?:\/\/.+/i.test(url)) {
         return res.status(400).json({
           success: false,
-          error: "Valid HTTP/HTTPS URL is required."
+          error: "Enter a valid HTTP/HTTPS API URL."
         });
       }
 
       if (
-        !["GET", "POST", "PUT", "PATCH", "DELETE"].includes(method)
+        ![
+          "GET",
+          "POST",
+          "PUT",
+          "PATCH",
+          "DELETE"
+        ].includes(method)
       ) {
         return res.status(400).json({
           success: false,
@@ -252,8 +227,7 @@ async function handler(req, res) {
           description,
           category,
           api_key,
-          api_header,
-          headers_json
+          api_header
         )
         VALUES
         (
@@ -263,8 +237,7 @@ async function handler(req, res) {
           ${description},
           ${category},
           ${apiKey},
-          ${apiHeader},
-          ${headersJson}
+          ${apiHeader}
         )
         RETURNING
           id,
@@ -279,17 +252,18 @@ async function handler(req, res) {
 
       return res.status(201).json({
         success: true,
+        message: "API saved successfully.",
         api: rows[0]
       });
     }
 
-    // =========================
-    // DELETE
-    // =========================
+    // ==========================
+    // DELETE API
+    // ==========================
 
     if (req.method === "DELETE") {
-      const body = req.body || {};
 
+      const body = req.body || {};
       const id = Number(body.id);
 
       if (!Number.isInteger(id) || id <= 0) {
@@ -314,12 +288,19 @@ async function handler(req, res) {
       success: false,
       error: "Method not allowed."
     });
+
   } catch (error) {
-    console.error("custom-apis error:", error);
+
+    console.error(
+      "CUSTOM API ERROR:",
+      error
+    );
 
     return res.status(500).json({
       success: false,
-      error: error.message || "Custom API server error."
+      error:
+        error.message ||
+        "Custom API server error."
     });
   }
 }
