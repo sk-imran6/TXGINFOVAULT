@@ -13,7 +13,9 @@ function getDatabase() {
 
   const url =
     process.env.DATABASE_URL ||
-    process.env.POSTGRES_URL;
+    process.env.POSTGRES_URL ||
+    process.env.STORAGE_DATABASE_URL ||
+    process.env.STORAGE_POSTGRES_URL;
 
   if (!url) {
     throw new Error(
@@ -43,49 +45,47 @@ function send(res, status, data) {
 
 
 // ==========================================
-// PRIVATE / LOCAL IP CHECK
+// BLOCK PRIVATE IPs
 // ==========================================
 
 function isBlockedIP(ip) {
 
   if (net.isIPv4(ip)) {
 
-    const parts =
-      ip
-        .split(".")
-        .map(Number);
+    const p =
+      ip.split(".").map(Number);
 
     // 10.0.0.0/8
-    if (parts[0] === 10) {
+    if (p[0] === 10) {
       return true;
     }
 
     // 127.0.0.0/8
-    if (parts[0] === 127) {
+    if (p[0] === 127) {
       return true;
     }
 
     // 169.254.0.0/16
     if (
-      parts[0] === 169 &&
-      parts[1] === 254
+      p[0] === 169 &&
+      p[1] === 254
     ) {
       return true;
     }
 
     // 172.16.0.0/12
     if (
-      parts[0] === 172 &&
-      parts[1] >= 16 &&
-      parts[1] <= 31
+      p[0] === 172 &&
+      p[1] >= 16 &&
+      p[1] <= 31
     ) {
       return true;
     }
 
     // 192.168.0.0/16
     if (
-      parts[0] === 192 &&
-      parts[1] === 168
+      p[0] === 192 &&
+      p[1] === 168
     ) {
       return true;
     }
@@ -99,10 +99,8 @@ function isBlockedIP(ip) {
     const lower =
       ip.toLowerCase();
 
-    // localhost
-    if (
-      lower === "::1"
-    ) {
+    // IPv6 localhost
+    if (lower === "::1") {
       return true;
     }
 
@@ -130,18 +128,16 @@ function isBlockedIP(ip) {
 
 
 // ==========================================
-// SAFE TARGET URL
+// VALIDATE TARGET URL
 // ==========================================
 
-async function validateTarget(
-  rawURL
-) {
+async function validateTarget(rawURL) {
 
   const url =
     new URL(rawURL);
 
 
-  // Only HTTPS
+  // HTTPS only
   if (
     url.protocol !== "https:"
   ) {
@@ -153,7 +149,6 @@ async function validateTarget(
   }
 
 
-  // Resolve hostname
   const addresses =
     await dns.lookup(
       url.hostname,
@@ -165,7 +160,7 @@ async function validateTarget(
 
   if (
     !addresses ||
-    !addresses.length
+    addresses.length === 0
   ) {
 
     throw new Error(
@@ -175,7 +170,6 @@ async function validateTarget(
   }
 
 
-  // Prevent internal/private targets
   for (
     const item of addresses
   ) {
@@ -222,12 +216,8 @@ module.exports = async function handler(
         res,
         405,
         {
-
           success: false,
-
-          error:
-            "GET method required"
-
+          error: "GET method required"
         }
       );
 
@@ -235,30 +225,24 @@ module.exports = async function handler(
 
 
     // --------------------------------------
-    // API ID
+    // UUID / TEXT API ID
     // --------------------------------------
 
     const id =
-      Number(
-        req.query?.id
-      );
+      String(
+        req.query?.id ||
+        ""
+      ).trim();
 
 
-    if (
-      !Number.isInteger(id) ||
-      id <= 0
-    ) {
+    if (!id) {
 
       return send(
         res,
         400,
         {
-
           success: false,
-
-          error:
-            "Invalid API ID"
-
+          error: "Invalid API ID"
         }
       );
 
@@ -287,7 +271,14 @@ module.exports = async function handler(
     const rows =
       await sql`
 
-        SELECT *
+        SELECT
+          id,
+          name,
+          url,
+          method,
+          description,
+          category,
+          created_at
 
         FROM custom_apis
 
@@ -304,12 +295,8 @@ module.exports = async function handler(
         res,
         404,
         {
-
           success: false,
-
-          error:
-            "Saved API not found"
-
+          error: "Saved API not found"
         }
       );
 
@@ -321,7 +308,7 @@ module.exports = async function handler(
 
 
     // --------------------------------------
-    // BUILD TARGET URL
+    // BUILD API URL
     // --------------------------------------
 
     let targetURL =
@@ -338,13 +325,10 @@ module.exports = async function handler(
       https://example.com/api?number={message}
     */
 
-
     targetURL =
       targetURL.replace(
         /\{message\}/gi,
-        encodeURIComponent(
-          message
-        )
+        encodeURIComponent(message)
       );
 
 
@@ -370,17 +354,11 @@ module.exports = async function handler(
 
 
     const allowedMethods = [
-
       "GET",
-
       "POST",
-
       "PUT",
-
       "PATCH",
-
       "DELETE"
-
     ];
 
 
@@ -394,12 +372,9 @@ module.exports = async function handler(
         res,
         400,
         {
-
           success: false,
-
           error:
             "Unsupported HTTP method"
-
         }
       );
 
@@ -407,7 +382,7 @@ module.exports = async function handler(
 
 
     // --------------------------------------
-    // REQUEST HEADERS
+    // HEADERS
     // --------------------------------------
 
     const headers = {
@@ -418,12 +393,7 @@ module.exports = async function handler(
     };
 
 
-    /*
-      Optional server-side API key.
-
-      These values are NEVER exposed
-      in index.html.
-    */
+    // Optional server-side API key
 
     if (
       process.env.CUSTOM_API_KEY
@@ -454,7 +424,7 @@ module.exports = async function handler(
 
 
     // --------------------------------------
-    // TIMEOUT
+    // REQUEST TIMEOUT
     // --------------------------------------
 
     const controller =
@@ -479,14 +449,10 @@ module.exports = async function handler(
         await fetch(
           safeURL.toString(),
           {
-
             method,
-
             headers,
-
             signal:
               controller.signal
-
           }
         );
 
@@ -586,12 +552,9 @@ module.exports = async function handler(
         res,
         504,
         {
-
           success: false,
-
           error:
             "External API request timed out"
-
         }
       );
 
@@ -610,6 +573,7 @@ module.exports = async function handler(
           "Custom API request failed"
 
       }
+
     );
 
   }
