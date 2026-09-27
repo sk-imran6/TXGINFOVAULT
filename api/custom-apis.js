@@ -1,228 +1,77 @@
-// api/custom-apis.js
-
 const crypto = require("crypto");
-const { neon } = require("@neondatabase/serverless");
 
 const COOKIE_NAME = "txg_admin_session";
-
-const FALLBACK_SECRET =
-  "TXG-INFORMATION-AUTH-2026-CHANGE-ME";
-
+const FALLBACK_SECRET = "TXG-INFORMATION-AUTH-2026-CHANGE-ME";
 const SESSION_HOURS = 12;
 
-
-// ==========================================
-// AUTH SECRET
-// ==========================================
-
 function getSecret() {
-  return (
-    process.env.AUTH_SECRET ||
-    FALLBACK_SECRET
-  );
+  return process.env.AUTH_SECRET || FALLBACK_SECRET;
 }
 
-
-// ==========================================
-// GET COOKIE
-// ==========================================
-
 function getCookie(req, name) {
-  const cookieHeader =
-    req.headers.cookie || "";
+  const cookie = req.headers.cookie || "";
 
-  for (const item of cookieHeader.split(";")) {
-
+  for (const part of cookie.split(";")) {
+    const item = part.trim();
     const index = item.indexOf("=");
 
     if (index === -1) continue;
 
-    const key =
-      item.slice(0, index).trim();
-
-    const value =
-      item.slice(index + 1).trim();
+    const key = item.slice(0, index);
+    const value = item.slice(index + 1);
 
     if (key === name) {
-
-      try {
-        return decodeURIComponent(value);
-      } catch {
-        return value;
-      }
-
+      return decodeURIComponent(value);
     }
   }
 
-  return null;
+  return "";
 }
-
-
-// ==========================================
-// VERIFY SESSION
-// ==========================================
 
 function verifySession(token) {
+  try {
+    if (!token) return false;
 
-  if (!token) {
-    return false;
-  }
+    const parts = token.split(".");
 
-  const parts = token.split(".");
+    if (parts.length !== 3) return false;
 
-  if (parts.length !== 2) {
-    return false;
-  }
+    const user = parts[0];
+    const timestamp = Number(parts[1]);
+    const signature = parts[2];
 
-  const timestamp =
-    Number(parts[0]);
+    if (!user || !Number.isFinite(timestamp) || !signature) {
+      return false;
+    }
 
-  const signature =
-    parts[1];
+    const age = Date.now() - timestamp;
 
-  if (!Number.isFinite(timestamp)) {
-    return false;
-  }
+    if (age < 0 || age > SESSION_HOURS * 60 * 60 * 1000) {
+      return false;
+    }
 
-  const age =
-    Date.now() - timestamp;
+    const data = user + "." + timestamp;
 
-  if (
-    age < 0 ||
-    age >
-      SESSION_HOURS *
-      60 *
-      60 *
-      1000
-  ) {
-    return false;
-  }
-
-  const expected =
-    crypto
-      .createHmac(
-        "sha256",
-        getSecret()
-      )
-      .update(
-        String(timestamp)
-      )
+    const expected = crypto
+      .createHmac("sha256", getSecret())
+      .update(data)
       .digest("hex");
 
-  if (
-    signature.length !==
-    expected.length
-  ) {
-    return false;
-  }
-
-  try {
-
     return crypto.timingSafeEqual(
-      Buffer.from(
-        signature,
-        "utf8"
-      ),
-      Buffer.from(
-        expected,
-        "utf8"
-      )
+      Buffer.from(signature),
+      Buffer.from(expected)
     );
-
-  } catch {
-
+  } catch (e) {
     return false;
-
   }
 }
 
-
-// ==========================================
-// AUTH CHECK
-// ==========================================
-
-function isAuthenticated(req) {
-
-  const token =
-    getCookie(
-      req,
-      COOKIE_NAME
-    );
-
-  return verifySession(token);
+function authenticated(req) {
+  return verifySession(getCookie(req, COOKIE_NAME));
 }
 
-
-// ==========================================
-// CLEAN INPUT
-// ==========================================
-
-function clean(
-  value,
-  max = 500
-) {
-
-  if (
-    typeof value !==
-    "string"
-  ) {
-    return "";
-  }
-
-  return value
-    .trim()
-    .replace(/[<>]/g, "")
-    .slice(0, max);
-}
-
-
-// ==========================================
-// GENERATE ID
-// ==========================================
-
-function makeId() {
-
-  return (
-    Date.now()
-      .toString(36) +
-    "-" +
-    crypto
-      .randomBytes(5)
-      .toString("hex")
-  );
-}
-
-
-// ==========================================
-// RESPONSE
-// ==========================================
-
-function send(
-  res,
-  status,
-  data
-) {
-
-  return res
-    .status(status)
-    .json(data);
-}
-
-
-// ==========================================
-// DATABASE
-// ==========================================
-
-async function getDatabase() {
-
-  /*
-    Supports:
-
-    DATABASE_URL
-    POSTGRES_URL
-    STORAGE_DATABASE_URL
-    STORAGE_POSTGRES_URL
-  */
+function database() {
+  const { neon } = require("@neondatabase/serverless");
 
   const databaseUrl =
     process.env.DATABASE_URL ||
@@ -231,516 +80,248 @@ async function getDatabase() {
     process.env.STORAGE_POSTGRES_URL;
 
   if (!databaseUrl) {
-
-    throw new Error(
-      "Database connection is not configured. Check the Neon environment variable in Vercel."
-    );
-
+    throw new Error("Database connection is not configured.");
   }
 
-  const sql =
-    neon(databaseUrl);
+  return neon(databaseUrl);
+}
 
-
-  // ========================================
-  // CREATE TABLE
-  // ========================================
-
+async function ensureTable(sql) {
   await sql`
     CREATE TABLE IF NOT EXISTS custom_apis (
-
-      id TEXT PRIMARY KEY,
-
+      id SERIAL PRIMARY KEY,
       name TEXT NOT NULL,
-
       url TEXT NOT NULL,
-
-      method TEXT NOT NULL
-        DEFAULT 'GET',
-
-      description TEXT
-        DEFAULT '',
-
-      category TEXT
-        DEFAULT 'Custom API',
-
-      created_at TIMESTAMPTZ
-        NOT NULL
-        DEFAULT NOW()
-
+      method TEXT NOT NULL DEFAULT 'GET',
+      description TEXT DEFAULT '',
+      category TEXT DEFAULT 'Custom API',
+      api_key TEXT DEFAULT '',
+      api_header TEXT DEFAULT 'Authorization',
+      headers_json TEXT DEFAULT '{}',
+      created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `;
 
-  return sql;
+  await sql`
+    ALTER TABLE custom_apis
+    ADD COLUMN IF NOT EXISTS api_key TEXT DEFAULT ''
+  `;
+
+  await sql`
+    ALTER TABLE custom_apis
+    ADD COLUMN IF NOT EXISTS api_header TEXT DEFAULT 'Authorization'
+  `;
+
+  await sql`
+    ALTER TABLE custom_apis
+    ADD COLUMN IF NOT EXISTS headers_json TEXT DEFAULT '{}'
+  `;
 }
 
+function validUrl(value) {
+  try {
+    const url = new URL(value);
 
-// ==========================================
-// MAIN HANDLER
-// ==========================================
-
-module.exports =
-  async function handler(
-    req,
-    res
-  ) {
-
-    res.setHeader(
-      "Cache-Control",
-      "no-store, no-cache, must-revalidate"
+    return (
+      url.protocol === "http:" ||
+      url.protocol === "https:"
     );
+  } catch (e) {
+    return false;
+  }
+}
 
-    res.setHeader(
-      "X-Content-Type-Options",
-      "nosniff"
-    );
+function clean(value, max = 5000) {
+  return String(value || "")
+    .replace(/[\r\n]/g, "")
+    .trim()
+    .slice(0, max);
+}
 
-
-    // ======================================
-    // LOGIN CHECK
-    // ======================================
-
-    if (
-      !isAuthenticated(req)
-    ) {
-
-      return send(
-        res,
-        401,
-        {
-          ok: false,
-          error: "Unauthorized"
-        }
-      );
-
+async function handler(req, res) {
+  try {
+    if (!authenticated(req)) {
+      return res.status(401).json({
+        success: false,
+        error: "Unauthorized."
+      });
     }
 
+    const sql = database();
 
-    try {
+    await ensureTable(sql);
 
-      const sql =
-        await getDatabase();
+    // =========================
+    // GET
+    // =========================
 
+    if (req.method === "GET") {
+      const rows = await sql`
+        SELECT
+          id,
+          name,
+          url,
+          method,
+          description,
+          category,
+          api_header,
+          created_at
+        FROM custom_apis
+        ORDER BY id ASC
+      `;
 
-      // ====================================
-      // GET SAVED APIs
-      // ====================================
+      return res.status(200).json({
+        success: true,
+        apis: rows
+      });
+    }
 
-      if (
-        req.method === "GET"
-      ) {
+    // =========================
+    // POST
+    // =========================
 
-        const rows =
-          await sql`
+    if (req.method === "POST") {
+      const body = req.body || {};
 
-            SELECT
+      const name = clean(body.name, 100);
+      const url = clean(body.url, 2000);
+      const method = clean(body.method || "GET", 10).toUpperCase();
+      const description = clean(body.description, 500);
+      const category = clean(body.category || "Custom API", 100);
+      const apiKey = clean(body.api_key, 2000);
+      const apiHeader = clean(
+        body.api_header || "Authorization",
+        200
+      );
 
-              id,
+      let headersJson = "{}";
 
-              name,
-
-              url,
-
-              method,
-
-              description,
-
-              category,
-
-              created_at
-                AS "createdAt"
-
-            FROM custom_apis
-
-            ORDER BY
-              created_at DESC
-
-          `;
-
-
-        return send(
-          res,
-          200,
-          {
-            ok: true,
-            apis: rows
-          }
-        );
-
-      }
-
-
-      // ====================================
-      // ADD API
-      // ====================================
-
-      if (
-        req.method === "POST"
-      ) {
-
-        const body =
-          req.body &&
-          typeof req.body ===
-            "object"
-            ? req.body
-            : {};
-
-
-        const name =
-          clean(
-            body.name,
-            80
-          );
-
-
-        const url =
-          clean(
-            body.url,
-            2000
-          );
-
-
-        const method =
-          clean(
-            body.method ||
-              "GET",
-            10
-          ).toUpperCase();
-
-
-        const description =
-          clean(
-            body.description ||
-              "",
-            300
-          );
-
-
-        const category =
-          clean(
-            body.category ||
-              "Custom API",
-            50
-          );
-
-
-        // ==================================
-        // NAME
-        // ==================================
-
-        if (!name) {
-
-          return send(
-            res,
-            400,
-            {
-              ok: false,
-              error:
-                "API name is required."
-            }
-          );
-
-        }
-
-
-        // ==================================
-        // URL
-        // ==================================
-
-        if (!url) {
-
-          return send(
-            res,
-            400,
-            {
-              ok: false,
-              error:
-                "API URL is required."
-            }
-          );
-
-        }
-
-
-        // ==================================
-        // VALIDATE URL
-        // ==================================
-
-        let parsedUrl;
-
+      if (body.headers_json) {
         try {
+          const parsed =
+            typeof body.headers_json === "string"
+              ? JSON.parse(body.headers_json)
+              : body.headers_json;
 
-          parsedUrl =
-            new URL(url);
-
-        } catch {
-
-          return send(
-            res,
-            400,
-            {
-              ok: false,
-              error:
-                "Invalid API URL."
-            }
-          );
-
-        }
-
-
-        if (
-          parsedUrl.protocol !==
-            "https:" &&
-          parsedUrl.protocol !==
-            "http:"
-        ) {
-
-          return send(
-            res,
-            400,
-            {
-              ok: false,
-              error:
-                "Only HTTP/HTTPS URLs are allowed."
-            }
-          );
-
-        }
-
-
-        // ==================================
-        // METHOD
-        // ==================================
-
-        const allowedMethods = [
-
-          "GET",
-
-          "POST",
-
-          "PUT",
-
-          "PATCH",
-
-          "DELETE"
-
-        ];
-
-
-        if (
-          !allowedMethods.includes(
-            method
-          )
-        ) {
-
-          return send(
-            res,
-            400,
-            {
-              ok: false,
-              error:
-                "Invalid HTTP method."
-            }
-          );
-
-        }
-
-
-        // ==================================
-        // CREATE ID
-        // ==================================
-
-        const id =
-          makeId();
-
-
-        // ==================================
-        // INSERT
-        // ==================================
-
-        const rows =
-          await sql`
-
-            INSERT INTO custom_apis (
-
-              id,
-
-              name,
-
-              url,
-
-              method,
-
-              description,
-
-              category
-
-            )
-
-            VALUES (
-
-              ${id},
-
-              ${name},
-
-              ${url},
-
-              ${method},
-
-              ${description},
-
-              ${category}
-
-            )
-
-            RETURNING
-
-              id,
-
-              name,
-
-              url,
-
-              method,
-
-              description,
-
-              category,
-
-              created_at
-                AS "createdAt"
-
-          `;
-
-
-        return send(
-          res,
-          201,
-          {
-            ok: true,
-            api: rows[0]
+          if (
+            !parsed ||
+            typeof parsed !== "object" ||
+            Array.isArray(parsed)
+          ) {
+            throw new Error("Headers must be an object.");
           }
-        );
 
+          headersJson = JSON.stringify(parsed);
+        } catch (e) {
+          return res.status(400).json({
+            success: false,
+            error: "Invalid extra headers JSON."
+          });
+        }
       }
 
+      if (!name) {
+        return res.status(400).json({
+          success: false,
+          error: "API name is required."
+        });
+      }
 
-      // ====================================
-      // REMOVE API
-      // ====================================
+      if (!validUrl(url)) {
+        return res.status(400).json({
+          success: false,
+          error: "Valid HTTP/HTTPS URL is required."
+        });
+      }
 
       if (
-        req.method === "DELETE"
+        !["GET", "POST", "PUT", "PATCH", "DELETE"].includes(method)
       ) {
-
-        let id =
-          req.query?.id ||
-          req.body?.id;
-
-
-        id =
-          clean(
-            id,
-            150
-          );
-
-
-        if (!id) {
-
-          return send(
-            res,
-            400,
-            {
-              ok: false,
-              error:
-                "API ID is required."
-            }
-          );
-
-        }
-
-
-        const rows =
-          await sql`
-
-            DELETE FROM custom_apis
-
-            WHERE id = ${id}
-
-            RETURNING id
-
-          `;
-
-
-        if (
-          !rows.length
-        ) {
-
-          return send(
-            res,
-            404,
-            {
-              ok: false,
-              error:
-                "API not found."
-            }
-          );
-
-        }
-
-
-        return send(
-          res,
-          200,
-          {
-            ok: true,
-            removed: id
-          }
-        );
-
+        return res.status(400).json({
+          success: false,
+          error: "Invalid HTTP method."
+        });
       }
 
+      const rows = await sql`
+        INSERT INTO custom_apis
+        (
+          name,
+          url,
+          method,
+          description,
+          category,
+          api_key,
+          api_header,
+          headers_json
+        )
+        VALUES
+        (
+          ${name},
+          ${url},
+          ${method},
+          ${description},
+          ${category},
+          ${apiKey},
+          ${apiHeader},
+          ${headersJson}
+        )
+        RETURNING
+          id,
+          name,
+          url,
+          method,
+          description,
+          category,
+          api_header,
+          created_at
+      `;
 
-      // ====================================
-      // INVALID METHOD
-      // ====================================
-
-      res.setHeader(
-        "Allow",
-        "GET, POST, DELETE"
-      );
-
-
-      return send(
-        res,
-        405,
-        {
-          ok: false,
-          error:
-            "Method not allowed."
-        }
-      );
-
-
-    } catch (error) {
-
-      console.error(
-        "CUSTOM API DATABASE ERROR:",
-        error
-      );
-
-
-      return send(
-        res,
-        500,
-        {
-          ok: false,
-          error:
-            error?.message ||
-            "Database error."
-        }
-      );
-
+      return res.status(201).json({
+        success: true,
+        api: rows[0]
+      });
     }
 
-  };
+    // =========================
+    // DELETE
+    // =========================
+
+    if (req.method === "DELETE") {
+      const body = req.body || {};
+
+      const id = Number(body.id);
+
+      if (!Number.isInteger(id) || id <= 0) {
+        return res.status(400).json({
+          success: false,
+          error: "Invalid API ID."
+        });
+      }
+
+      await sql`
+        DELETE FROM custom_apis
+        WHERE id = ${id}
+      `;
+
+      return res.status(200).json({
+        success: true,
+        message: "API removed."
+      });
+    }
+
+    return res.status(405).json({
+      success: false,
+      error: "Method not allowed."
+    });
+  } catch (error) {
+    console.error("custom-apis error:", error);
+
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Custom API server error."
+    });
+  }
+}
+
+module.exports = handler;
