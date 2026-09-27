@@ -2,1522 +2,690 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>TXG Information Center</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TXG Information</title>
 
 <style>
 *{
-  box-sizing:border-box;
-}
-
-html,body{
-  margin:0;
-  min-height:100%;
-  background:#030712;
-  color:#e5f1ff;
-  font-family:Inter,Arial,sans-serif;
+    box-sizing:border-box;
 }
 
 body{
-  overflow-x:hidden;
-}
-
-.code-bg{
-  position:fixed;
-  inset:0;
-  overflow:hidden;
-  pointer-events:none;
-  z-index:0;
-  opacity:.28;
-}
-
-.code-line{
-  position:absolute;
-  white-space:nowrap;
-  color:#168cff;
-  font-family:"Courier New",monospace;
-  font-size:10px;
-  opacity:.45;
-  animation:moveCode linear infinite;
-  will-change:transform;
-  text-shadow:0 0 5px rgba(22,140,255,.25);
-}
-
-@keyframes moveCode{
-  from{
-    transform:translateX(120vw);
-  }
-  to{
-    transform:translateX(-140vw);
-  }
+    margin:0;
+    min-height:100vh;
+    background:#080b12;
+    color:#f5f7fb;
+    font-family:Inter,Arial,sans-serif;
 }
 
 .app{
-  position:relative;
-  z-index:2;
-  min-height:100vh;
+    width:100%;
+    max-width:1100px;
+    margin:auto;
+    padding:22px 16px 50px;
 }
 
-.container{
-  width:min(1100px,94%);
-  margin:auto;
-  padding:25px 0 60px;
-}
-
-.login{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.card{
-  background:rgba(5,13,28,.88);
-  border:1px solid rgba(80,160,255,.18);
-  border-radius:20px;
-  padding:22px;
-  box-shadow:0 15px 50px rgba(0,0,0,.35);
-  backdrop-filter:blur(12px);
-}
-
-.login-box{
-  width:min(420px,92%);
+.header{
+    text-align:center;
+    margin-bottom:24px;
 }
 
 .logo{
-  font-size:28px;
-  font-weight:900;
-  color:#3fa9ff;
-  margin-bottom:8px;
+    font-size:30px;
+    font-weight:900;
+    letter-spacing:-1px;
 }
 
-.muted{
-  color:#8ea6c3;
+.logo span{
+    color:#00d99a;
 }
 
-input,select{
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:1px solid #203553;
-  background:#071223;
-  color:#fff;
-  outline:none;
-  font-size:15px;
+.subtitle{
+    color:#8992a5;
+    font-size:14px;
+    margin-top:7px;
 }
 
-input:focus,select:focus{
-  border-color:#168cff;
+.search-box{
+    background:#10151f;
+    border:1px solid #202838;
+    border-radius:20px;
+    padding:18px;
+    margin-bottom:20px;
 }
 
-button{
-  border:0;
-  border-radius:12px;
-  padding:13px 16px;
-  cursor:pointer;
-  color:#fff;
-  background:#087ff5;
-  font-weight:700;
+.search-row{
+    display:flex;
+    gap:10px;
 }
 
-button:hover{
-  background:#1591ff;
+#value{
+    flex:1;
+    min-width:0;
+    background:#080b12;
+    color:#fff;
+    border:1px solid #293243;
+    border-radius:13px;
+    padding:14px 15px;
+    outline:none;
+    font-size:15px;
 }
 
-button.secondary{
-  background:#101d31;
-  border:1px solid #263c5b;
+#value:focus{
+    border-color:#00d99a;
 }
 
-.top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  margin-bottom:22px;
+#searchBtn{
+    border:0;
+    border-radius:13px;
+    padding:0 22px;
+    background:#00d99a;
+    color:#06100c;
+    font-weight:900;
+    cursor:pointer;
 }
 
-.title{
-  font-size:27px;
-  font-weight:900;
+#searchBtn:disabled{
+    opacity:.55;
+    cursor:not-allowed;
 }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:14px;
+.categories{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:9px;
+    margin-top:14px;
 }
 
-.lookup-card{
-  cursor:pointer;
-  transition:.2s;
+.category{
+    border:1px solid #252d3d;
+    background:#0b1018;
+    color:#cbd2df;
+    border-radius:11px;
+    padding:10px 7px;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
 }
 
-.lookup-card:hover{
-  transform:translateY(-3px);
-  border-color:#168cff;
+.category.active{
+    background:#00d99a;
+    color:#06100c;
+    border-color:#00d99a;
 }
 
-.icon{
-  font-size:25px;
-  margin-bottom:10px;
+.status{
+    display:none;
+    text-align:center;
+    padding:16px;
+    color:#8e98aa;
 }
 
-.name{
-  font-size:18px;
-  font-weight:800;
-}
-
-.desc{
-  margin-top:5px;
-  font-size:13px;
-  color:#8199b7;
-}
-
-.section{
-  margin-top:20px;
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  z-index:20;
-  background:rgba(0,0,0,.75);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
-}
-
-.modal.show{
-  display:flex;
-}
-
-.modal-box{
-  width:min(760px,100%);
-  max-height:90vh;
-  overflow:auto;
-}
-
-.actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:12px;
-}
-
-.result{
-  margin-top:15px;
-}
-
-.result-section{
-  background:#071223;
-  border:1px solid #1c3150;
-  border-radius:14px;
-  padding:15px;
-  margin-bottom:12px;
-}
-
-.result-section h3{
-  margin:0 0 12px;
-  color:#5ab2ff;
-}
-
-.row{
-  display:flex;
-  justify-content:space-between;
-  gap:15px;
-  padding:8px 0;
-  border-bottom:1px solid rgba(255,255,255,.05);
-}
-
-.row:last-child{
-  border-bottom:0;
-}
-
-.key{
-  color:#91a8c4;
-}
-
-.value{
-  text-align:right;
-  word-break:break-word;
-}
-
-.pass{
-  color:#42e38a;
-}
-
-.fail{
-  color:#ff6875;
-}
-
-.warn{
-  color:#ffd166;
-}
-
-.verdict{
-  font-size:20px;
-  font-weight:900;
-  margin-bottom:8px;
-}
-
-.bar{
-  height:8px;
-  background:#17263b;
-  border-radius:99px;
-  overflow:hidden;
-  margin-top:10px;
-}
-
-.bar span{
-  display:block;
-  height:100%;
-  background:#168cff;
-}
-
-.api-list{
-  display:grid;
-  gap:10px;
-  margin-top:12px;
-}
-
-.api-item{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  background:#071223;
-  border:1px solid #1c3150;
-  border-radius:12px;
-  padding:12px;
-}
-
-pre{
-  white-space:pre-wrap;
-  word-break:break-word;
-  background:#020711;
-  padding:14px;
-  border-radius:12px;
-  overflow:auto;
-}
-
-@media(max-width:600px){
-  .container{
-    width:92%;
-  }
-
-  .top{
-    align-items:flex-start;
-  }
-
-  .row{
+.results{
+    display:flex;
     flex-direction:column;
-  }
+    gap:13px;
+}
 
-  .value{
-    text-align:left;
-  }
+.result-card{
+    background:#10151f;
+    border:1px solid #202838;
+    border-radius:18px;
+    overflow:hidden;
+}
+
+.result-head{
+    padding:14px 16px;
+    border-bottom:1px solid #202838;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.result-name{
+    font-size:15px;
+    font-weight:900;
+}
+
+.result-source{
+    font-size:11px;
+    color:#00d99a;
+    background:#06271d;
+    border:1px solid #0a4b39;
+    padding:5px 8px;
+    border-radius:7px;
+}
+
+.result-body{
+    padding:15px 16px;
+}
+
+.result-row{
+    display:flex;
+    justify-content:space-between;
+    gap:18px;
+    padding:9px 0;
+    border-bottom:1px solid #1c2330;
+}
+
+.result-row:last-child{
+    border-bottom:0;
+}
+
+.result-key{
+    color:#8992a5;
+    font-size:12px;
+    flex:0 0 38%;
+}
+
+.result-value{
+    color:#f1f4f8;
+    font-size:13px;
+    text-align:right;
+    word-break:break-word;
+}
+
+.raw-response{
+    margin:0;
+    white-space:pre-wrap;
+    word-break:break-word;
+    color:#cbd2df;
+    font-size:12px;
+    line-height:1.6;
+    background:#080b12;
+    border-radius:11px;
+    padding:13px;
+    overflow:auto;
+}
+
+.empty{
+    text-align:center;
+    padding:45px 20px;
+    color:#687286;
+}
+
+.error{
+    color:#ff7c88;
+}
+
+@media(max-width:750px){
+    .categories{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .search-row{
+        flex-direction:column;
+    }
+
+    #searchBtn{
+        min-height:46px;
+    }
+}
+
+@media(max-width:420px){
+    .categories{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .result-row{
+        flex-direction:column;
+        gap:4px;
+    }
+
+    .result-value{
+        text-align:left;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div id="codeBg" class="code-bg"></div>
-
 <div class="app">
 
-  <section id="loginPage" class="login">
+    <div class="header">
+        <div class="logo">TXG <span>Information</span></div>
+        <div class="subtitle">
+            Connected Information Lookup Center
+        </div>
+    </div>
 
-    <div class="card login-box">
+    <div class="search-box">
 
-      <div class="logo">TXG INFORMATION</div>
+        <div class="search-row">
+            <input
+                id="value"
+                type="text"
+                autocomplete="off"
+                placeholder="Enter number, email, IP, URL..."
+            >
 
-      <div class="muted">
-        Secure information & website verification center
-      </div>
+            <button id="searchBtn" type="button">
+                Search
+            </button>
+        </div>
 
-      <div style="height:18px"></div>
+        <div class="categories">
 
-      <input
-        id="password"
-        type="password"
-        placeholder="Admin password"
-      >
+            <button class="category active" data-type="mobile">
+                Mobile
+            </button>
 
-      <div class="actions">
-        <button id="loginBtn">
-          Login
-        </button>
-      </div>
+            <button class="category" data-type="email">
+                Email
+            </button>
 
-      <div id="loginError"
-           class="fail"
-           style="margin-top:12px">
-      </div>
+            <button class="category" data-type="vehicle">
+                Vehicle
+            </button>
+
+            <button class="category" data-type="ip">
+                IP
+            </button>
+
+            <button class="category" data-type="url">
+                URL
+            </button>
+
+            <button class="category" data-type="pin">
+                PIN
+            </button>
+
+            <button class="category" data-type="ifsc">
+                IFSC
+            </button>
+
+            <button class="category" data-type="upi">
+                UPI
+            </button>
+
+            <button class="category" data-type="company">
+                Company
+            </button>
+
+            <button class="category" data-type="crm">
+                CRM
+            </button>
+
+            <button class="category" data-type="custom">
+                Custom API
+            </button>
+
+        </div>
 
     </div>
 
-  </section>
-
-
-  <section id="dashboard" style="display:none">
-
-    <div class="container">
-
-      <div class="top">
-
-        <div>
-          <div class="title">
-            TXG Information Center
-          </div>
-
-          <div class="muted">
-            Public / authorized information checks
-          </div>
-        </div>
-
-        <button
-          id="logoutBtn"
-          class="secondary">
-          Logout
-        </button>
-
-      </div>
-
-
-      <div class="grid">
-
-        <div
-          class="card lookup-card"
-          data-type="mobile"
-        >
-          <div class="icon">📱</div>
-          <div class="name">Mobile</div>
-          <div class="desc">
-            Number validity and format
-          </div>
-        </div>
-
-
-        <div
-          class="card lookup-card"
-          data-type="pin"
-        >
-          <div class="icon">📮</div>
-          <div class="name">PIN</div>
-          <div class="desc">
-            Post office and location
-          </div>
-        </div>
-
-
-        <div
-          class="card lookup-card"
-          data-type="ifsc"
-        >
-          <div class="icon">🏦</div>
-          <div class="name">IFSC</div>
-          <div class="desc">
-            Bank and branch information
-          </div>
-        </div>
-
-
-        <div
-          class="card lookup-card"
-          data-type="ip"
-        >
-          <div class="icon">🌐</div>
-          <div class="name">IP</div>
-          <div class="desc">
-            Public IP information
-          </div>
-        </div>
-
-
-        <div
-          class="card lookup-card"
-          data-type="url"
-        >
-          <div class="icon">🔎</div>
-          <div class="name">URL</div>
-          <div class="desc">
-            Full website verification
-          </div>
-        </div>
-
-
-        <div
-          class="card lookup-card"
-          data-type="upi"
-        >
-          <div class="icon">💳</div>
-          <div class="name">UPI</div>
-          <div class="desc">
-            UPI format check
-          </div>
-        </div>
-
-      </div>
-
-
-      <div class="section card">
-
-        <div class="name">
-          Add Custom API
-        </div>
-
-        <div class="desc">
-          Add your own GET API using {message}
-        </div>
-
-        <div style="height:12px"></div>
-
-        <input
-          id="apiName"
-          placeholder="Button name"
-        >
-
-        <div style="height:8px"></div>
-
-        <input
-          id="apiUrl"
-          placeholder="https://example.com/api?message={message}"
-        >
-
-        <div class="actions">
-          <button id="addApiBtn">
-            Add API
-          </button>
-        </div>
-
-        <div id="apiList" class="api-list"></div>
-
-      </div>
-
+    <div id="status" class="status">
+        Searching...
     </div>
 
-  </section>
+    <div id="results" class="results">
+
+        <div class="empty">
+            Search something to see connected information.
+        </div>
+
+    </div>
 
 </div>
-
-
-<div id="modal" class="modal">
-
-  <div class="card modal-box">
-
-    <div class="top">
-
-      <div class="name" id="modalTitle">
-        Lookup
-      </div>
-
-      <button
-        id="closeModal"
-        class="secondary">
-        Close
-      </button>
-
-    </div>
-
-    <input
-      id="lookupInput"
-      placeholder="Enter value"
-    >
-
-    <div class="actions">
-
-      <button id="searchBtn">
-        Search
-      </button>
-
-    </div>
-
-    <div id="result" class="result"></div>
-
-  </div>
-
-</div>
-
 
 <script>
-const $ = id =>
-  document.getElementById(id);
 
-let currentType = null;
+let selectedType = "mobile";
 
-function escapeHTML(value){
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
-
-async function request(url, options = {}){
-  const response = await fetch(url, {
-    credentials:"include",
-    ...options
-  });
-
-  const text = await response.text();
-
-  let data;
-
-  try{
-    data = JSON.parse(text);
-  }catch{
-    throw new Error(
-      text || `Server error (${response.status})`
-    );
-  }
-
-  if(!response.ok || data.ok === false){
-    throw new Error(
-      data.error ||
-      `Request failed (${response.status})`
-    );
-  }
-
-  return data;
-}
+const valueInput = document.getElementById("value");
+const searchBtn = document.getElementById("searchBtn");
+const results = document.getElementById("results");
+const statusBox = document.getElementById("status");
+const categoryButtons = document.querySelectorAll(".category");
 
 
-function createCodeBackground(){
+categoryButtons.forEach(button => {
 
-  const bg = $("codeBg");
+    button.addEventListener("click", () => {
 
-  const code = [
-    "const TXG = await lookup();",
-    "fetch('/api/lookup');",
-    "RDAP.domain();",
-    "verifyWebsite(url);",
-    "checkSSL();",
-    "checkDNS();",
-    "checkRegistrar();",
-    "checkSupport();",
-    "checkPaymentGateway();",
-    "checkBusinessInfo();",
-    "checkPolicies();",
-    "verifyPublicEvidence();",
-    "payment.detected();",
-    "cashfree.detect();",
-    "razorpay.detect();",
-    "TXG SECURITY CORE",
-    "WEBSITE VERIFY",
-    "DOMAIN CHECK",
-    "PUBLIC DATA",
-    "HTTPS ACTIVE",
-    "RDAP LOOKUP",
-    "DNS RESOLVED",
-    "SYSTEM ONLINE"
-  ];
+        categoryButtons.forEach(btn => {
+            btn.classList.remove("active");
+        });
 
-  const totalLines = 180;
+        button.classList.add("active");
 
-  for(let i=0;i<totalLines;i++){
+        selectedType = button.dataset.type;
 
-    const line =
-      document.createElement("div");
+        const placeholders = {
+            mobile: "Enter mobile number...",
+            email: "Enter email address...",
+            vehicle: "Enter vehicle registration number...",
+            ip: "Enter IP address...",
+            url: "Enter URL or domain...",
+            pin: "Enter PIN code...",
+            ifsc: "Enter IFSC code...",
+            upi: "Enter UPI ID...",
+            company: "Enter company name...",
+            crm: "Enter CRM search...",
+            custom: "Enter search value..."
+        };
 
-    line.className = "code-line";
+        valueInput.placeholder =
+            placeholders[selectedType] ||
+            "Enter search value...";
 
-    let text =
-      code[
-        Math.floor(
-          Math.random()*code.length
-        )
-      ];
+    });
 
-    if(Math.random() > .55){
-      text += "  " +
-        Math.floor(
-          Math.random()*999999
-        );
+});
+
+
+searchBtn.addEventListener("click", runSearch);
+
+
+valueInput.addEventListener("keydown", event => {
+
+    if(event.key === "Enter"){
+        runSearch();
     }
 
-    line.textContent = text;
+});
 
-    line.style.top =
-      `${Math.random()*100}%`;
 
-    line.style.left =
-      `${Math.random()*100}%`;
+async function runSearch(){
 
-    line.style.animationDuration =
-      `${45+Math.random()*55}s`;
+    const value = valueInput.value.trim();
 
-    line.style.animationDelay =
-      `${-Math.random()*100}s`;
+    if(!value){
+        results.innerHTML = `
+            <div class="empty error">
+                Please enter a value to search.
+            </div>
+        `;
+        return;
+    }
 
-    line.style.opacity =
-      `${.16+Math.random()*.48}`;
+    searchBtn.disabled = true;
 
-    line.style.fontSize =
-      `${9+Math.random()*4}px`;
+    statusBox.style.display = "block";
+    statusBox.textContent = "Searching connected sources...";
 
-    bg.appendChild(line);
-  }
+    results.innerHTML = "";
+
+    try{
+
+        const url =
+            "/api/lookup?type=" +
+            encodeURIComponent(selectedType) +
+            "&value=" +
+            encodeURIComponent(value);
+
+        const response = await fetch(url, {
+            method:"GET",
+            headers:{
+                "Accept":"application/json"
+            },
+            cache:"no-store"
+        });
+
+        const data = await response.json();
+
+        if(!response.ok){
+
+            throw new Error(
+                data.message ||
+                "Search request failed."
+            );
+
+        }
+
+        renderResults(data);
+
+    }catch(error){
+
+        results.innerHTML = `
+            <div class="result-card">
+                <div class="result-head">
+                    <div class="result-name">Search Error</div>
+                    <div class="result-source">ERROR</div>
+                </div>
+
+                <div class="result-body">
+                    <div class="raw-response error">
+                        ${escapeHtml(error.message || "Unknown error")}
+                    </div>
+                </div>
+            </div>
+        `;
+
+    }finally{
+
+        searchBtn.disabled = false;
+        statusBox.style.display = "none";
+
+    }
+
 }
 
 
-function openModal(type){
-
-  currentType = type;
-
-  const names = {
-    mobile:"Mobile Lookup",
-    pin:"PIN Lookup",
-    ifsc:"IFSC Lookup",
-    ip:"IP Lookup",
-    url:"Full URL Verification",
-    upi:"UPI Lookup"
-  };
-
-  $("modalTitle").textContent =
-    names[type] || "Lookup";
-
-  const placeholders = {
-    mobile:"Enter mobile number",
-    pin:"Enter 6-digit PIN",
-    ifsc:"Enter IFSC",
-    ip:"Enter public IP address",
-    url:"https://example.com",
-    upi:"example@upi"
-  };
-
-  $("lookupInput").placeholder =
-    placeholders[type] || "Enter value";
-
-  $("lookupInput").value = "";
-
-  $("result").innerHTML = "";
-
-  $("modal").classList.add("show");
-
-  setTimeout(() =>
-    $("lookupInput").focus(),
-    50
-  );
-}
-
-
-function closeModal(){
-  $("modal").classList.remove("show");
-}
-
-
-function row(key,value,cls=""){
-  return `
-    <div class="row">
-      <div class="key">${escapeHTML(key)}</div>
-      <div class="value ${cls}">
-        ${escapeHTML(value)}
-      </div>
-    </div>
-  `;
-}
-
-
-function boolText(value){
-  return value
-    ? "✓ Yes"
-    : "✗ No";
-}
-
-
-function renderBasic(data){
-
-  let html = "";
-
-  if(data.lookup === "mobile"){
-
-    html += `
-      <div class="result-section">
-        <h3>Mobile Information</h3>
-
-        ${row("Valid",boolText(data.valid),
-          data.valid?"pass":"fail")}
-
-        ${row("Possible",boolText(data.possible),
-          data.possible?"pass":"fail")}
-
-        ${row("Country",data.country || "Not available")}
-        ${row("Calling code",data.countryCallingCode || "Not available")}
-        ${row("Type",data.type || "Not available")}
-        ${row("International",data.international || "Not available")}
-      </div>
-    `;
-  }
-
-  if(data.lookup === "pin"){
-
-    html += `
-      <div class="result-section">
-        <h3>PIN Result</h3>
-        <pre>${escapeHTML(
-          JSON.stringify(data.data,null,2)
-        )}</pre>
-      </div>
-    `;
-  }
-
-  if(data.lookup === "ifsc"){
-
-    html += `
-      <div class="result-section">
-        <h3>Bank Information</h3>
-        <pre>${escapeHTML(
-          JSON.stringify(data.data,null,2)
-        )}</pre>
-      </div>
-    `;
-  }
-
-  if(data.lookup === "ip"){
-
-    html += `
-      <div class="result-section">
-        <h3>IP Information</h3>
-        <pre>${escapeHTML(
-          JSON.stringify(data.data,null,2)
-        )}</pre>
-      </div>
-    `;
-  }
-
-  if(data.lookup === "upi"){
-
-    html += `
-      <div class="result-section">
-        <h3>UPI Result</h3>
-
-        ${row(
-          "UPI",
-          data.upi
-        )}
-
-        ${row(
-          "Format",
-          data.formatValid
-            ? "✓ Valid"
-            : "✗ Invalid",
-          data.formatValid
-            ? "pass"
-            : "fail"
-        )}
-
-        <div class="muted" style="margin-top:10px">
-          ${escapeHTML(data.note)}
-        </div>
-      </div>
-    `;
-  }
-
-  return html;
-}
-
-
-function renderUrl(data){
-
-  const d = data.domain;
-  const w = data.website;
-  const v = data.verification;
-
-  let html = "";
-
-  let percentage =
-    v.summary.total
-      ? Math.round(
-          v.summary.passed /
-          v.summary.total * 100
-        )
-      : 0;
-
-  let verdictClass =
-    v.result.startsWith("REAL")
-      ? "pass"
-      : v.result.startsWith("HIGH")
-        ? "fail"
-        : "warn";
-
-  html += `
-    <div class="result-section">
-
-      <div class="verdict ${verdictClass}">
-        ${escapeHTML(v.result)}
-      </div>
-
-      <div class="muted">
-        Website type:
-        ${escapeHTML(v.websiteType)}
-      </div>
-
-      <div class="bar">
-        <span style="width:${percentage}%"></span>
-      </div>
-
-      <div class="muted" style="margin-top:8px">
-        ${v.summary.passed} passed /
-        ${v.summary.failed} failed /
-        ${v.summary.total} total
-      </div>
-
-    </div>
-  `;
-
-
-  html += `
-    <div class="result-section">
-
-      <h3>🌐 Domain Information</h3>
-
-      ${row("Domain",d.name)}
-
-      ${row("Created",d.created)}
-
-      ${row("Age",d.age)}
-
-      ${row("Expires",d.expires)}
-
-      ${row("Registrar",d.registrar)}
-
-      ${row(
-        "RDAP",
-        d.rdapAvailable
-          ? "✓ Available"
-          : "✗ Not available",
-        d.rdapAvailable
-          ? "pass"
-          : "warn"
-      )}
-
-      ${row(
-        "Nameservers",
-        d.nameservers.length
-          ? d.nameservers.join(", ")
-          : "Not available"
-      )}
-
-    </div>
-  `;
-
-
-  html += `
-    <div class="result-section">
-
-      <h3>🔐 Website Security</h3>
-
-      ${row(
-        "Reachable",
-        w.reachable
-          ? "✓ Yes"
-          : "✗ No",
-        w.reachable
-          ? "pass"
-          : "fail"
-      )}
-
-      ${row(
-        "HTTP status",
-        w.status ?? "Not available"
-      )}
-
-      ${row(
-        "HTTPS",
-        w.https
-          ? "✓ Enabled"
-          : "✗ Not enabled",
-        w.https
-          ? "pass"
-          : "fail"
-      )}
-
-      ${row(
-        "Final URL",
-        w.finalUrl || "Not available"
-      )}
-
-      ${row(
-        "Redirects",
-        String(w.redirects)
-      )}
-
-      ${row(
-        "Page title",
-        w.title || "Not available"
-      )}
-
-    </div>
-  `;
-
-
-  html += `
-    <div class="result-section">
-
-      <h3>🧾 Website Information</h3>
-
-      ${row(
-        "Contact",
-        boolText(data.pages.contact),
-        data.pages.contact
-          ? "pass"
-          : "warn"
-      )}
-
-      ${row(
-        "Customer support",
-        boolText(data.pages.support),
-        data.pages.support
-          ? "pass"
-          : "warn"
-      )}
-
-      ${row(
-        "About page",
-        boolText(data.pages.about),
-        data.pages.about
-          ? "pass"
-          : "warn"
-      )}
-
-      ${row(
-        "Email",
-        boolText(data.contact.email),
-        data.contact.email
-          ? "pass"
-          : "warn"
-      )}
-
-      ${row(
-        "Phone",
-        boolText(data.contact.phone),
-        data.contact.phone
-          ? "pass"
-          : "warn"
-      )}
-
-      ${row(
-        "Telegram",
-        boolText(data.contact.telegram),
-        data.contact.telegram
-          ? "pass"
-          : "warn"
-      )}
-
-      ${row(
-        "WhatsApp",
-        boolText(data.contact.whatsapp),
-        data.contact.whatsapp
-          ? "pass"
-          : "warn"
-      )}
-
-    </div>
-  `;
-
-
-  html += `
-    <div class="result-section">
-
-      <h3>📜 Policies</h3>
-
-      ${row(
-        "Terms & Conditions",
-        boolText(data.pages.terms),
-        data.pages.terms
-          ? "pass"
-          : "warn"
-      )}
-
-      ${row(
-        "Privacy Policy",
-        boolText(data.pages.privacy),
-        data.pages.privacy
-          ? "pass"
-          : "warn"
-      )}
-
-      ${row(
-        "Refund / Cancellation",
-        boolText(data.pages.refund),
-        data.pages.refund
-          ? "pass"
-          : "warn"
-      )}
-
-    </div>
-  `;
-
-
-  html += `
-    <div class="result-section">
-
-      <h3>💳 Payment Systems</h3>
-  `;
-
-  data.paymentProviders.forEach(provider => {
-
-    html += row(
-      provider.name,
-      provider.detected
-        ? "✓ Detected"
-        : "Not detected",
-      provider.detected
-        ? "pass"
-        : ""
-    );
-
-  });
-
-  html += `
-      <div class="muted" style="margin-top:10px">
-        Payment-provider detection only means
-        public website integration was detected.
-        It does not prove private merchant approval.
-      </div>
-
-    </div>
-  `;
-
-
-  html += `
-    <div class="result-section">
-
-      <h3>🧪 Verification Checks</h3>
-  `;
-
-  v.checks.forEach(check => {
-
-    html += row(
-      check.name,
-      check.status
-        ? "✓ " + check.detail
-        : "✗ " + check.detail,
-      check.status
-        ? "pass"
-        : "fail"
-    );
-
-  });
-
-  html += `
-    </div>
-  `;
-
-
-  html += `
-    <div class="result-section">
-
-      <div class="muted">
-        ⚠ Public verification only. This report
-        cannot prove private KYC, merchant-account
-        approval, Google Search Console ownership,
-        or regulatory authorization unless an
-        authorized verification source confirms it.
-      </div>
-
-    </div>
-  `;
-
-  return html;
-}
-
-
-async function performSearch(){
-
-  const value =
-    $("lookupInput").value.trim();
-
-  if(!value){
-    $("result").innerHTML =
-      `<div class="result-section fail">
-        Enter a value first.
-      </div>`;
-    return;
-  }
-
-  $("result").innerHTML =
-    `<div class="result-section">
-      Checking...
-    </div>`;
-
-  try{
-
-    const data = await request(
-      "/api/lookup",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          type:currentType,
-          value
-        })
-      }
-    );
-
-    if(currentType === "url"){
-      $("result").innerHTML =
-        renderUrl(data);
+function renderResults(data){
+
+    results.innerHTML = "";
+
+    /*
+        Backend can return:
+
+        {
+            "results":[
+                {
+                    "name":"CRM",
+                    "source":"Zoho CRM",
+                    "data":{...}
+                },
+                {
+                    "name":"Company",
+                    "source":"Company API",
+                    "data":{...}
+                }
+            ]
+        }
+
+        Every result becomes its own block.
+    */
+
+    let items = [];
+
+    if(Array.isArray(data)){
+        items = data;
+    }else if(Array.isArray(data.results)){
+        items = data.results;
+    }else if(Array.isArray(data.sources)){
+        items = data.sources;
     }else{
-      $("result").innerHTML =
-        renderBasic(data);
+
+        items = [{
+            name:data.name || "Response",
+            source:data.source || "TXG",
+            data:data
+        }];
+
     }
 
-  }catch(error){
 
-    $("result").innerHTML =
-      `<div class="result-section fail">
-        ${escapeHTML(error.message)}
-      </div>`;
-  }
+    if(!items.length){
+
+        results.innerHTML = `
+            <div class="empty">
+                No information found.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    items.forEach(item => {
+
+        const card = document.createElement("div");
+
+        card.className = "result-card";
+
+        const name =
+            item.name ||
+            item.title ||
+            item.type ||
+            "Information";
+
+        const source =
+            item.source ||
+            item.provider ||
+            "TXG";
+
+
+        const body =
+            item.data !== undefined
+                ? item.data
+                : item.response !== undefined
+                    ? item.response
+                    : item;
+
+
+        card.innerHTML = `
+            <div class="result-head">
+
+                <div class="result-name">
+                    ${escapeHtml(String(name))}
+                </div>
+
+                <div class="result-source">
+                    ${escapeHtml(String(source))}
+                </div>
+
+            </div>
+
+            <div class="result-body">
+                ${renderBody(body)}
+            </div>
+        `;
+
+
+        results.appendChild(card);
+
+    });
+
 }
 
 
-async function login(){
+function renderBody(data){
 
-  const password =
-    $("password").value;
-
-  $("loginError").textContent =
-    "Checking...";
-
-  try{
-
-    await request(
-      "/api/auth",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          action:"login",
-          password
-        })
-      }
-    );
-
-    $("loginPage").style.display =
-      "none";
-
-    $("dashboard").style.display =
-      "block";
-
-  }catch(error){
-
-    $("loginError").textContent =
-      error.message;
-  }
-}
+    if(
+        data === null ||
+        data === undefined
+    ){
+        return `
+            <div class="raw-response">
+                Not available
+            </div>
+        `;
+    }
 
 
-async function logout(){
-
-  try{
-
-    await request(
-      "/api/auth",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          action:"logout"
-        })
-      }
-    );
-
-  }finally{
-
-    $("dashboard").style.display =
-      "none";
-
-    $("loginPage").style.display =
-      "flex";
-  }
-}
+    if(
+        typeof data !== "object"
+    ){
+        return `
+            <div class="raw-response">
+                ${escapeHtml(String(data))}
+            </div>
+        `;
+    }
 
 
-function loadCustomApis(){
+    const entries = Object.entries(data);
 
-  const list =
-    JSON.parse(
-      localStorage.getItem(
-        "txg_custom_apis"
-      ) || "[]"
-    );
+    if(!entries.length){
 
-  $("apiList").innerHTML = "";
+        return `
+            <div class="raw-response">
+                No data returned.
+            </div>
+        `;
 
-  list.forEach((api,index)=>{
-
-    const item =
-      document.createElement("div");
-
-    item.className =
-      "api-item";
-
-    item.innerHTML = `
-      <div>
-        <b>${escapeHTML(api.name)}</b>
-        <div class="muted">
-          ${escapeHTML(api.url)}
-        </div>
-      </div>
-
-      <button
-        class="secondary"
-        data-api-index="${index}">
-        Open
-      </button>
-    `;
-
-    item.querySelector("button")
-      .addEventListener(
-        "click",
-        () => openCustomApi(api)
-      );
-
-    $("apiList").appendChild(item);
-  });
-}
+    }
 
 
-function saveCustomApi(){
+    let html = "";
 
-  const name =
-    $("apiName").value.trim();
+    entries.forEach(([key,value]) => {
 
-  const url =
-    $("apiUrl").value.trim();
+        if(
+            value !== null &&
+            typeof value === "object"
+        ){
 
-  if(!name || !url){
-    alert("Enter button name and API URL");
-    return;
-  }
+            html += `
+                <div class="result-row">
 
-  if(
-    !/^https?:\/\//i.test(url)
-  ){
-    alert(
-      "API URL must start with http:// or https://"
-    );
-    return;
-  }
+                    <div class="result-key">
+                        ${escapeHtml(formatKey(key))}
+                    </div>
 
-  const list =
-    JSON.parse(
-      localStorage.getItem(
-        "txg_custom_apis"
-      ) || "[]"
-    );
+                    <div class="result-value">
+                        ${escapeHtml(
+                            JSON.stringify(value,null,2)
+                        )}
+                    </div>
 
-  list.push({
-    name,
-    url
-  });
+                </div>
+            `;
 
-  localStorage.setItem(
-    "txg_custom_apis",
-    JSON.stringify(list)
-  );
+        }else{
 
-  $("apiName").value = "";
-  $("apiUrl").value = "";
+            html += `
+                <div class="result-row">
 
-  loadCustomApis();
-}
+                    <div class="result-key">
+                        ${escapeHtml(formatKey(key))}
+                    </div>
 
+                    <div class="result-value">
+                        ${escapeHtml(
+                            value === null
+                                ? "Not available"
+                                : String(value)
+                        )}
+                    </div>
 
-async function openCustomApi(api){
+                </div>
+            `;
 
-  const message =
-    prompt(
-      "Enter value for {message}"
-    );
-
-  if(message === null){
-    return;
-  }
-
-  $("modalTitle").textContent =
-    api.name;
-
-  $("lookupInput").value =
-    message;
-
-  $("result").innerHTML =
-    `<div class="result-section">
-      Calling API...
-    </div>`;
-
-  $("modal").classList.add("show");
-
-  try{
-
-    const data =
-      await request(
-        "/api/custom",
-        {
-          method:"POST",
-          headers:{
-            "Content-Type":"application/json"
-          },
-          body:JSON.stringify({
-            url:api.url,
-            message
-          })
         }
-      );
 
-    $("result").innerHTML =
-      `
-      <div class="result-section">
+    });
 
-        <h3>API Response</h3>
 
-        ${row(
-          "HTTP Status",
-          data.status
-        )}
+    return html;
 
-        ${row(
-          "Content-Type",
-          data.contentType
-        )}
-
-        <pre>${escapeHTML(
-          typeof data.data === "string"
-            ? data.data
-            : JSON.stringify(
-                data.data,
-                null,
-                2
-              )
-        )}</pre>
-
-      </div>
-      `;
-
-  }catch(error){
-
-    $("result").innerHTML =
-      `<div class="result-section fail">
-        ${escapeHTML(error.message)}
-      </div>`;
-  }
 }
 
 
-$("loginBtn")
-  .addEventListener(
-    "click",
-    login
-  );
+function formatKey(key){
 
-$("password")
-  .addEventListener(
-    "keydown",
-    e => {
-      if(e.key === "Enter"){
-        login();
-      }
-    }
-  );
+    return String(key)
+        .replace(/_/g," ")
+        .replace(/([a-z])([A-Z])/g,"$1 $2")
+        .replace(/\b\w/g,c => c.toUpperCase());
 
-$("logoutBtn")
-  .addEventListener(
-    "click",
-    logout
-  );
-
-$("closeModal")
-  .addEventListener(
-    "click",
-    closeModal
-  );
-
-$("searchBtn")
-  .addEventListener(
-    "click",
-    performSearch
-  );
-
-$("lookupInput")
-  .addEventListener(
-    "keydown",
-    e => {
-      if(e.key === "Enter"){
-        performSearch();
-      }
-    }
-  );
-
-document
-  .querySelectorAll(".lookup-card")
-  .forEach(card => {
-
-    card.addEventListener(
-      "click",
-      () => openModal(
-        card.dataset.type
-      )
-    );
-
-  });
-
-$("addApiBtn")
-  .addEventListener(
-    "click",
-    saveCustomApi
-  );
-
-$("modal")
-  .addEventListener(
-    "click",
-    e => {
-      if(e.target === $("modal")){
-        closeModal();
-      }
-    }
-  );
-
-
-async function checkExistingLogin(){
-
-  try{
-
-    const data =
-      await request(
-        "/api/auth",
-        {
-          method:"GET"
-        }
-      );
-
-    if(data.authenticated){
-
-      $("loginPage").style.display =
-        "none";
-
-      $("dashboard").style.display =
-        "block";
-    }
-
-  }catch{}
 }
 
 
-createCodeBackground();
-loadCustomApis();
-checkExistingLogin();
+function escapeHtml(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
 </script>
 
 </body>
