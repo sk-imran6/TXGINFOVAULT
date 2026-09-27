@@ -1,581 +1,242 @@
 // api/custom-proxy.js
 
-const { neon } = require("@neondatabase/serverless");
 const dns = require("dns").promises;
-const net = require("net");
 
+function isPrivateIPv4(ip) {
+  const p = ip.split(".").map(Number);
 
-// ==========================================
-// DATABASE
-// ==========================================
-
-function getDatabase() {
-
-  const url =
-    process.env.DATABASE_URL ||
-    process.env.POSTGRES_URL ||
-    process.env.STORAGE_DATABASE_URL ||
-    process.env.STORAGE_POSTGRES_URL;
-
-  if (!url) {
-    throw new Error(
-      "DATABASE_URL is not configured"
-    );
-  }
-
-  return neon(url);
-}
-
-
-// ==========================================
-// RESPONSE
-// ==========================================
-
-function send(res, status, data) {
-
-  return res
-    .status(status)
-    .setHeader(
-      "Content-Type",
-      "application/json"
-    )
-    .json(data);
-
-}
-
-
-// ==========================================
-// BLOCK PRIVATE IPs
-// ==========================================
-
-function isBlockedIP(ip) {
-
-  if (net.isIPv4(ip)) {
-
-    const p =
-      ip.split(".").map(Number);
-
-    // 10.0.0.0/8
-    if (p[0] === 10) {
-      return true;
-    }
-
-    // 127.0.0.0/8
-    if (p[0] === 127) {
-      return true;
-    }
-
-    // 169.254.0.0/16
-    if (
-      p[0] === 169 &&
-      p[1] === 254
-    ) {
-      return true;
-    }
-
-    // 172.16.0.0/12
-    if (
-      p[0] === 172 &&
-      p[1] >= 16 &&
-      p[1] <= 31
-    ) {
-      return true;
-    }
-
-    // 192.168.0.0/16
-    if (
-      p[0] === 192 &&
-      p[1] === 168
-    ) {
-      return true;
-    }
-
+  if (p.length !== 4 || p.some(Number.isNaN)) {
     return false;
   }
 
-
-  if (net.isIPv6(ip)) {
-
-    const lower =
-      ip.toLowerCase();
-
-    // IPv6 localhost
-    if (lower === "::1") {
-      return true;
-    }
-
-    // Unique local
-    if (
-      lower.startsWith("fc") ||
-      lower.startsWith("fd")
-    ) {
-      return true;
-    }
-
-    // Link local
-    if (
-      lower.startsWith("fe80:")
-    ) {
-      return true;
-    }
-
-    return false;
-  }
-
-
-  return true;
+  return (
+    p[0] === 10 ||
+    p[0] === 127 ||
+    (p[0] === 172 && p[1] >= 16 && p[1] <= 31) ||
+    (p[0] === 192 && p[1] === 168) ||
+    (p[0] === 169 && p[1] === 254) ||
+    p[0] === 0
+  );
 }
 
+function isPrivateIPv6(ip) {
+  const value = ip.toLowerCase();
 
-// ==========================================
-// VALIDATE TARGET URL
-// ==========================================
-
-async function validateTarget(rawURL) {
-
-  const url =
-    new URL(rawURL);
-
-
-  // HTTPS only
-  if (
-    url.protocol !== "https:"
-  ) {
-
-    throw new Error(
-      "Only HTTPS API URLs are allowed"
-    );
-
-  }
-
-
-  const addresses =
-    await dns.lookup(
-      url.hostname,
-      {
-        all: true
-      }
-    );
-
-
-  if (
-    !addresses ||
-    addresses.length === 0
-  ) {
-
-    throw new Error(
-      "Unable to resolve API host"
-    );
-
-  }
-
-
-  for (
-    const item of addresses
-  ) {
-
-    if (
-      isBlockedIP(
-        item.address
-      )
-    ) {
-
-      throw new Error(
-        "API host is not allowed"
-      );
-
-    }
-
-  }
-
-
-  return url;
+  return (
+    value === "::1" ||
+    value === "::" ||
+    value.startsWith("fc") ||
+    value.startsWith("fd") ||
+    value.startsWith("fe8") ||
+    value.startsWith("fe9") ||
+    value.startsWith("fea") ||
+    value.startsWith("feb")
+  );
 }
 
+function isPrivateIP(ip) {
+  return isPrivateIPv4(ip) || isPrivateIPv6(ip);
+}
 
-// ==========================================
-// MAIN HANDLER
-// ==========================================
+async function hostIsPrivate(hostname) {
+  const host = hostname.toLowerCase();
 
-module.exports = async function handler(
-  req,
-  res
-) {
+  if (
+    host === "localhost" ||
+    host.endsWith(".localhost") ||
+    host.endsWith(".local")
+  ) {
+    return true;
+  }
 
   try {
+    const records = await dns.lookup(host, {
+      all: true,
+      verbatim: true
+    });
 
-    // --------------------------------------
-    // GET ONLY
-    // --------------------------------------
+    return records.some(record => isPrivateIP(record.address));
+  } catch {
+    return false;
+  }
+}
 
-    if (
-      req.method !== "GET"
-    ) {
+function replaceMessage(value, message) {
+  return String(value || "").replace(
+    /\{message\}/g,
+    encodeURIComponent(message)
+  );
+}
 
-      return send(
-        res,
-        405,
-        {
-          success: false,
-          error: "GET method required"
-        }
-      );
+module.exports = async function handler(req, res) {
+  try {
+    const id = String(req.query?.id || "").trim();
+    const message = String(req.query?.message || "");
 
+    if (!id || id === "[object Object]") {
+      return res.status(400).json({
+        success: false,
+        error: "Valid API ID is required"
+      });
     }
 
-
-    // --------------------------------------
-    // UUID / TEXT API ID
-    // --------------------------------------
-
-    const id =
-      String(
-        req.query?.id ||
-        ""
-      ).trim();
-
-
-    if (!id) {
-
-      return send(
-        res,
-        400,
-        {
-          success: false,
-          error: "Invalid API ID"
-        }
-      );
-
+    if (!message.trim()) {
+      return res.status(400).json({
+        success: false,
+        error: "Message is required"
+      });
     }
 
+    const databaseUrl =
+      process.env.DATABASE_URL ||
+      process.env.POSTGRES_URL ||
+      process.env.STORAGE_DATABASE_URL ||
+      process.env.STORAGE_POSTGRES_URL;
 
-    // --------------------------------------
-    // MESSAGE
-    // --------------------------------------
+    if (!databaseUrl) {
+      return res.status(500).json({
+        success: false,
+        error: "DATABASE_URL is not configured"
+      });
+    }
 
-    const message =
-      String(
-        req.query?.message ||
-        ""
-      );
+    const { neon } = require("@neondatabase/serverless");
+    const sql = neon(databaseUrl);
 
-
-    // --------------------------------------
-    // DATABASE
-    // --------------------------------------
-
-    const sql =
-      getDatabase();
-
-
-    const rows =
-      await sql`
-
-        SELECT
-          id,
-          name,
-          url,
-          method,
-          description,
-          category,
-          created_at
-
-        FROM custom_apis
-
-        WHERE id = ${id}
-
-        LIMIT 1
-
-      `;
-
+    const rows = await sql`
+      SELECT id, name, url, method
+      FROM custom_apis
+      WHERE id = ${id}
+      LIMIT 1
+    `;
 
     if (!rows.length) {
-
-      return send(
-        res,
-        404,
-        {
-          success: false,
-          error: "Saved API not found"
-        }
-      );
-
+      return res.status(404).json({
+        success: false,
+        error: "API not found"
+      });
     }
 
+    const api = rows[0];
 
-    const api =
-      rows[0];
+    let targetUrl = replaceMessage(api.url, message);
 
-
-    // --------------------------------------
-    // BUILD API URL
-    // --------------------------------------
-
-    let targetURL =
-      String(api.url);
-
-
-    /*
-      Supported placeholder:
-
-      {message}
-
-      Example:
-
-      https://example.com/api?number={message}
-    */
-
-    targetURL =
-      targetURL.replace(
-        /\{message\}/gi,
-        encodeURIComponent(message)
-      );
-
-
-    // --------------------------------------
-    // VALIDATE TARGET
-    // --------------------------------------
-
-    const safeURL =
-      await validateTarget(
-        targetURL
-      );
-
-
-    // --------------------------------------
-    // HTTP METHOD
-    // --------------------------------------
-
-    const method =
-      String(
-        api.method ||
-        "GET"
-      ).toUpperCase();
-
-
-    const allowedMethods = [
-      "GET",
-      "POST",
-      "PUT",
-      "PATCH",
-      "DELETE"
-    ];
-
-
-    if (
-      !allowedMethods.includes(
-        method
-      )
-    ) {
-
-      return send(
-        res,
-        400,
-        {
-          success: false,
-          error:
-            "Unsupported HTTP method"
-        }
-      );
-
-    }
-
-
-    // --------------------------------------
-    // HEADERS
-    // --------------------------------------
-
-    const headers = {
-
-      "Accept":
-        "application/json,text/plain,*/*"
-
-    };
-
-
-    // Optional server-side API key
-
-    if (
-      process.env.CUSTOM_API_KEY
-    ) {
-
-      const headerName =
-        process.env.CUSTOM_API_HEADER ||
-        "Authorization";
-
-
-      if (
-        headerName.toLowerCase() ===
-        "authorization"
-      ) {
-
-        headers[headerName] =
-          "Bearer " +
-          process.env.CUSTOM_API_KEY;
-
-      } else {
-
-        headers[headerName] =
-          process.env.CUSTOM_API_KEY;
-
-      }
-
-    }
-
-
-    // --------------------------------------
-    // REQUEST TIMEOUT
-    // --------------------------------------
-
-    const controller =
-      new AbortController();
-
-
-    const timer =
-      setTimeout(
-        () => {
-          controller.abort();
-        },
-        15000
-      );
-
-
-    let response;
-
+    let parsed;
 
     try {
+      parsed = new URL(targetUrl);
+    } catch {
+      return res.status(400).json({
+        success: false,
+        error: "Saved API URL is invalid"
+      });
+    }
 
-      response =
-        await fetch(
-          safeURL.toString(),
-          {
-            method,
-            headers,
-            signal:
-              controller.signal
-          }
-        );
+    if (parsed.protocol !== "https:") {
+      return res.status(400).json({
+        success: false,
+        error: "Only HTTPS APIs are allowed"
+      });
+    }
+
+    if (await hostIsPrivate(parsed.hostname)) {
+      return res.status(400).json({
+        success: false,
+        error: "Private network targets are not allowed"
+      });
+    }
+
+    const controller = new AbortController();
+
+    const timeout = setTimeout(() => {
+      controller.abort();
+    }, 15000);
+
+    try {
+      const headers = {
+        Accept: "application/json, text/plain, */*",
+        "User-Agent": "TXG-Information/1.0"
+      };
+
+      if (
+        process.env.CUSTOM_API_KEY &&
+        process.env.CUSTOM_API_HEADER
+      ) {
+        headers[process.env.CUSTOM_API_HEADER] =
+          process.env.CUSTOM_API_KEY;
+      }
+
+      const options = {
+        method: api.method,
+        headers,
+        signal: controller.signal
+      };
+
+      if (
+        ["POST", "PUT", "PATCH"].includes(api.method)
+      ) {
+        options.headers["Content-Type"] =
+          "application/json";
+
+        options.body = JSON.stringify({
+          message
+        });
+      }
+
+      const response = await fetch(
+        targetUrl,
+        options
+      );
+
+      const contentType =
+        response.headers.get("content-type") || "";
+
+      let data;
+
+      if (contentType.includes("application/json")) {
+        try {
+          data = await response.json();
+        } catch {
+          data = await response.text();
+        }
+      } else {
+        data = await response.text();
+      }
+
+      return res.status(200).json({
+        success: true,
+        api: {
+          id: api.id,
+          name: api.name,
+          method: api.method
+        },
+        request: {
+          message
+        },
+        response: {
+          status: response.status,
+          ok: response.ok,
+          data
+        }
+      });
 
     } finally {
-
-      clearTimeout(
-        timer
-      );
-
+      clearTimeout(timeout);
     }
-
-
-    // --------------------------------------
-    // READ RESPONSE
-    // --------------------------------------
-
-    const contentType =
-      response.headers.get(
-        "content-type"
-      ) || "";
-
-
-    let responseData;
-
-
-    if (
-      contentType.includes(
-        "application/json"
-      )
-    ) {
-
-      responseData =
-        await response
-          .json()
-          .catch(
-            () => null
-          );
-
-    } else {
-
-      responseData =
-        await response.text();
-
-    }
-
-
-    // --------------------------------------
-    // FINAL RESPONSE
-    // --------------------------------------
-
-    return send(
-      res,
-      200,
-      {
-
-        success:
-          response.ok,
-
-        status:
-          response.status,
-
-        status_text:
-          response.statusText,
-
-        api_id:
-          id,
-
-        api_name:
-          api.name,
-
-        method,
-
-        query:
-          message,
-
-        response:
-          responseData
-
-      }
-    );
-
 
   } catch (error) {
+    console.error("custom-proxy:", error);
 
-    console.error(
-      "Custom proxy error:",
-      error
-    );
-
-
-    if (
-      error.name ===
-      "AbortError"
-    ) {
-
-      return send(
-        res,
-        504,
-        {
-          success: false,
-          error:
-            "External API request timed out"
-        }
-      );
-
+    if (error.name === "AbortError") {
+      return res.status(504).json({
+        success: false,
+        error: "API request timed out"
+      });
     }
 
-
-    return send(
-      res,
-      500,
-      {
-
-        success: false,
-
-        error:
-          error.message ||
-          "Custom API request failed"
-
-      }
-
-    );
-
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Proxy request failed"
+    });
   }
-
 };
