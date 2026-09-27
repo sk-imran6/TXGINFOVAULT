@@ -17,9 +17,6 @@ module.exports = async function handler(req, res) {
 
     const sql = neon(databaseUrl);
 
-    // =========================
-    // CREATE TABLE
-    // =========================
     await sql`
       CREATE TABLE IF NOT EXISTS custom_apis (
         id TEXT PRIMARY KEY DEFAULT (gen_random_uuid()::text),
@@ -32,182 +29,97 @@ module.exports = async function handler(req, res) {
       )
     `;
 
-    // Keep existing UUID/text IDs
-    await sql`
-      ALTER TABLE custom_apis
-      ALTER COLUMN id SET DEFAULT (gen_random_uuid()::text)
-    `;
-
-    // =========================
-    // GET - LIST APIs
-    // =========================
     if (req.method === "GET") {
       const rows = await sql`
-        SELECT
-          id,
-          name,
-          url,
-          method,
-          description,
-          category,
-          created_at
+        SELECT id, name, url, method, description, category, created_at
         FROM custom_apis
         ORDER BY created_at DESC
       `;
 
       return res.status(200).json({
         success: true,
-        apis: rows,
-        total: rows.length
+        apis: rows
       });
     }
 
-    // =========================
-    // POST - ADD API
-    // =========================
     if (req.method === "POST") {
-      let body = req.body;
+      let body = req.body || {};
 
       if (typeof body === "string") {
-        try {
-          body = JSON.parse(body);
-        } catch (e) {
-          return res.status(400).json({
-            success: false,
-            error: "Invalid JSON body"
-          });
-        }
+        body = JSON.parse(body);
       }
-
-      body = body || {};
 
       const name = String(body.name || "").trim();
       const url = String(body.url || "").trim();
-      const method = String(body.method || "GET")
-        .trim()
-        .toUpperCase();
+      const method = String(body.method || "GET").trim().toUpperCase();
+      const description = String(body.description || "").trim();
+      const category = String(body.category || "Custom").trim();
 
-      const description = String(
-        body.description || ""
-      ).trim();
-
-      const category = String(
-        body.category || "Custom"
-      ).trim();
-
-      if (!name) {
+      if (!name || !url) {
         return res.status(400).json({
           success: false,
-          error: "API name is required"
+          error: "Name and URL are required"
         });
       }
 
-      if (!url) {
-        return res.status(400).json({
-          success: false,
-          error: "API URL is required"
-        });
-      }
-
-      // URL validation
-      let parsedUrl;
+      let parsed;
 
       try {
-        parsedUrl = new URL(url);
-      } catch (e) {
+        parsed = new URL(url);
+      } catch {
         return res.status(400).json({
           success: false,
           error: "Invalid API URL"
         });
       }
 
-      // Only HTTPS
-      if (parsedUrl.protocol !== "https:") {
+      if (parsed.protocol !== "https:") {
         return res.status(400).json({
           success: false,
-          error: "Only HTTPS API URLs are allowed"
+          error: "Only HTTPS URLs are allowed"
         });
       }
 
-      const allowedMethods = [
-        "GET",
-        "POST",
-        "PUT",
-        "PATCH",
-        "DELETE"
-      ];
+      const methods = ["GET", "POST", "PUT", "PATCH", "DELETE"];
 
-      if (!allowedMethods.includes(method)) {
+      if (!methods.includes(method)) {
         return res.status(400).json({
           success: false,
-          error: "Unsupported HTTP method"
+          error: "Invalid HTTP method"
         });
       }
 
-      // =========================
-      // INSERT
-      // Let PostgreSQL generate TEXT/UUID ID
-      // =========================
-      const inserted = await sql`
+      const result = await sql`
         INSERT INTO custom_apis
-        (
-          name,
-          url,
-          method,
-          description,
-          category
-        )
+          (name, url, method, description, category)
         VALUES
-        (
-          ${name},
-          ${url},
-          ${method},
-          ${description},
-          ${category}
-        )
-        RETURNING
-          id,
-          name,
-          url,
-          method,
-          description,
-          category,
-          created_at
+          (${name}, ${url}, ${method}, ${description}, ${category})
+        RETURNING *
       `;
 
       return res.status(201).json({
         success: true,
-        message: "Custom API added successfully",
-        api: inserted[0]
+        api: result[0]
       });
     }
 
-    // =========================
-    // DELETE - DELETE API
-    // =========================
     if (req.method === "DELETE") {
-      const id = String(
-        req.query?.id || ""
-      ).trim();
+      const id = String(req.query?.id || "").trim();
 
-      if (!id) {
+      if (!id || id === "[object Object]") {
         return res.status(400).json({
           success: false,
           error: "Valid API ID is required"
         });
       }
 
-      const deleted = await sql`
+      const result = await sql`
         DELETE FROM custom_apis
         WHERE id = ${id}
-        RETURNING
-          id,
-          name,
-          url,
-          method
+        RETURNING id, name
       `;
 
-      if (!deleted.length) {
+      if (!result.length) {
         return res.status(404).json({
           success: false,
           error: "API not found"
@@ -216,21 +128,17 @@ module.exports = async function handler(req, res) {
 
       return res.status(200).json({
         success: true,
-        message: "API deleted successfully",
-        deleted: deleted[0]
+        deleted: result[0]
       });
     }
 
-    // =========================
-    // METHOD NOT ALLOWED
-    // =========================
     return res.status(405).json({
       success: false,
       error: "Method not allowed"
     });
 
   } catch (error) {
-    console.error("custom-apis error:", error);
+    console.error(error);
 
     return res.status(500).json({
       success: false,
@@ -239,32 +147,22 @@ module.exports = async function handler(req, res) {
   }
 };
 
-Frontend delete function
-
-"index.html"-এ পুরোনো "deleteCustomApi()" থাকলে পুরোটা replace করে এটা দাও:
-
-:::writing{variant="standard" id="74106" title="index.html — Delete Function"}
-
 async function deleteCustomApi(id) {
-  const apiId = String(id || "").trim();
+  const apiId =
+    typeof id === "object"
+      ? String(id.id || "")
+      : String(id || "");
 
-  if (!apiId) {
+  if (!apiId || apiId === "[object Object]") {
     alert("Valid API ID is required");
     return;
   }
 
-  const confirmed = confirm(
-    "Are you sure you want to delete this API?"
-  );
-
-  if (!confirmed) {
-    return;
-  }
+  if (!confirm("Delete this API?")) return;
 
   try {
     const response = await fetch(
-      "/api/custom-apis?id=" +
-      encodeURIComponent(apiId),
+      "/api/custom-apis?id=" + encodeURIComponent(apiId),
       {
         method: "DELETE"
       }
@@ -273,33 +171,19 @@ async function deleteCustomApi(id) {
     const data = await response.json();
 
     if (!response.ok || !data.success) {
-      throw new Error(
-        data.error || "Failed to delete API"
-      );
+      throw new Error(data.error || "Delete failed");
     }
-
-    alert("API deleted successfully");
 
     await loadSavedApis();
 
   } catch (error) {
-    console.error("Delete API error:", error);
-
-    alert(
-      error.message ||
-      "Failed to delete API"
-    );
+    alert(error.message || "Delete failed");
   }
 }
-
-আরেকটা গুরুত্বপূর্ণ জিনিস: Delete button তৈরি করার সময় ID-টা অবশ্যই string হিসেবে পাঠাবে:
 
 <button
   type="button"
   onclick="deleteCustomApi(${JSON.stringify(api.id)})">
   Delete
 </button>
-
-এতে "mujub0uf-513841a331"-এর মতো text/UUID ID-ও ঠিকমতো delete হবে।
-
-Deploy করার পর: Vercel redeploy → Custom API section refresh → পুরোনো API-র Delete চাপো। "Valid API ID is required" আর আসার কথা নয়।
+```0
