@@ -23,7 +23,7 @@ body{margin:0;background:radial-gradient(circle at top,#182530,#07090d 50%);colo
 .login .primary{width:100%}
 .searchrow{display:grid;grid-template-columns:1fr 135px;gap:10px}
 .searchrow .input{width:100%}
-.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.customPanel{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}.customGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.saved{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.saved button{font-size:12px}.danger{color:#ff9da7}@media(max-width:650px){.customGrid{grid-template-columns:1fr}}
 .tool.active{color:var(--accent);border-color:var(--accent)}
 .status{font-size:13px;color:var(--muted);margin-top:12px}
 .ok{color:#9bf2c9}.error{color:var(--bad)}
@@ -63,6 +63,19 @@ pre{white-space:pre-wrap;overflow:auto;font-size:12px;line-height:1.6;margin:0;c
   </div>
 
   <div id="tools" class="tools"></div>
+
+  <div id="customPanel" class="customPanel hidden">
+    <div class="customGrid">
+      <input id="apiName" class="input" placeholder="API Name">
+      <input id="apiUrl" class="input" placeholder="API URL (use {message})">
+      <input id="apiKey" class="input" placeholder="API Key (optional)" type="password">
+      <input id="apiHeader" class="input" placeholder="Header name" value="Authorization">
+      <select id="apiMethod" class="input"><option value="GET">GET</option><option value="POST">POST</option></select>
+      <button id="addApi" type="button" class="btn primary">+ Save API</button>
+    </div>
+    <div id="savedApis" class="saved"></div>
+  </div>
+
   <div id="status" class="status">Ready.</div>
 </section>
 
@@ -88,6 +101,8 @@ const tools=[
 ];
 
 let selected="auto";
+let customApis=[];
+let selectedApiId="";
 const $=id=>document.getElementById(id);
 
 function message(el,text,className=""){
@@ -104,10 +119,67 @@ function drawTools(){
     b.textContent=label;
     b.onclick=()=>{
       selected=key;
+      if(key!=="custom") selectedApiId="";
       drawTools();
     };
     $("tools").appendChild(b);
   });
+  $("customPanel").classList.toggle("hidden", selected!=="custom");
+  if(selected==="custom") renderSavedApis();
+}
+
+async function loadCustomApis(){
+  try{
+    const r=await fetch("/api/custom-apis",{cache:"no-store"});
+    if(r.status===401) return showLogin();
+    const d=await r.json();
+    customApis=d.apis||[];
+    if(!selectedApiId && customApis[0]) selectedApiId=customApis[0].id;
+    renderSavedApis();
+  }catch(e){ message($("status"),"Could not load saved APIs.","error"); }
+}
+
+function renderSavedApis(){
+  const root=$("savedApis");
+  if(!root) return;
+  root.innerHTML="";
+  if(!customApis.length){
+    root.innerHTML='<span class="status">No saved APIs yet.</span>';
+    return;
+  }
+  customApis.forEach(api=>{
+    const wrap=document.createElement("div");
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="btn tool"+(api.id===selectedApiId?" active":"");
+    b.textContent=api.name;
+    b.onclick=()=>{ selectedApiId=api.id; renderSavedApis(); };
+    const d=document.createElement("button");
+    d.type="button"; d.className="btn danger"; d.textContent="×";
+    d.title="Delete saved API";
+    d.onclick=async()=>{
+      if(!confirm("Delete this saved API?")) return;
+      const r=await fetch("/api/custom-apis",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"delete",id:api.id})});
+      const x=await r.json();
+      if(!r.ok) return message($("status"),x.error||"Delete failed","error");
+      customApis=x.apis||[]; selectedApiId=customApis[0]?.id||""; renderSavedApis();
+    };
+    wrap.append(b,d); root.appendChild(wrap);
+  });
+}
+
+async function saveCustomApi(){
+  const body={name:$("apiName").value,url:$("apiUrl").value,key:$("apiKey").value,header:$("apiHeader").value,method:$("apiMethod").value};
+  if(!body.name || !body.url) return message($("status"),"Enter API name and URL.","error");
+  message($("status"),"Saving API...");
+  try{
+    const r=await fetch("/api/custom-apis",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(!r.ok) throw new Error(d.error||"Save failed");
+    customApis=d.apis||[]; selectedApiId=customApis[0]?.id||"";
+    $("apiName").value=""; $("apiUrl").value=""; $("apiKey").value="";
+    renderSavedApis(); message($("status"),"API saved permanently on this browser.","ok");
+  }catch(e){ message($("status"),e.message,"error"); }
 }
 
 function showApp(){
@@ -115,6 +187,7 @@ function showApp(){
   $("app").classList.remove("hidden");
   $("logout").classList.remove("hidden");
   drawTools();
+  loadCustomApis();
 }
 
 function showLogin(){
@@ -205,11 +278,12 @@ async function search(){
   $("results").innerHTML="";
 
   try{
-    const url=
+    let url=
       "/api/lookup?type="+
       encodeURIComponent(selected)+
       "&value="+
       encodeURIComponent(value);
+    if(selected==="custom") url += "&api_id="+encodeURIComponent(selectedApiId);
 
     const r=await fetch(url,{cache:"no-store"});
     const d=await r.json();
@@ -238,6 +312,7 @@ async function search(){
 $("login").onclick=login;
 $("logout").onclick=logout;
 $("search").onclick=search;
+$("addApi").onclick=saveCustomApi;
 
 $("password").addEventListener("keydown",e=>{
   if(e.key==="Enter") login();
