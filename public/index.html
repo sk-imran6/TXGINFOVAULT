@@ -2,64 +2,84 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>TXG Information Center</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
 
 html,body{
   margin:0;
   min-height:100%;
   font-family:Arial,Helvetica,sans-serif;
   background:#070b12;
-  color:#f5f7fa
+  color:#f5f7fa;
 }
 
-body{padding:16px}
+body{
+  padding:16px;
+}
 
-button,input,select{font:inherit}
+button,input,select{
+  font:inherit;
+}
 
-button{cursor:pointer}
+button{
+  cursor:pointer;
+}
 
-.hidden{display:none!important}
+.hidden{
+  display:none!important;
+}
 
-/* LOGIN */
+/* ================= APP ================= */
 
-#loginPage{
-  min-height:90vh;
+#appPage{
+  display:block;
+  max-width:1100px;
+  margin:0 auto;
+}
+
+.topbar{
   display:flex;
+  justify-content:space-between;
   align-items:center;
-  justify-content:center
+  gap:15px;
+  margin-bottom:20px;
 }
 
-.login-box{
-  width:100%;
-  max-width:390px;
-  padding:28px;
+.brand-title{
+  font-size:25px;
+  font-weight:800;
+}
+
+.brand-subtitle{
+  color:#7f8b9d;
+  font-size:13px;
+  margin-top:4px;
+}
+
+.section{
   background:#0d131d;
   border:1px solid #202a39;
-  border-radius:18px;
-  box-shadow:0 15px 45px rgba(0,0,0,.35)
+  border-radius:17px;
+  padding:18px;
+  margin-bottom:18px;
 }
 
-.login-title{
-  font-size:27px;
-  font-weight:800;
-  margin-bottom:7px
+.section-title{
+  font-size:17px;
+  font-weight:750;
+  margin-bottom:14px;
 }
 
-.login-subtitle{
-  color:#8e9aaa;
-  font-size:14px;
-  margin-bottom:25px
-}
+/* ================= SEARCH ================= */
 
-.input-label{
-  display:block;
-  font-size:13px;
-  color:#aab4c3;
-  margin-bottom:7px
+.search-row{
+  display:flex;
+  gap:10px;
 }
 
 .input{
@@ -69,92 +89,15 @@ button{cursor:pointer}
   color:#fff;
   border-radius:11px;
   padding:13px 14px;
-  outline:none
+  outline:none;
 }
 
 .input:focus{
-  border-color:#4c8dff
-}
-
-.login-btn{
-  width:100%;
-  margin-top:15px;
-  padding:13px;
-  border:0;
-  border-radius:11px;
-  background:#347cff;
-  color:#fff;
-  font-weight:700
-}
-
-.login-btn:disabled{
-  opacity:.6
-}
-
-.login-error{
-  min-height:20px;
-  margin-top:12px;
-  color:#ff6978;
-  font-size:13px
-}
-
-/* APP */
-
-#appPage{
-  max-width:1100px;
-  margin:0 auto
-}
-
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  margin-bottom:20px
-}
-
-.brand-title{
-  font-size:25px;
-  font-weight:800
-}
-
-.brand-subtitle{
-  color:#7f8b9d;
-  font-size:13px;
-  margin-top:4px
-}
-
-.logout-btn{
-  border:1px solid #303b4d;
-  background:#101722;
-  color:#e7ebf1;
-  padding:9px 14px;
-  border-radius:9px
-}
-
-.section{
-  background:#0d131d;
-  border:1px solid #202a39;
-  border-radius:17px;
-  padding:18px;
-  margin-bottom:18px
-}
-
-.section-title{
-  font-size:17px;
-  font-weight:750;
-  margin-bottom:14px
-}
-
-/* SEARCH */
-
-.search-row{
-  display:flex;
-  gap:10px
+  border-color:#4c8dff;
 }
 
 .search-row .input{
-  flex:1
+  flex:1;
 }
 
 .search-btn{
@@ -164,21 +107,25 @@ button{cursor:pointer}
   background:#347cff;
   color:#fff;
   font-weight:700;
-  padding:0 18px
+  padding:0 18px;
+}
+
+.search-btn:disabled{
+  opacity:.6;
 }
 
 .detected{
   margin-top:9px;
   color:#8490a2;
-  font-size:12px
+  font-size:12px;
 }
 
-/* TOOLS */
+/* ================= TOOLS ================= */
 
 .tools-grid{
   display:grid;
   grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px
+  gap:10px;
 }
 
 .tool{
@@ -189,26 +136,26 @@ button{cursor:pointer}
   border-radius:11px;
   padding:12px 13px;
   text-align:left;
-  font-weight:650
+  font-weight:650;
 }
 
 .tool:hover{
   border-color:#4a78bd;
-  background:#141d2a
+  background:#141d2a;
 }
 
 .tool.active{
   border-color:#347cff;
-  background:#142544
+  background:#142544;
 }
 
 .custom-tool-row{
   display:flex;
-  gap:7px
+  gap:7px;
 }
 
 .custom-tool-row .tool{
-  flex:1
+  flex:1;
 }
 
 .remove{
@@ -217,10 +164,10 @@ button{cursor:pointer}
   background:#1c1014;
   color:#ff7482;
   border-radius:10px;
-  font-size:18px
+  font-size:18px;
 }
 
-/* RESULT */
+/* ================= RESULT ================= */
 
 .result-box{
   min-height:100px;
@@ -228,12 +175,20 @@ button{cursor:pointer}
   border:1px solid #202a39;
   border-radius:12px;
   padding:15px;
-  overflow:auto
+  overflow:auto;
 }
 
-.result-loading{color:#8da9d8}
-.result-error{color:#ff6f7d}
-.result-empty{color:#697689}
+.result-loading{
+  color:#8da9d8;
+}
+
+.result-error{
+  color:#ff6f7d;
+}
+
+.result-empty{
+  color:#697689;
+}
 
 pre{
   white-space:pre-wrap;
@@ -241,26 +196,26 @@ pre{
   margin:0;
   color:#dfe6ef;
   font-family:Consolas,monospace;
-  font-size:13px
+  font-size:13px;
 }
 
-/* CUSTOM API */
+/* ================= CUSTOM API ================= */
 
 .form-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:11px
+  gap:11px;
 }
 
 .form-full{
-  grid-column:1/-1
+  grid-column:1/-1;
 }
 
 .field label{
   display:block;
   color:#aab4c3;
   font-size:12px;
-  margin-bottom:6px
+  margin-bottom:6px;
 }
 
 .save-api-btn{
@@ -269,59 +224,63 @@ pre{
   color:#fff;
   border-radius:10px;
   padding:12px 16px;
-  font-weight:700
+  font-weight:700;
 }
 
 .status{
   color:#8c99aa;
   font-size:12px;
   margin-top:10px;
-  min-height:18px
+  min-height:18px;
 }
 
 .saved-list{
   display:flex;
   flex-direction:column;
   gap:8px;
-  margin-top:13px
+  margin-top:13px;
 }
 
 .small{
   color:#737f91;
-  font-size:12px
+  font-size:12px;
 }
+
+/* ================= MOBILE ================= */
 
 @media(max-width:650px){
 
-  body{padding:12px}
-
-  .topbar{
-    align-items:flex-start
+  body{
+    padding:12px;
   }
 
   .brand-title{
-    font-size:21px
+    font-size:21px;
   }
 
   .section{
     padding:14px;
-    border-radius:14px
+    border-radius:14px;
   }
 
   .search-row{
-    flex-direction:column
+    flex-direction:column;
   }
 
   .search-btn{
-    min-height:46px
+    min-height:46px;
   }
 
   .form-grid{
-    grid-template-columns:1fr
+    grid-template-columns:1fr;
   }
 
   .form-full{
-    grid-column:auto
+    grid-column:auto;
+  }
+
+  .tools-grid{
+    grid-template-columns:1fr 1fr;
   }
 }
 </style>
@@ -329,78 +288,25 @@ pre{
 
 <body>
 
-<!-- ================= LOGIN ================= -->
+<!-- =====================================================
+     APP
+===================================================== -->
 
-<div id="loginPage">
+<div id="appPage">
 
-  <div class="login-box">
-
-    <div class="login-title">
-      TXG Information
-    </div>
-
-    <div class="login-subtitle">
-      Secure Admin Information Center
-    </div>
-
-    <label
-      class="input-label"
-      for="password"
-    >
-      Admin Password
-    </label>
-
-    <input
-      id="password"
-      class="input"
-      type="password"
-      autocomplete="current-password"
-      placeholder="Enter password"
-    >
-
-    <button
-      id="loginBtn"
-      class="login-btn"
-      type="button"
-    >
-      Login
-    </button>
-
-    <div
-      id="loginError"
-      class="login-error"
-    ></div>
-
-  </div>
-
-</div>
-
-
-<!-- ================= APP ================= -->
-
-<div id="appPage" class="hidden">
+  <!-- HEADER -->
 
   <div class="topbar">
 
     <div>
-
       <div class="brand-title">
         TXG Information Center
       </div>
 
       <div class="brand-subtitle">
-        Search & information tools
+        Search & Information Tools
       </div>
-
     </div>
-
-    <button
-      id="logoutBtn"
-      class="logout-btn"
-      type="button"
-    >
-      Logout
-    </button>
 
   </div>
 
@@ -457,7 +363,7 @@ pre{
     >
 
       <button
-        class="tool"
+        class="tool active"
         data-type="auto"
         type="button"
       >
@@ -730,11 +636,9 @@ pre{
       id="savedApis"
       class="saved-list"
     >
-
       <div class="small">
         Loading saved APIs...
       </div>
-
     </div>
 
   </div>
@@ -744,36 +648,18 @@ pre{
 
 <script>
 
-/* =========================================================
+/* =====================================================
    STATE
-========================================================= */
+===================================================== */
 
 let selectedType = "auto";
 
 window.savedApisCache = [];
 
 
-/* =========================================================
+/* =====================================================
    ELEMENTS
-========================================================= */
-
-const loginPage =
-  document.getElementById("loginPage");
-
-const appPage =
-  document.getElementById("appPage");
-
-const passwordInput =
-  document.getElementById("password");
-
-const loginBtn =
-  document.getElementById("loginBtn");
-
-const loginError =
-  document.getElementById("loginError");
-
-const logoutBtn =
-  document.getElementById("logoutBtn");
+===================================================== */
 
 const searchInput =
   document.getElementById("searchInput");
@@ -803,250 +689,9 @@ const customStatus =
   document.getElementById("customStatus");
 
 
-/* =========================================================
-   PAGE STATE
-========================================================= */
-
-function showLogin(){
-
-  loginPage.classList.remove("hidden");
-  appPage.classList.add("hidden");
-
-}
-
-
-function showApp(){
-
-  loginPage.classList.add("hidden");
-  appPage.classList.remove("hidden");
-
-  loadSavedApis();
-
-}
-
-
-/* =========================================================
-   AUTH CHECK
-   IMPORTANT:
-   ONLY authenticated === true is accepted.
-========================================================= */
-
-async function checkLogin(){
-
-  try{
-
-    const response =
-      await fetch(
-        "/api/auth",
-        {
-          method:"GET",
-          credentials:"include",
-          cache:"no-store"
-        }
-      );
-
-    let data = {};
-
-    try{
-      data = await response.json();
-    }catch(_){
-      data = {};
-    }
-
-    console.log(
-      "AUTH CHECK:",
-      data
-    );
-
-    if(
-      response.ok &&
-      data.authenticated === true
-    ){
-
-      showApp();
-
-    }else{
-
-      showLogin();
-
-    }
-
-  }catch(error){
-
-    console.error(
-      "AUTH CHECK ERROR:",
-      error
-    );
-
-    showLogin();
-
-  }
-
-}
-
-
-/* =========================================================
-   LOGIN
-========================================================= */
-
-loginBtn.addEventListener(
-  "click",
-  login
-);
-
-
-passwordInput.addEventListener(
-  "keydown",
-  function(event){
-
-    if(event.key === "Enter"){
-      login();
-    }
-
-  }
-);
-
-
-async function login(){
-
-  const password =
-    passwordInput.value;
-
-  loginError.textContent = "";
-
-
-  if(!password){
-
-    loginError.textContent =
-      "Enter admin password.";
-
-    return;
-
-  }
-
-
-  loginBtn.disabled = true;
-  loginBtn.textContent =
-    "Logging in...";
-
-
-  try{
-
-    const response =
-      await fetch(
-        "/api/auth",
-        {
-          method:"POST",
-          credentials:"include",
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-          body:JSON.stringify({
-            action:"login",
-            password:password
-          })
-        }
-      );
-
-
-    let data = {};
-
-    try{
-      data = await response.json();
-    }catch(_){
-      data = {};
-    }
-
-
-    console.log(
-      "LOGIN RESPONSE:",
-      data
-    );
-
-
-    /*
-     * IMPORTANT:
-     * Don't use data.success alone.
-     */
-
-    if(
-      !response.ok ||
-      data.authenticated !== true
-    ){
-
-      loginError.textContent =
-        data.error ||
-        data.message ||
-        "Invalid password.";
-
-      return;
-
-    }
-
-
-    passwordInput.value = "";
-
-    showApp();
-
-
-  }catch(error){
-
-    console.error(
-      "LOGIN ERROR:",
-      error
-    );
-
-    loginError.textContent =
-      "Login request failed.";
-
-  }finally{
-
-    loginBtn.disabled = false;
-    loginBtn.textContent =
-      "Login";
-
-  }
-
-}
-
-
-/* =========================================================
-   LOGOUT
-========================================================= */
-
-logoutBtn.addEventListener(
-  "click",
-  async function(){
-
-    try{
-
-      await fetch(
-        "/api/auth",
-        {
-          method:"POST",
-          credentials:"include",
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
-          body:JSON.stringify({
-            action:"logout"
-          })
-        }
-      );
-
-    }catch(_){}
-
-    showLogin();
-
-  }
-);
-
-
-/* =========================================================
+/* =====================================================
    TYPE DETECTION
-========================================================= */
+===================================================== */
 
 function detectType(value){
 
@@ -1111,13 +756,12 @@ function detectType(value){
 
 
   return "auto";
-
 }
 
 
-/* =========================================================
+/* =====================================================
    SELECT TOOL
-========================================================= */
+===================================================== */
 
 function selectTool(type){
 
@@ -1126,25 +770,17 @@ function selectTool(type){
 
   toolsGrid
     .querySelectorAll(".tool")
-    .forEach(
-      function(button){
+    .forEach(function(button){
 
-        button.classList.remove(
-          "active"
-        );
+      button.classList.remove("active");
 
-        if(
-          button.dataset.type === type
-        ){
-
-          button.classList.add(
-            "active"
-          );
-
-        }
-
+      if(
+        button.dataset.type === type
+      ){
+        button.classList.add("active");
       }
-    );
+
+    });
 
 
   if(
@@ -1178,22 +814,19 @@ function selectTool(type){
       type.toUpperCase();
 
   }
-
 }
 
 
-/* =========================================================
+/* =====================================================
    TOOL CLICK
-========================================================= */
+===================================================== */
 
 toolsGrid.addEventListener(
   "click",
   function(event){
 
     const button =
-      event.target.closest(
-        ".tool"
-      );
+      event.target.closest(".tool");
 
 
     if(!button){
@@ -1208,10 +841,8 @@ toolsGrid.addEventListener(
       const api =
         window.savedApisCache.find(
           function(item){
-
             return String(item.id) ===
               String(button.dataset.apiId);
-
           }
         );
 
@@ -1221,7 +852,6 @@ toolsGrid.addEventListener(
       }
 
       return;
-
     }
 
 
@@ -1229,9 +859,7 @@ toolsGrid.addEventListener(
       button.id === "customApiTool"
     ){
 
-      selectTool(
-        "custom-manager"
-      );
+      selectTool("custom-manager");
 
       customApiSection.scrollIntoView({
         behavior:"smooth",
@@ -1239,31 +867,27 @@ toolsGrid.addEventListener(
       });
 
       return;
-
     }
 
 
-    selectTool(
-      button.dataset.type || "auto"
-    );
+    const type =
+      button.dataset.type || "auto";
 
 
-    if(
-      button.dataset.type !==
-      "custom-manager"
-    ){
+    selectTool(type);
 
+
+    if(type !== "custom-manager"){
       runLookup();
-
     }
 
   }
 );
 
 
-/* =========================================================
+/* =====================================================
    SEARCH INPUT
-========================================================= */
+===================================================== */
 
 searchInput.addEventListener(
   "input",
@@ -1307,13 +931,11 @@ searchInput.addEventListener(
     if(event.key === "Enter"){
 
       if(
-        selectedType ===
+        selectedType !==
         "custom-manager"
       ){
-        return;
+        runLookup();
       }
-
-      runLookup();
 
     }
 
@@ -1327,9 +949,9 @@ searchBtn.addEventListener(
 );
 
 
-/* =========================================================
-   NORMAL LOOKUP
-========================================================= */
+/* =====================================================
+   LOOKUP
+===================================================== */
 
 async function runLookup(){
 
@@ -1345,7 +967,6 @@ async function runLookup(){
     });
 
     return;
-
   }
 
 
@@ -1396,24 +1017,14 @@ async function runLookup(){
     let data = {};
 
     try{
-      data = await response.json();
+      data =
+        await response.json();
     }catch(_){
 
       data = {
         success:false,
-        error:
-          "Server returned invalid response."
+        error:"Invalid server response."
       };
-
-    }
-
-
-    if(
-      response.status === 401
-    ){
-
-      showLogin();
-      return;
 
     }
 
@@ -1424,16 +1035,18 @@ async function runLookup(){
         success:false,
         error:
           data.error ||
-          "Lookup failed."
+          (
+            response.status === 401
+              ? "API authentication required."
+              : "Lookup failed."
+          )
       });
 
       return;
-
     }
 
 
     showResult(data);
-
 
   }catch(error){
 
@@ -1445,13 +1058,12 @@ async function runLookup(){
     });
 
   }
-
 }
 
 
-/* =========================================================
+/* =====================================================
    RESULT
-========================================================= */
+===================================================== */
 
 function showResult(data){
 
@@ -1476,7 +1088,6 @@ function showResult(data){
     resultBox.appendChild(div);
 
     return;
-
   }
 
 
@@ -1498,7 +1109,6 @@ function showResult(data){
     resultBox.appendChild(div);
 
     return;
-
   }
 
 
@@ -1535,13 +1145,12 @@ function showResult(data){
 
 
   resultBox.appendChild(pre);
-
 }
 
 
-/* =========================================================
+/* =====================================================
    LOAD SAVED APIs
-========================================================= */
+===================================================== */
 
 async function loadSavedApis(){
 
@@ -1562,27 +1171,32 @@ async function loadSavedApis(){
       );
 
 
-    if(
-      response.status === 401
-    ){
+    let data = {};
 
-      showLogin();
-      return;
+    try{
+      data =
+        await response.json();
+    }catch(_){
+
+      data = {
+        success:false,
+        error:"Invalid server response."
+      };
 
     }
 
 
-    const data =
-      await response.json();
-
-
     if(!response.ok){
 
-      throw new Error(
-        data.error ||
-        "Could not load APIs."
-      );
+      savedApisBox.innerHTML =
+        "<div class='small'>" +
+        escapeHtml(
+          data.error ||
+          "Could not load saved APIs."
+        ) +
+        "</div>";
 
+      return;
     }
 
 
@@ -1595,10 +1209,6 @@ async function loadSavedApis(){
     window.savedApisCache =
       apis;
 
-
-    /*
-     * Remove old saved tool buttons.
-     */
 
     toolsGrid
       .querySelectorAll(
@@ -1620,14 +1230,13 @@ async function loadSavedApis(){
         "<div class='small'>No saved APIs.</div>";
 
       return;
-
     }
 
 
     apis.forEach(
       function(api){
 
-        /* TOOL BUTTON */
+        /* ================= TOOL BUTTON ================= */
 
         const row =
           document.createElement("div");
@@ -1641,8 +1250,7 @@ async function loadSavedApis(){
 
         button.type = "button";
 
-        button.className =
-          "tool";
+        button.className = "tool";
 
         button.dataset.savedApi =
           "true";
@@ -1657,9 +1265,7 @@ async function loadSavedApis(){
         button.addEventListener(
           "click",
           function(){
-
             runSavedApi(api);
-
           }
         );
 
@@ -1672,8 +1278,7 @@ async function loadSavedApis(){
         remove.className =
           "remove";
 
-        remove.textContent =
-          "×";
+        remove.textContent = "×";
 
         remove.title =
           "Remove API";
@@ -1685,9 +1290,7 @@ async function loadSavedApis(){
 
             event.stopPropagation();
 
-            removeSavedApi(
-              api.id
-            );
+            removeSavedApi(api.id);
 
           }
         );
@@ -1698,7 +1301,8 @@ async function loadSavedApis(){
 
 
         /*
-         * Always before Custom API.
+         * IMPORTANT:
+         * Insert directly before Custom API button.
          */
 
         toolsGrid.insertBefore(
@@ -1707,7 +1311,7 @@ async function loadSavedApis(){
         );
 
 
-        /* MANAGER LIST */
+        /* ================= MANAGER LIST ================= */
 
         const managerRow =
           document.createElement("div");
@@ -1719,8 +1323,7 @@ async function loadSavedApis(){
         const managerButton =
           document.createElement("button");
 
-        managerButton.type =
-          "button";
+        managerButton.type = "button";
 
         managerButton.className =
           "tool";
@@ -1732,9 +1335,7 @@ async function loadSavedApis(){
         managerButton.addEventListener(
           "click",
           function(){
-
             runSavedApi(api);
-
           }
         );
 
@@ -1742,24 +1343,18 @@ async function loadSavedApis(){
         const managerRemove =
           document.createElement("button");
 
-        managerRemove.type =
-          "button";
+        managerRemove.type = "button";
 
         managerRemove.className =
           "remove";
 
-        managerRemove.textContent =
-          "×";
+        managerRemove.textContent = "×";
 
 
         managerRemove.addEventListener(
           "click",
           function(){
-
-            removeSavedApi(
-              api.id
-            );
-
+            removeSavedApi(api.id);
           }
         );
 
@@ -1792,13 +1387,12 @@ async function loadSavedApis(){
       "</div>";
 
   }
-
 }
 
 
-/* =========================================================
+/* =====================================================
    RUN SAVED API
-========================================================= */
+===================================================== */
 
 async function runSavedApi(api){
 
@@ -1817,7 +1411,6 @@ async function runSavedApi(api){
     searchInput.focus();
 
     return;
-
   }
 
 
@@ -1853,24 +1446,14 @@ async function runSavedApi(api){
     let data = {};
 
     try{
-      data = await response.json();
+      data =
+        await response.json();
     }catch(_){
 
       data = {
         success:false,
-        error:
-          "Invalid server response."
+        error:"Invalid server response."
       };
-
-    }
-
-
-    if(
-      response.status === 401
-    ){
-
-      showLogin();
-      return;
 
     }
 
@@ -1885,12 +1468,13 @@ async function runSavedApi(api){
       });
 
       return;
-
     }
 
 
     showResult(
-      data.response
+      data.response !== undefined
+        ? data.response
+        : data
     );
 
 
@@ -1904,13 +1488,12 @@ async function runSavedApi(api){
     });
 
   }
-
 }
 
 
-/* =========================================================
-   REMOVE API
-========================================================= */
+/* =====================================================
+   REMOVE SAVED API
+===================================================== */
 
 async function removeSavedApi(id){
 
@@ -1919,9 +1502,7 @@ async function removeSavedApi(id){
       "Remove this saved API?"
     )
   ){
-
     return;
-
   }
 
 
@@ -1944,18 +1525,12 @@ async function removeSavedApi(id){
       );
 
 
-    const data =
-      await response.json();
+    let data = {};
 
-
-    if(
-      response.status === 401
-    ){
-
-      showLogin();
-      return;
-
-    }
+    try{
+      data =
+        await response.json();
+    }catch(_){}
 
 
     if(!response.ok){
@@ -1966,7 +1541,6 @@ async function removeSavedApi(id){
       );
 
       return;
-
     }
 
 
@@ -1981,13 +1555,12 @@ async function removeSavedApi(id){
     );
 
   }
-
 }
 
 
-/* =========================================================
+/* =====================================================
    SAVE CUSTOM API
-========================================================= */
+===================================================== */
 
 document
   .getElementById("saveApi")
@@ -2050,7 +1623,6 @@ async function saveCustomApi(){
       "Enter API name.";
 
     return;
-
   }
 
 
@@ -2062,7 +1634,6 @@ async function saveCustomApi(){
       "Enter a valid API URL.";
 
     return;
-
   }
 
 
@@ -2074,7 +1645,6 @@ async function saveCustomApi(){
       "URL must contain {message}.";
 
     return;
-
   }
 
 
@@ -2115,18 +1685,12 @@ async function saveCustomApi(){
       );
 
 
-    const data =
-      await response.json();
+    let data = {};
 
-
-    if(
-      response.status === 401
-    ){
-
-      showLogin();
-      return;
-
-    }
+    try{
+      data =
+        await response.json();
+    }catch(_){}
 
 
     if(!response.ok){
@@ -2136,7 +1700,6 @@ async function saveCustomApi(){
         "Save failed.";
 
       return;
-
     }
 
 
@@ -2174,13 +1737,12 @@ async function saveCustomApi(){
       "Failed to save API.";
 
   }
-
 }
 
 
-/* =========================================================
-   ESCAPE
-========================================================= */
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
 
 function escapeHtml(value){
 
@@ -2194,15 +1756,21 @@ function escapeHtml(value){
 }
 
 
-/* =========================================================
-   START
-========================================================= */
+/* =====================================================
+   START DIRECTLY
+===================================================== */
 
 selectTool("auto");
 
-checkLogin();
+/*
+ * NO LOGIN
+ * NO PASSWORD
+ * NO checkLogin()
+ */
+
+loadSavedApis();
 
 </script>
 
 </body>
-  </html>
+</html>
