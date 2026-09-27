@@ -1,156 +1,408 @@
 const crypto = require("crypto");
 
+/* =========================================================
+   TXG INFORMATION — AUTH CONFIG
+========================================================= */
+
 const COOKIE_NAME = "txg_admin_session";
-const SESSION_MS = 12 * 60 * 60 * 1000;
 
-const ADMIN_PASSWORD =
-  process.env.ADMIN_PASSWORD || "TXG@Admin#2026!Secure";
+const SESSION_HOURS = 12;
 
-function sign(value) {
-  return crypto
-    .createHmac("sha256", ADMIN_PASSWORD)
-    .update(value)
-    .digest("hex");
-}
+const DEFAULT_PASSWORD =
+    "TXG@Admin#2026!Secure";
 
-function makeToken() {
-  const expires = Date.now() + SESSION_MS;
-  const payload = String(expires);
-  return `${payload}.${sign(payload)}`;
-}
 
-function validToken(token) {
-  if (!token || typeof token !== "string") return false;
+/* =========================================================
+   SECRET
+========================================================= */
 
-  const parts = token.split(".");
-  if (parts.length !== 2) return false;
+function getSecret() {
 
-  const expires = Number(parts[0]);
-  const signature = parts[1];
-
-  if (!Number.isFinite(expires)) return false;
-  if (Date.now() > expires) return false;
-
-  const expected = sign(parts[0]);
-
-  try {
-    return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expected)
+    return (
+        process.env.AUTH_SECRET ||
+        "TXG-INFORMATION-CHANGE-AUTH-SECRET-2026"
     );
-  } catch {
-    return false;
-  }
+
 }
 
-function getCookie(req) {
-  if (req.cookies && req.cookies[COOKIE_NAME]) {
-    return req.cookies[COOKIE_NAME];
-  }
 
-  const header = req.headers.cookie || "";
+/* =========================================================
+   HASH
+========================================================= */
 
-  const match = header.match(
-    new RegExp(
-      "(?:^|;\\s*)" +
-        COOKIE_NAME.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") +
-        "=([^;]*)"
-    )
-  );
+function hash(value) {
 
-  return match ? decodeURIComponent(match[1]) : null;
+    return crypto
+        .createHmac(
+            "sha256",
+            getSecret()
+        )
+        .update(String(value))
+        .digest("hex");
+
 }
 
-function isAuthenticated(req) {
-  return validToken(getCookie(req));
+
+/* =========================================================
+   SESSION TOKEN
+========================================================= */
+
+function createSession() {
+
+    const expires =
+        Date.now() +
+        SESSION_HOURS *
+        60 *
+        60 *
+        1000;
+
+    const payload =
+        String(expires);
+
+    const signature =
+        hash(payload);
+
+    return `${payload}.${signature}`;
+
 }
 
-function cookieHeader(token, maxAge) {
-  return [
-    `${COOKIE_NAME}=${encodeURIComponent(token)}`,
-    "Path=/",
-    "HttpOnly",
-    "SameSite=Lax",
-    "Secure",
-    `Max-Age=${maxAge}`
-  ].join("; ");
+
+/* =========================================================
+   VERIFY SESSION
+========================================================= */
+
+function verifySession(token) {
+
+    if (!token) {
+        return false;
+    }
+
+    const parts =
+        String(token).split(".");
+
+    if (parts.length !== 2) {
+        return false;
+    }
+
+    const expires =
+        Number(parts[0]);
+
+    const signature =
+        parts[1];
+
+    if (
+        !Number.isFinite(expires) ||
+        expires < Date.now()
+    ) {
+        return false;
+    }
+
+    const expected =
+        hash(String(expires));
+
+    try {
+
+        return crypto.timingSafeEqual(
+            Buffer.from(signature),
+            Buffer.from(expected)
+        );
+
+    } catch {
+
+        return false;
+
+    }
+
 }
+
+
+/* =========================================================
+   READ COOKIE
+========================================================= */
+
+function getCookie(req, name) {
+
+    if (
+        req &&
+        req.cookies &&
+        typeof req.cookies === "object"
+    ) {
+
+        return req.cookies[name] || null;
+
+    }
+
+
+    const header =
+        req?.headers?.cookie || "";
+
+    const cookies =
+        header.split(";");
+
+
+    for (const item of cookies) {
+
+        const index =
+            item.indexOf("=");
+
+        if (index === -1) {
+            continue;
+        }
+
+        const key =
+            item.slice(0, index).trim();
+
+        const value =
+            item.slice(index + 1).trim();
+
+
+        if (key === name) {
+            return decodeURIComponent(value);
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* =========================================================
+   AUTHENTICATED
+========================================================= */
+
+function authenticated(req) {
+
+    const token =
+        getCookie(
+            req,
+            COOKIE_NAME
+        );
+
+    return verifySession(token);
+
+}
+
+
+/* =========================================================
+   SET SESSION COOKIE
+========================================================= */
+
+function setSessionCookie(res) {
+
+    const token =
+        createSession();
+
+
+    const maxAge =
+        SESSION_HOURS *
+        60 *
+        60;
+
+
+    res.setHeader(
+        "Set-Cookie",
+        [
+            `${COOKIE_NAME}=${encodeURIComponent(token)}`,
+            `Max-Age=${maxAge}`,
+            "Path=/",
+            "HttpOnly",
+            "Secure",
+            "SameSite=Lax"
+        ].join("; ")
+    );
+
+}
+
+
+/* =========================================================
+   CLEAR SESSION
+========================================================= */
+
+function clearSessionCookie(res) {
+
+    res.setHeader(
+        "Set-Cookie",
+        [
+            `${COOKIE_NAME}=`,
+            "Max-Age=0",
+            "Path=/",
+            "HttpOnly",
+            "Secure",
+            "SameSite=Lax"
+        ].join("; ")
+    );
+
+}
+
+
+/* =========================================================
+   PASSWORD
+========================================================= */
+
+function getPassword() {
+
+    return (
+        process.env.ADMIN_PASSWORD ||
+        DEFAULT_PASSWORD
+    );
+
+}
+
+
+/* =========================================================
+   LOGIN CHECK
+========================================================= */
+
+function checkPassword(password) {
+
+    const supplied =
+        hash(password || "");
+
+    const correct =
+        hash(getPassword());
+
+
+    try {
+
+        return crypto.timingSafeEqual(
+            Buffer.from(supplied),
+            Buffer.from(correct)
+        );
+
+    } catch {
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   VERCEL HANDLER
+========================================================= */
 
 async function handler(req, res) {
-  try {
-    const method = String(req.method || "GET").toUpperCase();
 
-    if (method === "GET") {
-      if (!isAuthenticated(req)) {
-        return res.status(401).json({
-          ok: false,
-          authenticated: false
+    if (req.method === "GET") {
+
+        return res.status(200).json({
+            success: true,
+            authenticated:
+                authenticated(req)
         });
-      }
 
-      return res.status(200).json({
-        ok: true,
-        authenticated: true
-      });
     }
 
-    if (method === "POST") {
-      const body =
-        req.body && typeof req.body === "object"
-          ? req.body
-          : {};
 
-      const password = String(body.password || "");
+    if (req.method !== "POST") {
 
-      if (!password || password !== ADMIN_PASSWORD) {
-        return res.status(401).json({
-          ok: false,
-          authenticated: false,
-          error: "Invalid password"
+        return res.status(405).json({
+            success: false,
+            message: "Method not allowed"
         });
-      }
 
-      const token = makeToken();
-
-      res.setHeader(
-        "Set-Cookie",
-        cookieHeader(token, Math.floor(SESSION_MS / 1000))
-      );
-
-      return res.status(200).json({
-        ok: true,
-        authenticated: true
-      });
     }
 
-    if (method === "DELETE") {
-      res.setHeader(
-        "Set-Cookie",
-        cookieHeader("", 0)
-      );
 
-      return res.status(200).json({
-        ok: true,
-        authenticated: false
-      });
+    const body =
+        req.body || {};
+
+
+    const action =
+        String(body.action || "")
+            .toLowerCase();
+
+
+    /* ---------------------------------------------
+       LOGIN
+    --------------------------------------------- */
+
+    if (action === "login") {
+
+        const password =
+            String(body.password || "");
+
+
+        if (!checkPassword(password)) {
+
+            return res.status(401).json({
+                success: false,
+                message: "Invalid password"
+            });
+
+        }
+
+
+        setSessionCookie(res);
+
+
+        return res.status(200).json({
+            success: true,
+            authenticated: true,
+            message: "Login successful"
+        });
+
     }
 
-    res.setHeader("Allow", "GET, POST, DELETE");
 
-    return res.status(405).json({
-      ok: false,
-      error: "Method not allowed"
-    });
-  } catch (error) {
-    console.error("AUTH ERROR:", error);
+    /* ---------------------------------------------
+       LOGOUT
+    --------------------------------------------- */
 
-    return res.status(500).json({
-      ok: false,
-      error: "Authentication server error"
+    if (action === "logout") {
+
+        clearSessionCookie(res);
+
+
+        return res.status(200).json({
+            success: true,
+            authenticated: false,
+            message: "Logged out"
+        });
+
+    }
+
+
+    /* ---------------------------------------------
+       CHECK
+    --------------------------------------------- */
+
+    if (action === "check") {
+
+        return res.status(200).json({
+            success: true,
+            authenticated:
+                authenticated(req)
+        });
+
+    }
+
+
+    return res.status(400).json({
+        success: false,
+        message: "Unknown authentication action"
     });
-  }
+
 }
 
-handler.authenticated = isAuthenticated;
+
+/* =========================================================
+   EXPORTS
+========================================================= */
+
+handler.authenticated =
+    authenticated;
+
+handler.setSessionCookie =
+    setSessionCookie;
+
+handler.clearSessionCookie =
+    clearSessionCookie;
+
+handler.checkPassword =
+    checkPassword;
 
 module.exports = handler;
