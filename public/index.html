@@ -14,15 +14,35 @@
   --text:#f4f7fb;
   --muted:#91a0b2;
   --accent:#6ee7b7;
-  --bad:#ff8995;
+  --danger:#ff8995;
 }
-*{box-sizing:border-box}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  min-height:100%;
+}
 
 body{
-  margin:0;
-  background:radial-gradient(circle at top,#182530,#07090d 52%);
+  background:#07090d;
   color:var(--text);
   font-family:Inter,system-ui,Arial,sans-serif;
+}
+
+/* NO MOVING LETTERS / NO ANIMATION */
+body::before,
+body::after{
+  content:none!important;
+  display:none!important;
+}
+
+button,
+input,
+select{
+  font:inherit;
 }
 
 .wrap{
@@ -52,7 +72,7 @@ body{
 .login,
 .searchbox,
 .card{
-  background:rgba(16,21,29,.96);
+  background:var(--panel);
   border:1px solid var(--line);
   border-radius:18px;
   padding:22px;
@@ -75,23 +95,16 @@ select{
   color:var(--text);
   border-radius:12px;
   padding:12px 14px;
-  font:inherit;
-}
-
-.input{
   outline:none;
 }
 
-.input:focus{
+.input:focus,
+select:focus{
   border-color:var(--accent);
 }
 
 .btn{
   cursor:pointer;
-}
-
-.btn:hover{
-  border-color:#52657c;
 }
 
 .primary{
@@ -169,7 +182,7 @@ select{
 }
 
 .customForm .full{
-  grid-column:1 / -1;
+  grid-column:1/-1;
 }
 
 .savedManager{
@@ -177,8 +190,8 @@ select{
 }
 
 .managerTitle{
-  font-size:13px;
   color:var(--muted);
+  font-size:13px;
   margin-bottom:9px;
 }
 
@@ -199,10 +212,11 @@ select{
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
+  text-align:left;
 }
 
 .removeBtn{
-  color:#ff8995;
+  color:var(--danger);
   border-color:#4a2930;
   min-width:82px;
 }
@@ -218,7 +232,7 @@ select{
 }
 
 .error{
-  color:var(--bad);
+  color:var(--danger);
 }
 
 .results{
@@ -259,6 +273,7 @@ pre{
 }
 
 @media(max-width:650px){
+
   .searchrow{
     grid-template-columns:1fr;
   }
@@ -290,7 +305,7 @@ pre{
 
   <div>
     <div class="logo">TXG Information</div>
-    <div class="sub">Connected public & authorized lookup center</div>
+    <div class="sub">Information & API Center</div>
   </div>
 
   <button
@@ -304,16 +319,16 @@ pre{
 </header>
 
 
-<!-- =========================
+<!-- ================================
      LOGIN
-========================= -->
+================================ -->
 
 <section id="loginBox" class="login">
 
   <h1>Admin Login</h1>
 
   <div class="sub">
-    Secure server-side session.
+    Secure admin access
   </div>
 
   <input
@@ -332,14 +347,17 @@ pre{
     Login
   </button>
 
-  <div id="loginMsg" class="status"></div>
+  <div
+    id="loginMsg"
+    class="status"
+  ></div>
 
 </section>
 
 
-<!-- =========================
-     APP
-========================= -->
+<!-- ================================
+     MAIN APP
+================================ -->
 
 <main id="app" class="hidden">
 
@@ -350,7 +368,7 @@ pre{
     <input
       id="query"
       class="input"
-      placeholder="Mobile, Email, IP, URL, PIN, IFSC, UPI, Vehicle or Company"
+      placeholder="Enter search value..."
     >
 
     <button
@@ -365,35 +383,22 @@ pre{
 
 
   <!--
-    FIXED BUTTONS
-
-    Auto
-    Mobile
-    Email
-    Vehicle
-    IP
-    URL
-    PIN
-    IFSC
-    UPI
-    Company
-    CRM
-
+    FIXED TOOLS
     ↓
-
-    ALL SAVED CUSTOM APIs
-
+    SAVED CUSTOM APIS
     ↓
-
-    Custom API
+    CUSTOM API
   -->
 
-  <div id="tools" class="tools"></div>
+  <div
+    id="tools"
+    class="tools"
+  ></div>
 
 
-  <!-- =========================
+  <!-- ================================
        CUSTOM API MANAGER
-  ========================= -->
+  ================================= -->
 
   <div
     id="customPanel"
@@ -417,15 +422,15 @@ pre{
       <input
         id="apiKey"
         class="input"
-        placeholder="API Key (optional)"
         type="password"
+        placeholder="API Key (optional)"
       >
 
       <input
         id="apiHeader"
         class="input"
-        placeholder="Header name"
         value="Authorization"
+        placeholder="Header name"
       >
 
       <select
@@ -447,14 +452,12 @@ pre{
     </div>
 
 
-    <!-- =========================
-         REMOVE API MANAGER
-    ========================= -->
+    <!-- REMOVE API SECTION -->
 
     <div class="savedManager">
 
       <div class="managerTitle">
-        Saved APIs
+        Manage Saved APIs
       </div>
 
       <div
@@ -489,9 +492,9 @@ pre{
 
 <script>
 
-/* =====================================================
+/* ==========================================
    FIXED TOOLS
-===================================================== */
+========================================== */
 
 const builtInTools = [
 
@@ -510,39 +513,35 @@ const builtInTools = [
 ];
 
 
-/* =====================================================
+/* ==========================================
    STATE
-===================================================== */
+========================================== */
 
 let selected = "auto";
-
 let selectedApiId = "";
-
 let customApis = [];
 
 
-/* =====================================================
-   SHORTCUT
-===================================================== */
+/* ==========================================
+   HELPER
+========================================== */
 
 const $ = id =>
   document.getElementById(id);
 
 
-/* =====================================================
+/* ==========================================
    STATUS
-===================================================== */
+========================================== */
 
 function setStatus(
   text,
   type=""
 ){
 
-  const el =
-    $("status");
+  const el = $("status");
 
-  el.textContent =
-    text;
+  el.textContent = text;
 
   el.className =
     "status " + type;
@@ -550,9 +549,9 @@ function setStatus(
 }
 
 
-/* =====================================================
-   ADD TOOL BUTTON
-===================================================== */
+/* ==========================================
+   CREATE TOOL BUTTON
+========================================== */
 
 function addToolButton(
   key,
@@ -563,8 +562,7 @@ function addToolButton(
   const button =
     document.createElement("button");
 
-  button.type =
-    "button";
+  button.type = "button";
 
   button.className =
     "btn tool " +
@@ -583,20 +581,18 @@ function addToolButton(
     "click",
     () => {
 
-      selected =
-        key;
+      selected = key;
 
       if(
         key.startsWith("custom:")
       ){
 
         selectedApiId =
-          key.slice(7);
+          key.substring(7);
 
       }else{
 
-        selectedApiId =
-          "";
+        selectedApiId = "";
 
       }
 
@@ -612,19 +608,16 @@ function addToolButton(
 }
 
 
-/* =====================================================
-   DRAW MAIN BUTTONS
-===================================================== */
+/* ==========================================
+   DRAW BUTTONS
+========================================== */
 
 function drawTools(){
 
-  $("tools")
-    .innerHTML = "";
+  $("tools").innerHTML = "";
 
 
-  /*
-    FIXED TOOLS
-  */
+  /* FIXED BUTTONS */
 
   builtInTools.forEach(
     ([key,label]) => {
@@ -639,10 +632,10 @@ function drawTools(){
 
 
   /*
-    SAVED CUSTOM APIS
+    SAVED CUSTOM APIs
 
-    EVERY NEW API IS ADDED
-    BEFORE CUSTOM API
+    They ALWAYS appear before
+    the Custom API button.
   */
 
   customApis.forEach(
@@ -669,7 +662,7 @@ function drawTools(){
 
 
   /*
-    SHOW / HIDE MANAGER
+    CUSTOM API MANAGER
   */
 
   $("customPanel")
@@ -685,9 +678,9 @@ function drawTools(){
 }
 
 
-/* =====================================================
-   DRAW REMOVE MANAGER
-===================================================== */
+/* ==========================================
+   REMOVE MANAGER
+========================================== */
 
 function drawManager(){
 
@@ -698,7 +691,7 @@ function drawManager(){
 
 
   if(
-    !customApis.length
+    customApis.length === 0
   ){
 
     const empty =
@@ -708,11 +701,9 @@ function drawManager(){
       "status";
 
     empty.textContent =
-      "No custom APIs saved.";
+      "No saved APIs.";
 
-    list.appendChild(
-      empty
-    );
+    list.appendChild(empty);
 
     return;
   }
@@ -729,7 +720,9 @@ function drawManager(){
 
 
       const name =
-        document.createElement("div");
+        document.createElement("button");
+
+      name.type = "button";
 
       name.className =
         "btn managerName";
@@ -739,7 +732,7 @@ function drawManager(){
 
 
       /*
-        Click name = select API
+        SELECT API
       */
 
       name.addEventListener(
@@ -750,7 +743,7 @@ function drawManager(){
             "custom:" + api.id;
 
           selectedApiId =
-            api.id;
+            String(api.id);
 
           drawTools();
 
@@ -764,14 +757,13 @@ function drawManager(){
 
 
       /*
-        REMOVE BUTTON
+        REMOVE API
       */
 
       const remove =
         document.createElement("button");
 
-      remove.type =
-        "button";
+      remove.type = "button";
 
       remove.className =
         "btn removeBtn";
@@ -798,9 +790,7 @@ function drawManager(){
       );
 
 
-      list.appendChild(
-        row
-      );
+      list.appendChild(row);
 
     }
   );
@@ -808,9 +798,9 @@ function drawManager(){
 }
 
 
-/* =====================================================
-   LOAD CUSTOM APIS
-===================================================== */
+/* ==========================================
+   LOAD CUSTOM APIs
+========================================== */
 
 async function loadCustomApis(){
 
@@ -831,8 +821,8 @@ async function loadCustomApis(){
     ){
 
       showLogin();
-
       return;
+
     }
 
 
@@ -841,9 +831,7 @@ async function loadCustomApis(){
 
 
     customApis =
-      Array.isArray(
-        data.apis
-      )
+      Array.isArray(data.apis)
         ? data.apis
         : [];
 
@@ -867,9 +855,9 @@ async function loadCustomApis(){
 }
 
 
-/* =====================================================
-   SAVE CUSTOM API
-===================================================== */
+/* ==========================================
+   ADD CUSTOM API
+========================================== */
 
 async function saveCustomApi(){
 
@@ -884,18 +872,17 @@ async function saveCustomApi(){
       .trim();
 
   const key =
-    $("apiKey")
-      .value;
+    $("apiKey").value;
 
   const header =
     $("apiHeader")
       .value
       .trim()
-      || "Authorization";
+      ||
+      "Authorization";
 
   const method =
-    $("apiMethod")
-      .value;
+    $("apiMethod").value;
 
 
   if(!name){
@@ -942,17 +929,12 @@ async function saveCustomApi(){
             JSON.stringify({
 
               name:name,
-
               url:url,
-
               key:key,
-
               header:header,
-
               method:method
 
             })
-
         }
       );
 
@@ -972,30 +954,19 @@ async function saveCustomApi(){
 
 
     customApis =
-      Array.isArray(
-        data.apis
-      )
+      Array.isArray(data.apis)
         ? data.apis
         : [];
 
 
-    /*
-      CLEAR FORM
-    */
+    /* CLEAR FORM */
 
-    $("apiName")
-      .value = "";
-
-    $("apiUrl")
-      .value = "";
-
-    $("apiKey")
-      .value = "";
+    $("apiName").value = "";
+    $("apiUrl").value = "";
+    $("apiKey").value = "";
 
 
-    /*
-      SELECT NEWEST API
-    */
+    /* SELECT NEW API */
 
     const newest =
       customApis[
@@ -1010,7 +981,7 @@ async function saveCustomApi(){
         newest.id;
 
       selectedApiId =
-        newest.id;
+        String(newest.id);
 
     }
 
@@ -1036,13 +1007,11 @@ async function saveCustomApi(){
 }
 
 
-/* =====================================================
+/* ==========================================
    REMOVE CUSTOM API
-===================================================== */
+========================================== */
 
-async function removeCustomApi(
-  id
-){
+async function removeCustomApi(id){
 
   const api =
     customApis.find(
@@ -1061,7 +1030,7 @@ async function removeCustomApi(
     window.confirm(
       'Remove "' +
       api.name +
-      '"?'
+      '" permanently?'
     );
 
 
@@ -1092,7 +1061,6 @@ async function removeCustomApi(
             JSON.stringify({
               id:id
             })
-
         }
       );
 
@@ -1112,16 +1080,13 @@ async function removeCustomApi(
 
 
     customApis =
-      Array.isArray(
-        data.apis
-      )
+      Array.isArray(data.apis)
         ? data.apis
         : [];
 
 
     /*
-      IF CURRENT API WAS REMOVED,
-      RETURN TO CUSTOM API MANAGER
+      IF CURRENT API WAS REMOVED
     */
 
     if(
@@ -1132,8 +1097,7 @@ async function removeCustomApi(
       selected =
         "custom-manager";
 
-      selectedApiId =
-        "";
+      selectedApiId = "";
 
     }
 
@@ -1159,38 +1123,32 @@ async function removeCustomApi(
 }
 
 
-/* =====================================================
+/* ==========================================
    LOGIN
-===================================================== */
+========================================== */
 
 async function login(){
 
   const password =
-    $("password")
-      .value;
+    $("password").value;
 
 
   if(!password){
 
-    $("loginMsg")
-      .textContent =
+    $("loginMsg").textContent =
       "Enter password.";
 
-    $("loginMsg")
-      .className =
+    $("loginMsg").className =
       "status error";
 
     return;
   }
 
 
-  $("loginMsg")
-    .textContent =
+  $("loginMsg").textContent =
     "Checking...";
 
-
-  $("loginMsg")
-    .className =
+  $("loginMsg").className =
     "status";
 
 
@@ -1212,7 +1170,6 @@ async function login(){
               action:"login",
               password:password
             })
-
         }
       );
 
@@ -1236,12 +1193,10 @@ async function login(){
 
   }catch(error){
 
-    $("loginMsg")
-      .textContent =
+    $("loginMsg").textContent =
       error.message;
 
-    $("loginMsg")
-      .className =
+    $("loginMsg").className =
       "status error";
 
   }
@@ -1249,9 +1204,9 @@ async function login(){
 }
 
 
-/* =====================================================
+/* ==========================================
    LOGOUT
-===================================================== */
+========================================== */
 
 async function logout(){
 
@@ -1271,7 +1226,6 @@ async function logout(){
           JSON.stringify({
             action:"logout"
           })
-
       }
     );
 
@@ -1284,9 +1238,9 @@ async function logout(){
 }
 
 
-/* =====================================================
+/* ==========================================
    SHOW APP
-===================================================== */
+========================================== */
 
 function showApp(){
 
@@ -1310,9 +1264,9 @@ function showApp(){
 }
 
 
-/* =====================================================
+/* ==========================================
    SHOW LOGIN
-===================================================== */
+========================================== */
 
 function showLogin(){
 
@@ -1331,19 +1285,16 @@ function showLogin(){
 }
 
 
-/* =====================================================
+/* ==========================================
    RENDER RESULTS
-===================================================== */
+========================================== */
 
-function renderResults(
-  data
-){
+function renderResults(data){
 
   const root =
     $("results");
 
-  root.innerHTML =
-    "";
+  root.innerHTML = "";
 
 
   if(
@@ -1360,9 +1311,7 @@ function renderResults(
     empty.textContent =
       "No results returned.";
 
-    root.appendChild(
-      empty
-    );
+    root.appendChild(empty);
 
     return;
   }
@@ -1372,27 +1321,21 @@ function renderResults(
     item => {
 
       const card =
-        document.createElement(
-          "article"
-        );
+        document.createElement("article");
 
       card.className =
         "card";
 
 
       const head =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
       head.className =
         "head";
 
 
       const name =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
       name.className =
         "name";
@@ -1403,9 +1346,7 @@ function renderResults(
 
 
       const source =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
       source.className =
         "source";
@@ -1423,29 +1364,17 @@ function renderResults(
 
 
       const pre =
-        document.createElement(
-          "pre"
-        );
+        document.createElement("pre");
 
 
-      if(
-        typeof item.data ===
-        "string"
-      ){
-
-        pre.textContent =
-          item.data;
-
-      }else{
-
-        pre.textContent =
-          JSON.stringify(
-            item.data,
-            null,
-            2
-          );
-
-      }
+      pre.textContent =
+        typeof item.data === "string"
+          ? item.data
+          : JSON.stringify(
+              item.data,
+              null,
+              2
+            );
 
 
       head.append(
@@ -1453,16 +1382,12 @@ function renderResults(
         source
       );
 
-
       card.append(
         head,
         pre
       );
 
-
-      root.appendChild(
-        card
-      );
+      root.appendChild(card);
 
     }
   );
@@ -1470,9 +1395,9 @@ function renderResults(
 }
 
 
-/* =====================================================
+/* ==========================================
    SEARCH
-===================================================== */
+========================================== */
 
 async function search(){
 
@@ -1498,8 +1423,7 @@ async function search(){
   );
 
 
-  $("results")
-    .innerHTML = "";
+  $("results").innerHTML = "";
 
 
   try{
@@ -1507,14 +1431,8 @@ async function search(){
     let url;
 
 
-    /*
-      CUSTOM API
-    */
-
     if(
-      selected.startsWith(
-        "custom:"
-      )
+      selected.startsWith("custom:")
     ){
 
       url =
@@ -1529,13 +1447,7 @@ async function search(){
           value
         );
 
-
     }else{
-
-
-      /*
-        NORMAL TOOL
-      */
 
       url =
         "/api/lookup" +
@@ -1570,12 +1482,10 @@ async function search(){
 
       showLogin();
 
-      $("loginMsg")
-        .textContent =
+      $("loginMsg").textContent =
         "Session expired. Login again.";
 
-      $("loginMsg")
-        .className =
+      $("loginMsg").className =
         "status error";
 
       return;
@@ -1592,9 +1502,7 @@ async function search(){
     }
 
 
-    renderResults(
-      data
-    );
+    renderResults(data);
 
 
     setStatus(
@@ -1610,9 +1518,7 @@ async function search(){
   }catch(error){
 
     const card =
-      document.createElement(
-        "div"
-      );
+      document.createElement("div");
 
     card.className =
       "card error";
@@ -1635,9 +1541,9 @@ async function search(){
 }
 
 
-/* =====================================================
+/* ==========================================
    EVENTS
-===================================================== */
+========================================== */
 
 $("login")
   .addEventListener(
@@ -1645,20 +1551,17 @@ $("login")
     login
   );
 
-
 $("logout")
   .addEventListener(
     "click",
     logout
   );
 
-
 $("search")
   .addEventListener(
     "click",
     search
   );
-
 
 $("addApi")
   .addEventListener(
@@ -1672,13 +1575,8 @@ $("password")
     "keydown",
     event => {
 
-      if(
-        event.key ===
-        "Enter"
-      ){
-
+      if(event.key === "Enter"){
         login();
-
       }
 
     }
@@ -1690,26 +1588,22 @@ $("query")
     "keydown",
     event => {
 
-      if(
-        event.key ===
-        "Enter"
-      ){
-
+      if(event.key === "Enter"){
         search();
-
       }
 
     }
   );
 
 
-/* =====================================================
-   SESSION CHECK
-===================================================== */
+/* ==========================================
+   CHECK LOGIN SESSION
+========================================== */
 
 fetch(
   "/api/auth",
   {
+    method:"GET",
     cache:"no-store"
   }
 )
@@ -1720,9 +1614,7 @@ fetch(
 .then(
   data => {
 
-    if(
-      data.authenticated
-    ){
+    if(data.authenticated){
 
       showApp();
 
@@ -1746,4 +1638,3 @@ fetch(
 
 </body>
 </html>
-```0
