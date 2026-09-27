@@ -6,367 +6,322 @@
 <title>TXG Information Center</title>
 
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#070b12;
+  color:#f5f7fa
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #070b12;
-  color: #f5f7fa;
+body{padding:16px}
+
+button,input,select{font:inherit}
+
+button{cursor:pointer}
+
+.hidden{display:none!important}
+
+/* LOGIN */
+
+#loginPage{
+  min-height:90vh;
+  display:flex;
+  align-items:center;
+  justify-content:center
 }
 
-body {
-  padding: 18px;
+.login-box{
+  width:100%;
+  max-width:390px;
+  padding:28px;
+  background:#0d131d;
+  border:1px solid #202a39;
+  border-radius:18px;
+  box-shadow:0 15px 45px rgba(0,0,0,.35)
 }
 
-button,
-input,
-select,
-textarea {
-  font: inherit;
+.login-title{
+  font-size:27px;
+  font-weight:800;
+  margin-bottom:7px
 }
 
-button {
-  cursor: pointer;
+.login-subtitle{
+  color:#8e9aaa;
+  font-size:14px;
+  margin-bottom:25px
 }
 
-.hidden {
-  display: none !important;
+.input-label{
+  display:block;
+  font-size:13px;
+  color:#aab4c3;
+  margin-bottom:7px
 }
 
-/* =========================
-   LOGIN
-========================= */
-
-#loginPage {
-  min-height: 90vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.input{
+  width:100%;
+  border:1px solid #273344;
+  background:#080d15;
+  color:#fff;
+  border-radius:11px;
+  padding:13px 14px;
+  outline:none
 }
 
-.login-box {
-  width: 100%;
-  max-width: 390px;
-  background: #0d131d;
-  border: 1px solid #202a39;
-  border-radius: 18px;
-  padding: 28px;
-  box-shadow: 0 15px 45px rgba(0,0,0,.35);
+.input:focus{
+  border-color:#4c8dff
 }
 
-.login-title {
-  font-size: 27px;
-  font-weight: 800;
-  margin-bottom: 7px;
+.login-btn{
+  width:100%;
+  margin-top:15px;
+  padding:13px;
+  border:0;
+  border-radius:11px;
+  background:#347cff;
+  color:#fff;
+  font-weight:700
 }
 
-.login-subtitle {
-  color: #8e9aaa;
-  font-size: 14px;
-  margin-bottom: 25px;
+.login-btn:disabled{
+  opacity:.6
 }
 
-.input-label {
-  display: block;
-  font-size: 13px;
-  color: #aab4c3;
-  margin-bottom: 7px;
+.login-error{
+  min-height:20px;
+  margin-top:12px;
+  color:#ff6978;
+  font-size:13px
 }
 
-.input {
-  width: 100%;
-  border: 1px solid #273344;
-  background: #080d15;
-  color: white;
-  border-radius: 11px;
-  padding: 13px 14px;
-  outline: none;
+/* APP */
+
+#appPage{
+  max-width:1100px;
+  margin:0 auto
 }
 
-.input:focus {
-  border-color: #4c8dff;
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:20px
 }
 
-.login-btn {
-  width: 100%;
-  margin-top: 15px;
-  padding: 13px;
-  border: 0;
-  border-radius: 11px;
-  background: #347cff;
-  color: white;
-  font-weight: 700;
+.brand-title{
+  font-size:25px;
+  font-weight:800
 }
 
-.login-btn:disabled {
-  opacity: .6;
-  cursor: not-allowed;
+.brand-subtitle{
+  color:#7f8b9d;
+  font-size:13px;
+  margin-top:4px
 }
 
-.login-error {
-  min-height: 20px;
-  margin-top: 12px;
-  color: #ff6978;
-  font-size: 13px;
+.logout-btn{
+  border:1px solid #303b4d;
+  background:#101722;
+  color:#e7ebf1;
+  padding:9px 14px;
+  border-radius:9px
 }
 
-/* =========================
-   MAIN
-========================= */
-
-#appPage {
-  max-width: 1100px;
-  margin: 0 auto;
+.section{
+  background:#0d131d;
+  border:1px solid #202a39;
+  border-radius:17px;
+  padding:18px;
+  margin-bottom:18px
 }
 
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
+.section-title{
+  font-size:17px;
+  font-weight:750;
+  margin-bottom:14px
 }
 
-.brand-title {
-  font-size: 25px;
-  font-weight: 800;
+/* SEARCH */
+
+.search-row{
+  display:flex;
+  gap:10px
 }
 
-.brand-subtitle {
-  color: #7f8b9d;
-  font-size: 13px;
-  margin-top: 4px;
+.search-row .input{
+  flex:1
 }
 
-.logout-btn {
-  border: 1px solid #303b4d;
-  background: #101722;
-  color: #e7ebf1;
-  padding: 9px 14px;
-  border-radius: 9px;
+.search-btn{
+  min-width:105px;
+  border:0;
+  border-radius:10px;
+  background:#347cff;
+  color:#fff;
+  font-weight:700;
+  padding:0 18px
 }
 
-.section {
-  background: #0d131d;
-  border: 1px solid #202a39;
-  border-radius: 17px;
-  padding: 18px;
-  margin-bottom: 18px;
+.detected{
+  margin-top:9px;
+  color:#8490a2;
+  font-size:12px
 }
 
-.section-title {
-  font-size: 17px;
-  font-weight: 750;
-  margin-bottom: 14px;
+/* TOOLS */
+
+.tools-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px
 }
 
-.search-row {
-  display: flex;
-  gap: 10px;
+.tool{
+  min-height:48px;
+  border:1px solid #263244;
+  background:#101722;
+  color:#eef2f7;
+  border-radius:11px;
+  padding:12px 13px;
+  text-align:left;
+  font-weight:650
 }
 
-.search-row .input {
-  flex: 1;
+.tool:hover{
+  border-color:#4a78bd;
+  background:#141d2a
 }
 
-.search-btn {
-  min-width: 105px;
-  border: 0;
-  border-radius: 10px;
-  background: #347cff;
-  color: white;
-  font-weight: 700;
-  padding: 0 18px;
+.tool.active{
+  border-color:#347cff;
+  background:#142544
 }
 
-.detected {
-  margin-top: 9px;
-  color: #8490a2;
-  font-size: 12px;
+.custom-tool-row{
+  display:flex;
+  gap:7px
 }
 
-/* =========================
-   TOOLS GRID
-========================= */
-
-.tools-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+.custom-tool-row .tool{
+  flex:1
 }
 
-.tool {
-  min-height: 48px;
-  border: 1px solid #263244;
-  background: #101722;
-  color: #eef2f7;
-  border-radius: 11px;
-  padding: 12px 13px;
-  text-align: left;
-  font-weight: 650;
-  transition: .15s ease;
+.remove{
+  width:44px;
+  border:1px solid #42252c;
+  background:#1c1014;
+  color:#ff7482;
+  border-radius:10px;
+  font-size:18px
 }
 
-.tool:hover {
-  border-color: #4a78bd;
-  background: #141d2a;
+/* RESULT */
+
+.result-box{
+  min-height:100px;
+  background:#080d15;
+  border:1px solid #202a39;
+  border-radius:12px;
+  padding:15px;
+  overflow:auto
 }
 
-.tool.active {
-  border-color: #347cff;
-  background: #142544;
+.result-loading{color:#8da9d8}
+.result-error{color:#ff6f7d}
+.result-empty{color:#697689}
+
+pre{
+  white-space:pre-wrap;
+  word-break:break-word;
+  margin:0;
+  color:#dfe6ef;
+  font-family:Consolas,monospace;
+  font-size:13px
 }
 
-.custom-tool-row {
-  display: flex;
-  gap: 7px;
-  align-items: stretch;
+/* CUSTOM API */
+
+.form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:11px
 }
 
-.custom-tool-row .tool {
-  flex: 1;
+.form-full{
+  grid-column:1/-1
 }
 
-.remove {
-  width: 44px;
-  border: 1px solid #42252c;
-  background: #1c1014;
-  color: #ff7482;
-  border-radius: 10px;
-  font-size: 18px;
+.field label{
+  display:block;
+  color:#aab4c3;
+  font-size:12px;
+  margin-bottom:6px
 }
 
-/* =========================
-   RESULT
-========================= */
-
-.result-box {
-  min-height: 100px;
-  background: #080d15;
-  border: 1px solid #202a39;
-  border-radius: 12px;
-  padding: 15px;
-  overflow: auto;
+.save-api-btn{
+  border:0;
+  background:#2779e8;
+  color:#fff;
+  border-radius:10px;
+  padding:12px 16px;
+  font-weight:700
 }
 
-.result-loading {
-  color: #8da9d8;
+.status{
+  color:#8c99aa;
+  font-size:12px;
+  margin-top:10px;
+  min-height:18px
 }
 
-.result-error {
-  color: #ff6f7d;
+.saved-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin-top:13px
 }
 
-.result-empty {
-  color: #697689;
+.small{
+  color:#737f91;
+  font-size:12px
 }
 
-pre {
-  white-space: pre-wrap;
-  word-break: break-word;
-  margin: 0;
-  color: #dfe6ef;
-  font-family: Consolas, monospace;
-  font-size: 13px;
-}
+@media(max-width:650px){
 
-/* =========================
-   CUSTOM API
-========================= */
+  body{padding:12px}
 
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 11px;
-}
-
-.form-full {
-  grid-column: 1 / -1;
-}
-
-.field label {
-  display: block;
-  color: #aab4c3;
-  font-size: 12px;
-  margin-bottom: 6px;
-}
-
-.save-api-btn {
-  border: 0;
-  background: #2779e8;
-  color: white;
-  border-radius: 10px;
-  padding: 12px 16px;
-  font-weight: 700;
-}
-
-.status {
-  color: #8c99aa;
-  font-size: 12px;
-  margin-top: 10px;
-  min-height: 18px;
-}
-
-.saved-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 13px;
-}
-
-.saved-item {
-  display: flex;
-  gap: 7px;
-}
-
-.small {
-  color: #737f91;
-  font-size: 12px;
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 650px) {
-
-  body {
-    padding: 12px;
+  .topbar{
+    align-items:flex-start
   }
 
-  .topbar {
-    align-items: flex-start;
+  .brand-title{
+    font-size:21px
   }
 
-  .brand-title {
-    font-size: 21px;
+  .section{
+    padding:14px;
+    border-radius:14px
   }
 
-  .section {
-    padding: 14px;
-    border-radius: 14px;
+  .search-row{
+    flex-direction:column
   }
 
-  .search-row {
-    flex-direction: column;
+  .search-btn{
+    min-height:46px
   }
 
-  .search-btn {
-    min-height: 46px;
+  .form-grid{
+    grid-template-columns:1fr
   }
 
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-full {
-    grid-column: auto;
+  .form-full{
+    grid-column:auto
   }
 }
 </style>
@@ -374,9 +329,7 @@ pre {
 
 <body>
 
-<!-- =========================================================
-     LOGIN PAGE
-========================================================= -->
+<!-- ================= LOGIN ================= -->
 
 <div id="loginPage">
 
@@ -390,7 +343,10 @@ pre {
       Secure Admin Information Center
     </div>
 
-    <label class="input-label" for="password">
+    <label
+      class="input-label"
+      for="password"
+    >
       Admin Password
     </label>
 
@@ -420,15 +376,14 @@ pre {
 </div>
 
 
-<!-- =========================================================
-     MAIN APP
-========================================================= -->
+<!-- ================= APP ================= -->
 
 <div id="appPage" class="hidden">
 
   <div class="topbar">
 
     <div>
+
       <div class="brand-title">
         TXG Information Center
       </div>
@@ -436,6 +391,7 @@ pre {
       <div class="brand-subtitle">
         Search & information tools
       </div>
+
     </div>
 
     <button
@@ -449,9 +405,7 @@ pre {
   </div>
 
 
-  <!-- =======================================================
-       SEARCH
-  ======================================================== -->
+  <!-- SEARCH -->
 
   <div class="section">
 
@@ -489,9 +443,7 @@ pre {
   </div>
 
 
-  <!-- =======================================================
-       TOOLS
-  ======================================================== -->
+  <!-- TOOLS -->
 
   <div class="section">
 
@@ -592,10 +544,6 @@ pre {
         CRM
       </button>
 
-
-      <!-- Saved APIs are inserted here -->
-
-
       <button
         id="customApiTool"
         class="tool"
@@ -610,9 +558,7 @@ pre {
   </div>
 
 
-  <!-- =======================================================
-       RESULT
-  ======================================================== -->
+  <!-- RESULT -->
 
   <div class="section">
 
@@ -624,17 +570,17 @@ pre {
       id="resultBox"
       class="result-box"
     >
+
       <div class="result-empty">
         Search result will appear here.
       </div>
+
     </div>
 
   </div>
 
 
-  <!-- =======================================================
-       CUSTOM API MANAGER
-  ======================================================== -->
+  <!-- CUSTOM API -->
 
   <div
     id="customApiSection"
@@ -645,13 +591,16 @@ pre {
       Custom API
     </div>
 
-    <div class="small" style="margin-bottom:14px;">
-      Use <b>{message}</b> in the URL. Whatever you type in the search box will replace it.
+    <div
+      class="small"
+      style="margin-bottom:14px;"
+    >
+      Use <b>{message}</b> in the URL.
+      Your search value will replace it.
     </div>
 
 
     <div class="form-grid">
-
 
       <div class="field">
 
@@ -680,25 +629,11 @@ pre {
           class="input"
         >
 
-          <option value="GET">
-            GET
-          </option>
-
-          <option value="POST">
-            POST
-          </option>
-
-          <option value="PUT">
-            PUT
-          </option>
-
-          <option value="PATCH">
-            PATCH
-          </option>
-
-          <option value="DELETE">
-            DELETE
-          </option>
+          <option value="GET">GET</option>
+          <option value="POST">POST</option>
+          <option value="PUT">PUT</option>
+          <option value="PATCH">PATCH</option>
+          <option value="DELETE">DELETE</option>
 
         </select>
 
@@ -731,8 +666,8 @@ pre {
           id="apiKey"
           class="input"
           type="password"
-          placeholder="Optional"
           autocomplete="off"
+          placeholder="Optional"
         >
 
       </div>
@@ -795,9 +730,11 @@ pre {
       id="savedApis"
       class="saved-list"
     >
+
       <div class="small">
         Loading saved APIs...
       </div>
+
     </div>
 
   </div>
@@ -805,17 +742,15 @@ pre {
 </div>
 
 
-<!-- =========================================================
-     JAVASCRIPT
-========================================================= -->
-
 <script>
 
 /* =========================================================
-   GLOBAL STATE
+   STATE
 ========================================================= */
 
 let selectedType = "auto";
+
+window.savedApisCache = [];
 
 
 /* =========================================================
@@ -852,14 +787,14 @@ const resultBox =
 const detectedType =
   document.getElementById("detectedType");
 
-const customApiSection =
-  document.getElementById("customApiSection");
+const toolsGrid =
+  document.getElementById("toolsGrid");
 
 const customApiTool =
   document.getElementById("customApiTool");
 
-const toolsGrid =
-  document.getElementById("toolsGrid");
+const customApiSection =
+  document.getElementById("customApiSection");
 
 const savedApisBox =
   document.getElementById("savedApis");
@@ -869,54 +804,10 @@ const customStatus =
 
 
 /* =========================================================
-   LOGIN
+   PAGE STATE
 ========================================================= */
 
-async function checkLogin() {
-
-  try {
-
-    const response =
-      await fetch(
-        "/api/auth",
-        {
-          method: "GET",
-          credentials: "include",
-          cache: "no-store"
-        }
-      );
-
-    if (!response.ok) {
-      showLogin();
-      return;
-    }
-
-    const data =
-      await response.json();
-
-    if (
-      data.authenticated === true ||
-      data.loggedIn === true ||
-      data.success === true
-    ) {
-
-      showApp();
-
-    } else {
-
-      showLogin();
-
-    }
-
-  } catch (error) {
-
-    showLogin();
-
-  }
-}
-
-
-function showLogin() {
+function showLogin(){
 
   loginPage.classList.remove("hidden");
   appPage.classList.add("hidden");
@@ -924,7 +815,7 @@ function showLogin() {
 }
 
 
-function showApp() {
+function showApp(){
 
   loginPage.classList.add("hidden");
   appPage.classList.remove("hidden");
@@ -935,7 +826,67 @@ function showApp() {
 
 
 /* =========================================================
-   LOGIN BUTTON
+   AUTH CHECK
+   IMPORTANT:
+   ONLY authenticated === true is accepted.
+========================================================= */
+
+async function checkLogin(){
+
+  try{
+
+    const response =
+      await fetch(
+        "/api/auth",
+        {
+          method:"GET",
+          credentials:"include",
+          cache:"no-store"
+        }
+      );
+
+    let data = {};
+
+    try{
+      data = await response.json();
+    }catch(_){
+      data = {};
+    }
+
+    console.log(
+      "AUTH CHECK:",
+      data
+    );
+
+    if(
+      response.ok &&
+      data.authenticated === true
+    ){
+
+      showApp();
+
+    }else{
+
+      showLogin();
+
+    }
+
+  }catch(error){
+
+    console.error(
+      "AUTH CHECK ERROR:",
+      error
+    );
+
+    showLogin();
+
+  }
+
+}
+
+
+/* =========================================================
+   LOGIN
 ========================================================= */
 
 loginBtn.addEventListener(
@@ -946,9 +897,9 @@ loginBtn.addEventListener(
 
 passwordInput.addEventListener(
   "keydown",
-  function(event) {
+  function(event){
 
-    if (event.key === "Enter") {
+    if(event.key === "Enter"){
       login();
     }
 
@@ -956,41 +907,44 @@ passwordInput.addEventListener(
 );
 
 
-async function login() {
+async function login(){
 
   const password =
     passwordInput.value;
 
   loginError.textContent = "";
 
-  if (!password) {
+
+  if(!password){
 
     loginError.textContent =
       "Enter admin password.";
 
     return;
+
   }
 
 
   loginBtn.disabled = true;
-  loginBtn.textContent = "Logging in...";
+  loginBtn.textContent =
+    "Logging in...";
 
 
-  try {
+  try{
 
     const response =
       await fetch(
         "/api/auth",
         {
-          method: "POST",
-          credentials: "include",
-          headers: {
+          method:"POST",
+          credentials:"include",
+          headers:{
             "Content-Type":
               "application/json"
           },
-          body: JSON.stringify({
-            action: "login",
-            password: password
+          body:JSON.stringify({
+            action:"login",
+            password:password
           })
         }
       );
@@ -998,30 +952,28 @@ async function login() {
 
     let data = {};
 
-    try {
+    try{
       data = await response.json();
-    } catch (_) {
+    }catch(_){
       data = {};
     }
 
 
-    if (!response.ok) {
-
-      loginError.textContent =
-        data.error ||
-        data.message ||
-        "Invalid password.";
-
-      passwordInput.select();
-
-      return;
-    }
+    console.log(
+      "LOGIN RESPONSE:",
+      data
+    );
 
 
-    if (
-      data.success === false ||
-      data.authenticated === false
-    ) {
+    /*
+     * IMPORTANT:
+     * Don't use data.success alone.
+     */
+
+    if(
+      !response.ok ||
+      data.authenticated !== true
+    ){
 
       loginError.textContent =
         data.error ||
@@ -1029,6 +981,7 @@ async function login() {
         "Invalid password.";
 
       return;
+
     }
 
 
@@ -1037,17 +990,24 @@ async function login() {
     showApp();
 
 
-  } catch (error) {
+  }catch(error){
+
+    console.error(
+      "LOGIN ERROR:",
+      error
+    );
 
     loginError.textContent =
-      "Login request failed. Please try again.";
+      "Login request failed.";
 
-  } finally {
+  }finally{
 
     loginBtn.disabled = false;
-    loginBtn.textContent = "Login";
+    loginBtn.textContent =
+      "Login";
 
   }
+
 }
 
 
@@ -1057,26 +1017,26 @@ async function login() {
 
 logoutBtn.addEventListener(
   "click",
-  async function() {
+  async function(){
 
-    try {
+    try{
 
       await fetch(
         "/api/auth",
         {
-          method: "POST",
-          credentials: "include",
-          headers: {
+          method:"POST",
+          credentials:"include",
+          headers:{
             "Content-Type":
               "application/json"
           },
-          body: JSON.stringify({
-            action: "logout"
+          body:JSON.stringify({
+            action:"logout"
           })
         }
       );
 
-    } catch (_) {}
+    }catch(_){}
 
     showLogin();
 
@@ -1088,97 +1048,70 @@ logoutBtn.addEventListener(
    TYPE DETECTION
 ========================================================= */
 
-function detectType(value) {
+function detectType(value){
 
   const v =
     String(value || "").trim();
 
 
-  if (!v) {
+  if(!v){
     return "auto";
   }
 
 
-  /* URL */
-
-  if (
+  if(
     /^https?:\/\//i.test(v) ||
     /^www\./i.test(v)
-  ) {
-
+  ){
     return "url";
-
   }
 
 
-  /* Email */
-
-  if (
+  if(
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
-  ) {
-
+  ){
     return "email";
-
   }
 
 
-  /* IP */
-
-  if (
+  if(
     /^(?:\d{1,3}\.){3}\d{1,3}$/.test(v) ||
     v.includes(":")
-  ) {
-
+  ){
     return "ip";
-
   }
 
 
-  /* IFSC */
-
-  if (
+  if(
     /^[A-Z]{4}0[A-Z0-9]{6}$/i.test(v)
-  ) {
-
+  ){
     return "ifsc";
-
   }
 
 
-  /* UPI */
-
-  if (
+  if(
     /^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+$/.test(v)
-  ) {
-
+  ){
     return "upi";
-
   }
 
 
-  /* PIN */
-
-  if (
+  if(
     /^\d{6}$/.test(v)
-  ) {
-
+  ){
     return "pin";
-
   }
 
 
-  /* Mobile */
-
-  if (
+  if(
     /^\+?[0-9][0-9\s-]{7,14}$/.test(v)
-  ) {
-
+  ){
     return "mobile";
-
   }
 
 
   return "auto";
+
 }
 
 
@@ -1186,60 +1119,63 @@ function detectType(value) {
    SELECT TOOL
 ========================================================= */
 
-function selectTool(type) {
+function selectTool(type){
 
   selectedType = type;
 
-  const buttons =
-    toolsGrid.querySelectorAll(
-      ".tool"
-    );
 
-  buttons.forEach(
-    function(button) {
+  toolsGrid
+    .querySelectorAll(".tool")
+    .forEach(
+      function(button){
 
-      button.classList.remove(
-        "active"
-      );
-
-      if (
-        button.dataset.type === type
-      ) {
-
-        button.classList.add(
+        button.classList.remove(
           "active"
         );
 
+        if(
+          button.dataset.type === type
+        ){
+
+          button.classList.add(
+            "active"
+          );
+
+        }
+
       }
-
-    }
-  );
-
-
-  if (type === "custom-manager") {
-
-    customApiSection.classList.remove(
-      "hidden"
     );
 
-  } else {
 
-    customApiSection.classList.add(
-      "hidden"
-    );
+  if(
+    type === "custom-manager"
+  ){
+
+    customApiSection
+      .classList
+      .remove("hidden");
+
+  }else{
+
+    customApiSection
+      .classList
+      .add("hidden");
 
   }
 
 
-  if (type === "auto") {
+  if(type === "auto"){
 
     detectedType.textContent =
       "Auto detection enabled";
 
-  } else if (type !== "custom-manager") {
+  }else if(
+    type !== "custom-manager"
+  ){
 
     detectedType.textContent =
-      "Selected: " + type.toUpperCase();
+      "Selected: " +
+      type.toUpperCase();
 
   }
 
@@ -1247,60 +1183,63 @@ function selectTool(type) {
 
 
 /* =========================================================
-   TOOL BUTTONS
+   TOOL CLICK
 ========================================================= */
 
 toolsGrid.addEventListener(
   "click",
-  function(event) {
+  function(event){
 
     const button =
       event.target.closest(
         ".tool"
       );
 
-    if (!button) {
+
+    if(!button){
       return;
     }
 
 
-    if (
+    if(
+      button.dataset.savedApi === "true"
+    ){
+
+      const api =
+        window.savedApisCache.find(
+          function(item){
+
+            return String(item.id) ===
+              String(button.dataset.apiId);
+
+          }
+        );
+
+
+      if(api){
+        runSavedApi(api);
+      }
+
+      return;
+
+    }
+
+
+    if(
       button.id === "customApiTool"
-    ) {
+    ){
 
       selectTool(
         "custom-manager"
       );
 
       customApiSection.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
+        behavior:"smooth",
+        block:"start"
       });
 
       return;
-    }
 
-
-    if (
-      button.dataset.savedApi === "true"
-    ) {
-
-      const apiId =
-        button.dataset.apiId;
-
-      const api =
-        window.savedApisCache.find(
-          function(item) {
-            return String(item.id) ===
-              String(apiId);
-          }
-        );
-
-      if (api) {
-        runSavedApi(api);
-      }
-
-      return;
     }
 
 
@@ -1308,10 +1247,11 @@ toolsGrid.addEventListener(
       button.dataset.type || "auto"
     );
 
-    if (
+
+    if(
       button.dataset.type !==
       "custom-manager"
-    ) {
+    ){
 
       runLookup();
 
@@ -1327,24 +1267,27 @@ toolsGrid.addEventListener(
 
 searchInput.addEventListener(
   "input",
-  function() {
+  function(){
 
-    if (
+    if(
       selectedType === "auto"
-    ) {
+    ){
 
       const detected =
         detectType(
           searchInput.value
         );
 
-      if (detected !== "auto") {
+
+      if(
+        detected !== "auto"
+      ){
 
         detectedType.textContent =
           "Detected: " +
           detected.toUpperCase();
 
-      } else {
+      }else{
 
         detectedType.textContent =
           "Auto detection enabled";
@@ -1359,14 +1302,14 @@ searchInput.addEventListener(
 
 searchInput.addEventListener(
   "keydown",
-  function(event) {
+  function(event){
 
-    if (event.key === "Enter") {
+    if(event.key === "Enter"){
 
-      if (
+      if(
         selectedType ===
         "custom-manager"
-      ) {
+      ){
         return;
       }
 
@@ -1388,20 +1331,21 @@ searchBtn.addEventListener(
    NORMAL LOOKUP
 ========================================================= */
 
-async function runLookup() {
+async function runLookup(){
 
   const value =
     searchInput.value.trim();
 
 
-  if (!value) {
+  if(!value){
 
     showResult({
-      success: false,
-      error: "Enter a value first."
+      success:false,
+      error:"Enter a value first."
     });
 
     return;
+
   }
 
 
@@ -1409,10 +1353,10 @@ async function runLookup() {
     selectedType;
 
 
-  if (
+  if(
     type === "auto" ||
     type === "custom-manager"
-  ) {
+  ){
 
     type =
       detectType(value);
@@ -1421,7 +1365,7 @@ async function runLookup() {
 
 
   showResult({
-    status: "loading",
+    status:"loading",
     message:
       "Searching " +
       type.toUpperCase() +
@@ -1429,7 +1373,7 @@ async function runLookup() {
   });
 
 
-  try {
+  try{
 
     const url =
       "/api/lookup?type=" +
@@ -1442,21 +1386,21 @@ async function runLookup() {
       await fetch(
         url,
         {
-          method: "GET",
-          credentials: "include",
-          cache: "no-store"
+          method:"GET",
+          credentials:"include",
+          cache:"no-store"
         }
       );
 
 
     let data = {};
 
-    try {
+    try{
       data = await response.json();
-    } catch (_) {
+    }catch(_){
 
       data = {
-        success: false,
+        success:false,
         error:
           "Server returned invalid response."
       };
@@ -1464,36 +1408,37 @@ async function runLookup() {
     }
 
 
-    if (
+    if(
       response.status === 401
-    ) {
+    ){
 
       showLogin();
-
       return;
+
     }
 
 
-    if (!response.ok) {
+    if(!response.ok){
 
       showResult({
-        success: false,
+        success:false,
         error:
           data.error ||
           "Lookup failed."
       });
 
       return;
+
     }
 
 
     showResult(data);
 
 
-  } catch (error) {
+  }catch(error){
 
     showResult({
-      success: false,
+      success:false,
       error:
         error.message ||
         "Request failed."
@@ -1505,18 +1450,18 @@ async function runLookup() {
 
 
 /* =========================================================
-   RESULT DISPLAY
+   RESULT
 ========================================================= */
 
-function showResult(data) {
+function showResult(data){
 
   resultBox.innerHTML = "";
 
 
-  if (
+  if(
     data &&
     data.status === "loading"
-  ) {
+  ){
 
     const div =
       document.createElement("div");
@@ -1531,13 +1476,14 @@ function showResult(data) {
     resultBox.appendChild(div);
 
     return;
+
   }
 
 
-  if (
+  if(
     data &&
     data.success === false
-  ) {
+  ){
 
     const div =
       document.createElement("div");
@@ -1552,6 +1498,7 @@ function showResult(data) {
     resultBox.appendChild(div);
 
     return;
+
   }
 
 
@@ -1559,16 +1506,16 @@ function showResult(data) {
     document.createElement("pre");
 
 
-  try {
+  try{
 
-    if (
+    if(
       typeof data === "string"
-    ) {
+    ){
 
       pre.textContent =
         data;
 
-    } else {
+    }else{
 
       pre.textContent =
         JSON.stringify(
@@ -1579,7 +1526,7 @@ function showResult(data) {
 
     }
 
-  } catch (_) {
+  }catch(_){
 
     pre.textContent =
       String(data);
@@ -1593,38 +1540,35 @@ function showResult(data) {
 
 
 /* =========================================================
-   SAVED API
+   LOAD SAVED APIs
 ========================================================= */
 
-window.savedApisCache = [];
-
-
-async function loadSavedApis() {
+async function loadSavedApis(){
 
   savedApisBox.innerHTML =
-    "<div class='small'>Loading APIs...</div>";
+    "<div class='small'>Loading saved APIs...</div>";
 
 
-  try {
+  try{
 
     const response =
       await fetch(
         "/api/custom-apis",
         {
-          method: "GET",
-          credentials: "include",
-          cache: "no-store"
+          method:"GET",
+          credentials:"include",
+          cache:"no-store"
         }
       );
 
 
-    if (
+    if(
       response.status === 401
-    ) {
+    ){
 
       showLogin();
-
       return;
+
     }
 
 
@@ -1632,7 +1576,7 @@ async function loadSavedApis() {
       await response.json();
 
 
-    if (!response.ok) {
+    if(!response.ok){
 
       throw new Error(
         data.error ||
@@ -1653,16 +1597,16 @@ async function loadSavedApis() {
 
 
     /*
-     * Remove old saved buttons.
+     * Remove old saved tool buttons.
      */
 
     toolsGrid
       .querySelectorAll(
-        ".saved-api-button"
+        ".saved-api-row"
       )
       .forEach(
-        function(element) {
-          element.parentElement.remove();
+        function(row){
+          row.remove();
         }
       );
 
@@ -1670,36 +1614,30 @@ async function loadSavedApis() {
     savedApisBox.innerHTML = "";
 
 
-    if (!apis.length) {
+    if(!apis.length){
 
       savedApisBox.innerHTML =
         "<div class='small'>No saved APIs.</div>";
 
       return;
+
     }
 
 
     apis.forEach(
-      function(api) {
+      function(api){
 
-        /*
-         * Add button before
-         * Custom API button.
-         */
+        /* TOOL BUTTON */
 
         const row =
-          document.createElement(
-            "div"
-          );
+          document.createElement("div");
 
         row.className =
-          "custom-tool-row saved-api-button";
+          "custom-tool-row saved-api-row";
 
 
         const button =
-          document.createElement(
-            "button"
-          );
+          document.createElement("button");
 
         button.type = "button";
 
@@ -1718,16 +1656,16 @@ async function loadSavedApis() {
 
         button.addEventListener(
           "click",
-          function() {
+          function(){
+
             runSavedApi(api);
+
           }
         );
 
 
         const remove =
-          document.createElement(
-            "button"
-          );
+          document.createElement("button");
 
         remove.type = "button";
 
@@ -1743,7 +1681,7 @@ async function loadSavedApis() {
 
         remove.addEventListener(
           "click",
-          function(event) {
+          function(event){
 
             event.stopPropagation();
 
@@ -1759,31 +1697,27 @@ async function loadSavedApis() {
         row.appendChild(remove);
 
 
+        /*
+         * Always before Custom API.
+         */
+
         toolsGrid.insertBefore(
           row,
-          customApiTool
-            .parentElement ||
           customApiTool
         );
 
 
-        /*
-         * Saved API manager list
-         */
+        /* MANAGER LIST */
 
         const managerRow =
-          document.createElement(
-            "div"
-          );
+          document.createElement("div");
 
         managerRow.className =
           "custom-tool-row";
 
 
         const managerButton =
-          document.createElement(
-            "button"
-          );
+          document.createElement("button");
 
         managerButton.type =
           "button";
@@ -1797,7 +1731,7 @@ async function loadSavedApis() {
 
         managerButton.addEventListener(
           "click",
-          function() {
+          function(){
 
             runSavedApi(api);
 
@@ -1806,9 +1740,7 @@ async function loadSavedApis() {
 
 
         const managerRemove =
-          document.createElement(
-            "button"
-          );
+          document.createElement("button");
 
         managerRemove.type =
           "button";
@@ -1822,7 +1754,7 @@ async function loadSavedApis() {
 
         managerRemove.addEventListener(
           "click",
-          function() {
+          function(){
 
             removeSavedApi(
               api.id
@@ -1849,7 +1781,7 @@ async function loadSavedApis() {
     );
 
 
-  } catch (error) {
+  }catch(error){
 
     savedApisBox.innerHTML =
       "<div class='small'>" +
@@ -1868,16 +1800,16 @@ async function loadSavedApis() {
    RUN SAVED API
 ========================================================= */
 
-async function runSavedApi(api) {
+async function runSavedApi(api){
 
   const value =
     searchInput.value.trim();
 
 
-  if (!value) {
+  if(!value){
 
     showResult({
-      success: false,
+      success:false,
       error:
         "Enter something in the search box first."
     });
@@ -1885,11 +1817,12 @@ async function runSavedApi(api) {
     searchInput.focus();
 
     return;
+
   }
 
 
   showResult({
-    status: "loading",
+    status:"loading",
     message:
       "Calling " +
       (api.name || "API") +
@@ -1897,21 +1830,21 @@ async function runSavedApi(api) {
   });
 
 
-  try {
+  try{
 
     const response =
       await fetch(
         "/api/custom-proxy",
         {
-          method: "POST",
-          credentials: "include",
-          headers: {
+          method:"POST",
+          credentials:"include",
+          headers:{
             "Content-Type":
               "application/json"
           },
-          body: JSON.stringify({
-            id: api.id,
-            message: value
+          body:JSON.stringify({
+            id:api.id,
+            message:value
           })
         }
       );
@@ -1919,15 +1852,12 @@ async function runSavedApi(api) {
 
     let data = {};
 
-    try {
-
-      data =
-        await response.json();
-
-    } catch (_) {
+    try{
+      data = await response.json();
+    }catch(_){
 
       data = {
-        success: false,
+        success:false,
         error:
           "Invalid server response."
       };
@@ -1935,43 +1865,39 @@ async function runSavedApi(api) {
     }
 
 
-    if (
+    if(
       response.status === 401
-    ) {
+    ){
 
       showLogin();
-
       return;
+
     }
 
 
-    if (!response.ok) {
+    if(!response.ok){
 
       showResult({
-        success: false,
+        success:false,
         error:
           data.error ||
           "API request failed."
       });
 
       return;
+
     }
 
-
-    /*
-     * Whatever the API returns,
-     * show it here.
-     */
 
     showResult(
       data.response
     );
 
 
-  } catch (error) {
+  }catch(error){
 
     showResult({
-      success: false,
+      success:false,
       error:
         error.message ||
         "Failed to call API."
@@ -1983,36 +1909,36 @@ async function runSavedApi(api) {
 
 
 /* =========================================================
-   REMOVE SAVED API
+   REMOVE API
 ========================================================= */
 
-async function removeSavedApi(id) {
+async function removeSavedApi(id){
 
-  const ok =
-    confirm(
+  if(
+    !confirm(
       "Remove this saved API?"
-    );
+    )
+  ){
 
-
-  if (!ok) {
     return;
+
   }
 
 
-  try {
+  try{
 
     const response =
       await fetch(
         "/api/custom-apis",
         {
-          method: "DELETE",
-          credentials: "include",
-          headers: {
+          method:"DELETE",
+          credentials:"include",
+          headers:{
             "Content-Type":
               "application/json"
           },
-          body: JSON.stringify({
-            id: id
+          body:JSON.stringify({
+            id:id
           })
         }
       );
@@ -2022,17 +1948,17 @@ async function removeSavedApi(id) {
       await response.json();
 
 
-    if (
+    if(
       response.status === 401
-    ) {
+    ){
 
       showLogin();
-
       return;
+
     }
 
 
-    if (!response.ok) {
+    if(!response.ok){
 
       alert(
         data.error ||
@@ -2040,13 +1966,14 @@ async function removeSavedApi(id) {
       );
 
       return;
+
     }
 
 
     await loadSavedApis();
 
 
-  } catch (error) {
+  }catch(error){
 
     alert(
       error.message ||
@@ -2070,7 +1997,7 @@ document
   );
 
 
-async function saveCustomApi() {
+async function saveCustomApi(){
 
   const name =
     document
@@ -2114,38 +2041,40 @@ async function saveCustomApi() {
       .trim();
 
 
-  customStatus.textContent =
-    "";
+  customStatus.textContent = "";
 
 
-  if (!name) {
+  if(!name){
 
     customStatus.textContent =
       "Enter API name.";
 
     return;
+
   }
 
 
-  if (
+  if(
     !/^https?:\/\//i.test(url)
-  ) {
+  ){
 
     customStatus.textContent =
       "Enter a valid API URL.";
 
     return;
+
   }
 
 
-  if (
+  if(
     !url.includes("{message}")
-  ) {
+  ){
 
     customStatus.textContent =
       "URL must contain {message}.";
 
     return;
+
   }
 
 
@@ -2153,34 +2082,33 @@ async function saveCustomApi() {
     "Saving...";
 
 
-  try {
+  try{
 
     const response =
       await fetch(
         "/api/custom-apis",
         {
-          method: "POST",
-          credentials: "include",
-          headers: {
+          method:"POST",
+          credentials:"include",
+          headers:{
             "Content-Type":
               "application/json"
           },
-          body: JSON.stringify({
+          body:JSON.stringify({
 
-            name: name,
+            name:name,
 
-            url: url,
+            url:url,
 
-            method: method,
+            method:method,
 
-            api_key: apiKey,
+            api_key:apiKey,
 
-            api_header: apiHeader,
+            api_header:apiHeader,
 
-            description: description,
+            description:description,
 
-            category:
-              "Custom API"
+            category:"Custom API"
 
           })
         }
@@ -2191,23 +2119,24 @@ async function saveCustomApi() {
       await response.json();
 
 
-    if (
+    if(
       response.status === 401
-    ) {
+    ){
 
       showLogin();
-
       return;
+
     }
 
 
-    if (!response.ok) {
+    if(!response.ok){
 
       customStatus.textContent =
         data.error ||
         "Save failed.";
 
       return;
+
     }
 
 
@@ -2238,7 +2167,7 @@ async function saveCustomApi() {
     await loadSavedApis();
 
 
-  } catch (error) {
+  }catch(error){
 
     customStatus.textContent =
       error.message ||
@@ -2250,17 +2179,17 @@ async function saveCustomApi() {
 
 
 /* =========================================================
-   ESCAPE HTML
+   ESCAPE
 ========================================================= */
 
-function escapeHtml(value) {
+function escapeHtml(value){
 
   return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 
 }
 
