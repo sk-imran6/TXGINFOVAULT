@@ -1,3 +1,5 @@
+// api/custom-apis.js
+
 const { neon } = require("@neondatabase/serverless");
 
 module.exports = async function handler(req, res) {
@@ -31,14 +33,22 @@ module.exports = async function handler(req, res) {
 
     if (req.method === "GET") {
       const rows = await sql`
-        SELECT id, name, url, method, description, category, created_at
+        SELECT
+          id,
+          name,
+          url,
+          method,
+          description,
+          category,
+          created_at
         FROM custom_apis
         ORDER BY created_at DESC
       `;
 
       return res.status(200).json({
         success: true,
-        apis: rows
+        apis: rows,
+        total: rows.length
       });
     }
 
@@ -46,19 +56,35 @@ module.exports = async function handler(req, res) {
       let body = req.body || {};
 
       if (typeof body === "string") {
-        body = JSON.parse(body);
+        try {
+          body = JSON.parse(body);
+        } catch {
+          return res.status(400).json({
+            success: false,
+            error: "Invalid JSON"
+          });
+        }
       }
 
       const name = String(body.name || "").trim();
       const url = String(body.url || "").trim();
-      const method = String(body.method || "GET").trim().toUpperCase();
+      const method = String(body.method || "GET")
+        .trim()
+        .toUpperCase();
       const description = String(body.description || "").trim();
       const category = String(body.category || "Custom").trim();
 
-      if (!name || !url) {
+      if (!name) {
         return res.status(400).json({
           success: false,
-          error: "Name and URL are required"
+          error: "API name is required"
+        });
+      }
+
+      if (!url) {
+        return res.status(400).json({
+          success: false,
+          error: "API URL is required"
         });
       }
 
@@ -80,9 +106,15 @@ module.exports = async function handler(req, res) {
         });
       }
 
-      const methods = ["GET", "POST", "PUT", "PATCH", "DELETE"];
+      const allowedMethods = [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE"
+      ];
 
-      if (!methods.includes(method)) {
+      if (!allowedMethods.includes(method)) {
         return res.status(400).json({
           success: false,
           error: "Invalid HTTP method"
@@ -91,10 +123,29 @@ module.exports = async function handler(req, res) {
 
       const result = await sql`
         INSERT INTO custom_apis
-          (name, url, method, description, category)
+        (
+          name,
+          url,
+          method,
+          description,
+          category
+        )
         VALUES
-          (${name}, ${url}, ${method}, ${description}, ${category})
-        RETURNING *
+        (
+          ${name},
+          ${url},
+          ${method},
+          ${description},
+          ${category}
+        )
+        RETURNING
+          id,
+          name,
+          url,
+          method,
+          description,
+          category,
+          created_at
       `;
 
       return res.status(201).json({
@@ -116,7 +167,7 @@ module.exports = async function handler(req, res) {
       const result = await sql`
         DELETE FROM custom_apis
         WHERE id = ${id}
-        RETURNING id, name
+        RETURNING id, name, url, method
       `;
 
       if (!result.length) {
@@ -138,7 +189,7 @@ module.exports = async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error(error);
+    console.error("custom-apis:", error);
 
     return res.status(500).json({
       success: false,
@@ -146,44 +197,3 @@ module.exports = async function handler(req, res) {
     });
   }
 };
-
-async function deleteCustomApi(id) {
-  const apiId =
-    typeof id === "object"
-      ? String(id.id || "")
-      : String(id || "");
-
-  if (!apiId || apiId === "[object Object]") {
-    alert("Valid API ID is required");
-    return;
-  }
-
-  if (!confirm("Delete this API?")) return;
-
-  try {
-    const response = await fetch(
-      "/api/custom-apis?id=" + encodeURIComponent(apiId),
-      {
-        method: "DELETE"
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok || !data.success) {
-      throw new Error(data.error || "Delete failed");
-    }
-
-    await loadSavedApis();
-
-  } catch (error) {
-    alert(error.message || "Delete failed");
-  }
-}
-
-<button
-  type="button"
-  onclick="deleteCustomApi(${JSON.stringify(api.id)})">
-  Delete
-</button>
-```0
