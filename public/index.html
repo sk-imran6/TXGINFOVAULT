@@ -1,379 +1,627 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+  <meta name="theme-color" content="#05070b">
+  <title>TXG Information Center</title>
 
-<title>TXG Information Center</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<style>
-*{
-  box-sizing:border-box;
-}
+    :root {
+      --bg: #05070b;
+      --panel: #0b0f16;
+      --panel2: #101620;
+      --border: #1c2633;
+      --text: #f4f7fb;
+      --muted: #8793a3;
+      --accent: #5ee7a2;
+      --accent2: #32c77a;
+      --danger: #ff6b6b;
+      --blue: #67a7ff;
+    }
 
-body{
-  margin:0;
-  background:#080b10;
-  color:#f4f7fb;
-  font-family:Inter,Arial,sans-serif;
-}
+    body {
+      margin: 0;
+      background:
+        radial-gradient(
+          circle at top,
+          #111a27 0,
+          var(--bg) 42%
+        );
+      color: var(--text);
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      min-height: 100vh;
+    }
 
-.container{
-  width:min(1050px,100%);
-  margin:auto;
-  padding:18px;
-}
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
 
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin-bottom:18px;
-}
+    button {
+      cursor: pointer;
+    }
 
-.logo{
-  font-size:24px;
-  font-weight:800;
-}
+    .wrap {
+      width: min(1050px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 28px 0 50px;
+    }
 
-.subtitle{
-  color:#8792a3;
-  font-size:13px;
-  margin-top:4px;
-}
+    .hero {
+      padding: 22px 0 26px;
+    }
 
-.status{
-  padding:8px 12px;
-  border:1px solid #26313e;
-  border-radius:999px;
-  color:#7ff0a0;
-  font-size:12px;
-}
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-.card{
-  background:#10151d;
-  border:1px solid #202a35;
-  border-radius:17px;
-  padding:16px;
-  margin-bottom:15px;
-}
+    .brand-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(
+        145deg,
+        #173425,
+        #0c1712
+      );
+      border: 1px solid #244b37;
+      color: var(--accent);
+      font-weight: 900;
+      font-size: 19px;
+    }
 
-.tools{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
-  gap:9px;
-}
+    h1 {
+      margin: 0;
+      font-size: clamp(25px, 6vw, 38px);
+      letter-spacing: -1px;
+    }
 
-button{
-  border:1px solid #2a3543;
-  background:#151c25;
-  color:#f2f5f8;
-  border-radius:11px;
-  padding:12px;
-  cursor:pointer;
-  font-size:14px;
-}
+    .subtitle {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
 
-button:hover{
-  background:#1b2633;
-  border-color:#4c8dff;
-}
+    .section {
+      margin-top: 18px;
+      padding: 18px;
+      border: 1px solid var(--border);
+      background: rgba(11, 15, 22, .88);
+      border-radius: 22px;
+    }
 
-button.active{
-  background:#172b48;
-  border-color:#4c8dff;
-}
+    .section-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
 
-.search-row{
-  display:grid;
-  grid-template-columns:1fr 145px 105px;
-  gap:9px;
-}
+    .tools {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(120px, 1fr));
+      gap: 9px;
+    }
 
-input,select{
-  width:100%;
-  border:1px solid #2a3543;
-  background:#0b1016;
-  color:#fff;
-  border-radius:11px;
-  padding:13px;
-  outline:none;
-}
+    .tool {
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: #dbe3ec;
+      border-radius: 13px;
+      min-height: 46px;
+      padding: 10px 12px;
+      transition: .15s ease;
+    }
 
-input:focus,select:focus{
-  border-color:#4c8dff;
-}
+    .tool:hover {
+      border-color: #38516a;
+    }
 
-.result{
-  margin-top:12px;
-  min-height:220px;
-  max-height:600px;
-  overflow:auto;
-  white-space:pre-wrap;
-  word-break:break-word;
-  background:#080c11;
-  border:1px solid #202a35;
-  border-radius:12px;
-  padding:14px;
-  font:13px/1.55 monospace;
-}
+    .tool.active {
+      color: #07120c;
+      background: var(--accent);
+      border-color: var(--accent);
+      font-weight: 800;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-}
+    .search-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
 
-.full{
-  grid-column:1/-1;
-}
+    .input {
+      width: 100%;
+      min-height: 52px;
+      padding: 0 15px;
+      color: var(--text);
+      background: #070b11;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      outline: none;
+    }
 
-.saved{
-  display:grid;
-  gap:8px;
-  margin-top:13px;
-}
+    .input:focus {
+      border-color: var(--accent);
+    }
 
-.saved-item{
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:8px;
-}
+    .primary {
+      min-height: 52px;
+      padding: 0 19px;
+      border: 0;
+      border-radius: 14px;
+      background: var(--accent);
+      color: #06110b;
+      font-weight: 900;
+    }
 
-.saved-run{
-  text-align:left;
-}
+    .primary:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
 
-.delete{
-  color:#ff8d8d;
-}
+    .hint {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 12px;
+    }
 
-.small{
-  color:#8792a3;
-  font-size:12px;
-}
+    .status {
+      display: none;
+      margin-top: 14px;
+      padding: 11px 13px;
+      border-radius: 12px;
+      font-size: 13px;
+    }
 
-@media(max-width:650px){
-  .container{
-    padding:12px;
-  }
+    .status.show {
+      display: block;
+    }
 
-  .search-row{
-    grid-template-columns:1fr;
-  }
+    .status.error {
+      background: #251014;
+      border: 1px solid #54212a;
+      color: #ff9ca5;
+    }
 
-  .grid{
-    grid-template-columns:1fr;
-  }
+    .status.success {
+      background: #0b2117;
+      border: 1px solid #1d5a3c;
+      color: #87eeb7;
+    }
 
-  .header{
-    align-items:flex-start;
-  }
-}
-</style>
+    .result {
+      margin-top: 14px;
+      background: #05080d;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    .result-head {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 15px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      overflow: auto;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #dce6f1;
+    }
+
+    .custom-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    textarea.input {
+      min-height: 90px;
+      padding: 14px;
+      resize: vertical;
+    }
+
+    .custom-actions {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .secondary {
+      min-height: 46px;
+      padding: 0 15px;
+      border-radius: 13px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: #dce5ef;
+    }
+
+    .saved {
+      margin-top: 17px;
+    }
+
+    .saved-title {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 9px;
+    }
+
+    .api-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px;
+      margin-top: 9px;
+      background: #080c12;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+    }
+
+    .api-info {
+      min-width: 0;
+    }
+
+    .api-name {
+      font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .api-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .api-buttons {
+      display: flex;
+      gap: 7px;
+      flex-shrink: 0;
+    }
+
+    .run-btn,
+    .delete-btn {
+      min-height: 40px;
+      padding: 0 12px;
+      border-radius: 11px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: #dce5ef;
+    }
+
+    .run-btn {
+      border-color: #28533d;
+      color: var(--accent);
+    }
+
+    .delete-btn {
+      border-color: #4b252b;
+      color: #ff7f89;
+    }
+
+    .custom-run {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid #233244;
+      background: #090e15;
+      border-radius: 16px;
+    }
+
+    .custom-run.show {
+      display: block;
+    }
+
+    .custom-run-title {
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .empty {
+      color: var(--muted);
+      padding: 10px 0;
+      font-size: 13px;
+    }
+
+    .footer {
+      text-align: center;
+      color: #596575;
+      font-size: 11px;
+      padding: 25px 0 5px;
+    }
+
+    @media (max-width: 650px) {
+
+      .wrap {
+        width: min(
+          100% - 18px,
+          1050px
+        );
+        padding-top: 15px;
+      }
+
+      .section {
+        padding: 14px;
+        border-radius: 18px;
+      }
+
+      .search-box {
+        grid-template-columns: 1fr;
+      }
+
+      .primary {
+        width: 100%;
+      }
+
+      .custom-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .api-card {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .api-buttons {
+        width: 100%;
+      }
+
+      .run-btn,
+      .delete-btn {
+        flex: 1;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="wrap">
 
-  <div class="header">
+  <!-- ==========================================
+       HEADER
+  =========================================== -->
 
-    <div>
-      <div class="logo">TXG Information Center</div>
-      <div class="subtitle">
-        Public & authorized information lookup
+  <header class="hero">
+
+    <div class="brand">
+
+      <div class="brand-icon">
+        TXG
       </div>
+
+      <div>
+        <h1>TXG Information</h1>
+
+        <div class="subtitle">
+          Information & lookup center
+        </div>
+      </div>
+
     </div>
 
-    <div class="status">
-      DIRECT ACCESS
+  </header>
+
+
+  <!-- ==========================================
+       LOOKUP TOOLS
+  =========================================== -->
+
+  <section class="section">
+
+    <div class="section-title">
+      Search
     </div>
 
-  </div>
+    <div
+      class="tools"
+      id="tools"
+    >
 
+      <button
+        class="tool active"
+        data-type="auto"
+        type="button"
+      >
+        Auto
+      </button>
 
-  <!-- TOOLS -->
-
-  <div class="card">
-
-    <div class="tools" id="tools">
-
-      <button data-type="auto">Auto</button>
-
-      <button data-type="mobile">
+      <button
+        class="tool"
+        data-type="mobile"
+        type="button"
+      >
         Mobile
       </button>
 
-      <button data-type="email">
+      <button
+        class="tool"
+        data-type="email"
+        type="button"
+      >
         Email
       </button>
 
-      <button data-type="vehicle">
+      <button
+        class="tool"
+        data-type="vehicle"
+        type="button"
+      >
         Vehicle
       </button>
 
-      <button data-type="ip">
+      <button
+        class="tool"
+        data-type="ip"
+        type="button"
+      >
         IP
       </button>
 
-      <button data-type="url">
+      <button
+        class="tool"
+        data-type="url"
+        type="button"
+      >
         URL
       </button>
 
-      <button data-type="pin">
+      <button
+        class="tool"
+        data-type="pin"
+        type="button"
+      >
         PIN
       </button>
 
-      <button data-type="ifsc">
+      <button
+        class="tool"
+        data-type="ifsc"
+        type="button"
+      >
         IFSC
       </button>
 
-      <button data-type="upi">
+      <button
+        class="tool"
+        data-type="upi"
+        type="button"
+      >
         UPI
       </button>
 
-      <button data-type="company">
+      <button
+        class="tool"
+        data-type="company"
+        type="button"
+      >
         Company
       </button>
 
-      <button data-type="crm">
+      <button
+        class="tool"
+        data-type="crm"
+        type="button"
+      >
         CRM
       </button>
 
     </div>
 
-  </div>
 
-
-  <!-- SEARCH -->
-
-  <div class="card">
-
-    <div class="search-row">
+    <div
+      class="search-box"
+      style="margin-top:14px"
+    >
 
       <input
-        id="query"
+        id="lookupInput"
+        class="input"
         type="text"
-        placeholder="Enter search value..."
+        autocomplete="off"
+        placeholder="Enter information to search..."
       >
 
-      <select id="type">
-
-        <option value="auto">
-          Auto
-        </option>
-
-        <option value="mobile">
-          Mobile
-        </option>
-
-        <option value="email">
-          Email
-        </option>
-
-        <option value="vehicle">
-          Vehicle
-        </option>
-
-        <option value="ip">
-          IP
-        </option>
-
-        <option value="url">
-          URL / Domain
-        </option>
-
-        <option value="pin">
-          PIN
-        </option>
-
-        <option value="ifsc">
-          IFSC
-        </option>
-
-        <option value="upi">
-          UPI
-        </option>
-
-        <option value="company">
-          Company
-        </option>
-
-        <option value="crm">
-          CRM
-        </option>
-
-      </select>
-
-      <button id="searchBtn">
+      <button
+        id="lookupBtn"
+        class="primary"
+        type="button"
+      >
         Search
       </button>
 
     </div>
 
-  </div>
+
+    <div
+      id="lookupHint"
+      class="hint"
+    >
+      Auto detects the search type.
+    </div>
 
 
-  <!-- RESULT -->
+    <div
+      id="lookupStatus"
+      class="status"
+      aria-live="polite"
+    ></div>
 
-  <div class="card">
 
-    <div style="
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-    ">
+    <div
+      id="lookupResult"
+      class="result"
+      style="display:none"
+    >
 
-      <strong>
-        Result
-      </strong>
+      <div class="result-head">
+        Search Result
+      </div>
 
-      <span
-        class="small"
-        id="statusText"
-      >
-        Ready
-      </span>
+      <pre id="lookupOutput"></pre>
 
     </div>
 
-    <pre
-      class="result"
-      id="result"
-    >Ready.</pre>
-
-  </div>
+  </section>
 
 
-  <!-- CUSTOM API -->
+  <!-- ==========================================
+       CUSTOM API
+  =========================================== -->
 
-  <div class="card">
+  <section class="section">
 
-    <h3 style="margin-top:0;">
+    <div class="section-title">
       Custom API
-    </h3>
+    </div>
 
-    <div class="grid">
+
+    <div class="custom-grid">
 
       <input
         id="apiName"
-        placeholder="API name"
+        class="input"
+        placeholder="API Name"
       >
 
-      <input
-        id="apiCategory"
-        placeholder="Category"
+      <select
+        id="apiMethod"
+        class="input"
       >
-
-      <input
-        class="full"
-        id="apiUrl"
-        placeholder="https://example.com/api?message={message}"
-      >
-
-      <select id="apiMethod">
 
         <option value="GET">
           GET
@@ -397,35 +645,103 @@ input:focus,select:focus{
 
       </select>
 
+
       <input
-        id="apiDescription"
-        placeholder="Description"
+        id="apiURL"
+        class="input full"
+        placeholder="https://example.com/api?number={message}"
       >
 
-    </div>
 
-    <button
-      id="addApiBtn"
-      style="margin-top:10px;"
-    >
-      + Add Custom API
-    </button>
+      <textarea
+        id="apiDescription"
+        class="input full"
+        placeholder="Description"
+      ></textarea>
+
+    </div>
 
 
     <div
-      class="small"
-      style="margin-top:12px;"
+      class="custom-actions"
+      style="margin-top:10px"
     >
-      Saved APIs
+
+      <button
+        id="addApiBtn"
+        class="primary"
+        type="button"
+      >
+        + Add Custom API
+      </button>
+
     </div>
+
 
     <div
-      class="saved"
-      id="savedApis"
+      id="customStatus"
+      class="status"
+      aria-live="polite"
+    ></div>
+
+
+    <!-- CUSTOM API RUN PANEL -->
+
+    <div
+      id="customRun"
+      class="custom-run"
     >
-      Loading...
+
+      <div
+        id="customRunTitle"
+        class="custom-run-title"
+      >
+        Run API
+      </div>
+
+
+      <input
+        id="customInput"
+        class="input"
+        placeholder="Enter information..."
+      >
+
+
+      <button
+        id="customRunBtn"
+        class="primary"
+        type="button"
+        style="margin-top:9px;width:100%"
+      >
+        Search
+      </button>
+
     </div>
 
+
+    <!-- SAVED APIS -->
+
+    <div class="saved">
+
+      <div class="saved-title">
+        Saved APIs
+      </div>
+
+      <div id="savedApis">
+
+        <div class="empty">
+          Loading saved APIs...
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <div class="footer">
+    TXG Information Center
   </div>
 
 </div>
@@ -433,319 +749,629 @@ input:focus,select:focus{
 
 <script>
 
-const $ = id => document.getElementById(id);
+  // ==========================================
+  // STATE
+  // ==========================================
 
-let selectedType = "auto";
+  let selectedType = "auto";
 
+  let savedApis = [];
 
-/* =========================
-   TOOL SELECTION
-========================= */
-
-document
-  .querySelectorAll("#tools button")
-  .forEach(button => {
-
-    button.addEventListener("click", () => {
-
-      selectedType =
-        button.dataset.type;
-
-      $("type").value =
-        selectedType;
-
-      document
-        .querySelectorAll("#tools button")
-        .forEach(x =>
-          x.classList.remove("active")
-        );
-
-      button.classList.add("active");
-
-    });
-
-  });
+  let selectedCustomApi = null;
 
 
-$("type").addEventListener(
-  "change",
-  event => {
+  // ==========================================
+  // ELEMENTS
+  // ==========================================
 
-    selectedType =
-      event.target.value;
+  const lookupInput =
+    document.getElementById(
+      "lookupInput"
+    );
 
-  }
-);
+  const lookupBtn =
+    document.getElementById(
+      "lookupBtn"
+    );
+
+  const lookupHint =
+    document.getElementById(
+      "lookupHint"
+    );
+
+  const lookupStatus =
+    document.getElementById(
+      "lookupStatus"
+    );
+
+  const lookupResult =
+    document.getElementById(
+      "lookupResult"
+    );
+
+  const lookupOutput =
+    document.getElementById(
+      "lookupOutput"
+    );
+
+  const savedApis =
+    document.getElementById(
+      "savedApis"
+    );
+
+  const customStatus =
+    document.getElementById(
+      "customStatus"
+    );
+
+  const customRun =
+    document.getElementById(
+      "customRun"
+    );
+
+  const customRunTitle =
+    document.getElementById(
+      "customRunTitle"
+    );
+
+  const customInput =
+    document.getElementById(
+      "customInput"
+    );
+
+  const customRunBtn =
+    document.getElementById(
+      "customRunBtn"
+    );
 
 
-/* =========================
-   SEARCH
-========================= */
+  // ==========================================
+  // TOOL LABELS
+  // ==========================================
 
-$("searchBtn").addEventListener(
-  "click",
-  runLookup
-);
+  const toolLabels = {
 
+    auto: {
+      label: "Information",
+      placeholder:
+        "Enter mobile, email, IP, PIN, IFSC, URL, UPI...",
+      hint:
+        "Auto detects the search type."
+    },
 
-$("query").addEventListener(
-  "keydown",
-  event => {
+    mobile: {
+      label: "Mobile Number",
+      placeholder:
+        "Enter mobile number",
+      hint:
+        "Enter a mobile number for available public/authorized information."
+    },
 
-    if(event.key === "Enter"){
-      runLookup();
+    email: {
+      label: "Email",
+      placeholder:
+        "Enter email address",
+      hint:
+        "Enter an email address."
+    },
+
+    vehicle: {
+      label: "Vehicle",
+      placeholder:
+        "Enter vehicle registration number",
+      hint:
+        "Enter a vehicle registration number."
+    },
+
+    ip: {
+      label: "IP Address",
+      placeholder:
+        "Enter IPv4 or IPv6 address",
+      hint:
+        "Enter an IP address."
+    },
+
+    url: {
+      label: "URL / Domain",
+      placeholder:
+        "Enter URL or domain",
+      hint:
+        "Enter a URL or domain."
+    },
+
+    pin: {
+      label: "PIN Code",
+      placeholder:
+        "Enter 6-digit PIN code",
+      hint:
+        "Enter an Indian 6-digit PIN code."
+    },
+
+    ifsc: {
+      label: "IFSC Code",
+      placeholder:
+        "Enter IFSC code",
+      hint:
+        "Enter an IFSC code."
+    },
+
+    upi: {
+      label: "UPI",
+      placeholder:
+        "Enter UPI ID",
+      hint:
+        "Enter a UPI ID such as name@bank."
+    },
+
+    company: {
+      label: "Company",
+      placeholder:
+        "Enter company name",
+      hint:
+        "Search public company information."
+    },
+
+    crm: {
+      label: "CRM",
+      placeholder:
+        "Enter CRM search",
+      hint:
+        "Uses your configured authorized CRM integration."
     }
-
-  }
-);
-
-
-async function runLookup(){
-
-  const value =
-    $("query").value.trim();
-
-  const type =
-    $("type").value;
-
-  if(!value){
-
-    $("result").textContent =
-      "Please enter a value.";
-
-    return;
-
-  }
-
-  $("statusText").textContent =
-    "Searching...";
-
-  $("result").textContent =
-    "Loading...";
-
-  try{
-
-    const url =
-      "/api/lookup?type=" +
-      encodeURIComponent(type) +
-      "&value=" +
-      encodeURIComponent(value);
-
-    const response =
-      await fetch(url);
-
-    const data =
-      await response.json();
-
-    $("result").textContent =
-      JSON.stringify(
-        data,
-        null,
-        2
-      );
-
-    $("statusText").textContent =
-      data.success
-        ? "Done"
-        : "Error";
-
-  }catch(error){
-
-    $("statusText").textContent =
-      "Error";
-
-    $("result").textContent =
-      error.message;
-
-  }
-
-}
-
-
-/* =========================
-   ADD CUSTOM API
-========================= */
-
-$("addApiBtn").addEventListener(
-  "click",
-  addCustomApi
-);
-
-
-async function addCustomApi(){
-
-  const payload = {
-
-    name:
-      $("apiName").value.trim(),
-
-    url:
-      $("apiUrl").value.trim(),
-
-    method:
-      $("apiMethod").value,
-
-    category:
-      $("apiCategory").value.trim()
-      || "Custom API",
-
-    description:
-      $("apiDescription").value.trim()
 
   };
 
 
-  if(!payload.name){
+  // ==========================================
+  // STATUS
+  // ==========================================
 
-    alert("Enter API name.");
+  function setStatus(
+    element,
+    message,
+    type
+  ) {
 
-    return;
+    element.textContent =
+      message || "";
+
+    element.className =
+      "status " +
+      (message ? "show " + type : "");
 
   }
 
 
-  if(!payload.url){
+  // ==========================================
+  // SELECT TOOL
+  // ==========================================
 
-    alert("Enter API URL.");
+  function selectTool(type) {
 
-    return;
-
-  }
-
-
-  try{
-
-    $("addApiBtn").disabled =
-      true;
-
-    $("addApiBtn").textContent =
-      "Saving...";
+    selectedType =
+      type;
 
 
-    const response =
-      await fetch(
-        "/api/custom-apis",
-        {
-          method:"POST",
+    document
+      .querySelectorAll(
+        ".tool"
+      )
+      .forEach(
+        button => {
 
-          headers:{
-            "Content-Type":
-              "application/json"
-          },
+          button.classList.toggle(
+            "active",
+            button.dataset.type === type
+          );
 
-          body:
-            JSON.stringify(payload)
         }
       );
 
 
-    const data =
-      await response.json();
+    const info =
+      toolLabels[type] ||
+      toolLabels.auto;
 
 
-    if(!data.success){
+    lookupInput.placeholder =
+      info.placeholder;
 
-      alert(
-        data.error ||
-        "Unable to save API."
-      );
+    lookupHint.textContent =
+      info.hint;
 
-      return;
-
-    }
-
-
-    $("apiName").value = "";
-    $("apiUrl").value = "";
-    $("apiCategory").value = "";
-    $("apiDescription").value = "";
-
-
-    await loadSavedApis();
-
-
-  }catch(error){
-
-    alert(error.message);
-
-  }finally{
-
-    $("addApiBtn").disabled =
-      false;
-
-    $("addApiBtn").textContent =
-      "+ Add Custom API";
+    lookupInput.focus();
 
   }
 
-}
+
+  document
+    .querySelectorAll(
+      ".tool"
+    )
+    .forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            selectTool(
+              button.dataset.type
+            );
+
+          }
+        );
+
+      }
+    );
 
 
-/* =========================
-   LOAD SAVED APIs
-========================= */
+  // ==========================================
+  // LOOKUP
+  // ==========================================
 
-async function loadSavedApis(){
+  async function doLookup() {
 
-  const box =
-    $("savedApis");
-
-  box.innerHTML =
-    '<span class="small">Loading...</span>';
+    const value =
+      lookupInput.value.trim();
 
 
-  try{
+    if (!value) {
 
-    const response =
-      await fetch(
-        "/api/custom-apis"
+      setStatus(
+        lookupStatus,
+        "Enter something to search.",
+        "error"
       );
 
-    const data =
-      await response.json();
+      return;
+
+    }
 
 
-    if(!data.success){
+    lookupBtn.disabled =
+      true;
 
-      box.innerHTML =
-        `<span class="small">
-          ${escapeHtml(
-            data.error ||
-            "Unable to load APIs"
-          )}
-        </span>`;
+    lookupBtn.textContent =
+      "Searching...";
+
+
+    lookupResult.style.display =
+      "none";
+
+
+    setStatus(
+      lookupStatus,
+      "Searching...",
+      "success"
+    );
+
+
+    try {
+
+      const params =
+        new URLSearchParams();
+
+
+      params.set(
+        "q",
+        value
+      );
+
+
+      if (
+        selectedType &&
+        selectedType !== "auto"
+      ) {
+
+        params.set(
+          "type",
+          selectedType
+        );
+
+      }
+
+
+      const response =
+        await fetch(
+          "/api/lookup?" +
+          params.toString(),
+          {
+            method: "GET",
+            headers: {
+              "Accept":
+                "application/json"
+            }
+          }
+        );
+
+
+      const data =
+        await response
+          .json()
+          .catch(
+            () => ({
+              success: false,
+              error:
+                "Invalid server response"
+            })
+          );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Lookup failed"
+        );
+
+      }
+
+
+      lookupOutput.textContent =
+        JSON.stringify(
+          data,
+          null,
+          2
+        );
+
+
+      lookupResult.style.display =
+        "block";
+
+
+      if (data.success === false) {
+
+        setStatus(
+          lookupStatus,
+          data.error ||
+          "Lookup failed.",
+          "error"
+        );
+
+      } else {
+
+        setStatus(
+          lookupStatus,
+          "Search completed.",
+          "success"
+        );
+
+      }
+
+    } catch (error) {
+
+      setStatus(
+        lookupStatus,
+        error.message ||
+        "Lookup failed.",
+        "error"
+      );
+
+    } finally {
+
+      lookupBtn.disabled =
+        false;
+
+      lookupBtn.textContent =
+        "Search";
+
+    }
+
+  }
+
+
+  lookupBtn.addEventListener(
+    "click",
+    doLookup
+  );
+
+
+  lookupInput.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Enter"
+      ) {
+
+        event.preventDefault();
+
+        doLookup();
+
+      }
+
+    }
+  );
+
+
+  // ==========================================
+  // LOAD SAVED APIS
+  // ==========================================
+
+  async function loadSavedApis() {
+
+    savedApis.innerHTML =
+      '<div class="empty">Loading...</div>';
+
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/custom-apis",
+          {
+            method: "GET",
+            headers: {
+              "Accept":
+                "application/json"
+            }
+          }
+        );
+
+
+      const data =
+        await response
+          .json()
+          .catch(
+            () => ({})
+          );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Unable to load APIs"
+        );
+
+      }
+
+
+      savedApis =
+        Array.isArray(data)
+          ? data
+          : (
+            Array.isArray(data.apis)
+              ? data.apis
+              : (
+                Array.isArray(data.results)
+                  ? data.results
+                  : []
+              )
+          );
+
+
+      renderSavedApis();
+
+    } catch (error) {
+
+      savedApis.innerHTML = "";
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+      div.className =
+        "empty";
+
+      div.textContent =
+        error.message ||
+        "Unable to load saved APIs.";
+
+      savedApis.appendChild(
+        div
+      );
+
+    }
+
+  }
+
+
+  // ==========================================
+  // RENDER SAVED APIS
+  // ==========================================
+
+  function renderSavedApis() {
+
+    savedApis.innerHTML = "";
+
+
+    if (
+      !savedApis.length
+    ) {
+
+      const empty =
+        document.createElement(
+          "div"
+        );
+
+      empty.className =
+        "empty";
+
+      empty.textContent =
+        "No saved APIs yet.";
+
+      savedApis.appendChild(
+        empty
+      );
 
       return;
 
     }
 
 
-    box.innerHTML = "";
-
-
-    if(
-      !data.apis ||
-      !data.apis.length
-    ){
-
-      box.innerHTML =
-        '<span class="small">No saved APIs yet.</span>';
-
-      return;
-
-    }
-
-
-    data.apis.forEach(
+    savedApis.forEach(
       api => {
 
-        const row =
+        const card =
           document.createElement(
             "div"
           );
 
-        row.className =
-          "saved-item";
+        card.className =
+          "api-card";
+
+
+        const info =
+          document.createElement(
+            "div"
+          );
+
+        info.className =
+          "api-info";
+
+
+        const name =
+          document.createElement(
+            "div"
+          );
+
+        name.className =
+          "api-name";
+
+        name.textContent =
+          api.name ||
+          "Unnamed API";
+
+
+        const meta =
+          document.createElement(
+            "div"
+          );
+
+        meta.className =
+          "api-meta";
+
+        meta.textContent =
+          (
+            api.category ||
+            "Custom"
+          ) +
+          " · " +
+          (
+            api.method ||
+            "GET"
+          );
+
+
+        info.appendChild(
+          name
+        );
+
+        info.appendChild(
+          meta
+        );
+
+
+        const buttons =
+          document.createElement(
+            "div"
+          );
+
+        buttons.className =
+          "api-buttons";
 
 
         const run =
@@ -753,20 +1379,25 @@ async function loadSavedApis(){
             "button"
           );
 
-        run.className =
-          "saved-run";
+        run.type =
+          "button";
 
+        run.className =
+          "run-btn";
 
         run.textContent =
-          api.name +
-          "  ·  " +
-          api.method;
+          "Search";
 
 
         run.addEventListener(
           "click",
-          () =>
-            runSavedApi(api)
+          () => {
+
+            openCustomApi(
+              api
+            );
+
+          }
         );
 
 
@@ -775,8 +1406,11 @@ async function loadSavedApis(){
             "button"
           );
 
+        del.type =
+          "button";
+
         del.className =
-          "delete";
+          "delete-btn";
 
         del.textContent =
           "Delete";
@@ -784,133 +1418,101 @@ async function loadSavedApis(){
 
         del.addEventListener(
           "click",
-          () =>
-            deleteSavedApi(api.id)
+          () => {
+
+            deleteCustomApi(
+              api.id
+            );
+
+          }
         );
 
 
-        row.appendChild(run);
-        row.appendChild(del);
+        buttons.appendChild(
+          run
+        );
 
-        box.appendChild(row);
+        buttons.appendChild(
+          del
+        );
+
+
+        card.appendChild(
+          info
+        );
+
+        card.appendChild(
+          buttons
+        );
+
+
+        savedApis.appendChild(
+          card
+        );
 
       }
     );
 
-
-  }catch(error){
-
-    box.innerHTML =
-      `<span class="small">
-        ${escapeHtml(
-          error.message
-        )}
-      </span>`;
-
   }
 
-}
+
+  // ==========================================
+  // ADD CUSTOM API
+  // ==========================================
+
+  document
+    .getElementById(
+      "addApiBtn"
+    )
+    .addEventListener(
+      "click",
+      addCustomApi
+    );
 
 
-/* =========================
-   RUN SAVED API
-========================= */
+  async function addCustomApi() {
 
-async function runSavedApi(api){
+    const name =
+      document
+        .getElementById(
+          "apiName"
+        )
+        .value
+        .trim();
 
-  const message =
-    $("query").value.trim();
-
-
-  $("statusText").textContent =
-    "Running API...";
-
-  $("result").textContent =
-    "Loading...";
-
-
-  try{
 
     const url =
-      "/api/custom-proxy?id=" +
-      encodeURIComponent(api.id) +
-      "&message=" +
-      encodeURIComponent(message);
+      document
+        .getElementById(
+          "apiURL"
+        )
+        .value
+        .trim();
 
 
-    const response =
-      await fetch(url);
+    const method =
+      document
+        .getElementById(
+          "apiMethod"
+        )
+        .value;
 
 
-    const data =
-      await response.json();
+    const description =
+      document
+        .getElementById(
+          "apiDescription"
+        )
+        .value
+        .trim();
 
 
-    $("result").textContent =
-      JSON.stringify(
-        data,
-        null,
-        2
-      );
+    if (!name) {
 
-
-    $("statusText").textContent =
-      data.success
-        ? "Done"
-        : "API Error";
-
-
-  }catch(error){
-
-    $("statusText").textContent =
-      "Error";
-
-    $("result").textContent =
-      error.message;
-
-  }
-
-}
-
-
-/* =========================
-   DELETE API
-========================= */
-
-async function deleteSavedApi(id){
-
-  if(
-    !confirm(
-      "Delete this saved API?"
-    )
-  ){
-
-    return;
-
-  }
-
-
-  try{
-
-    const response =
-      await fetch(
-        "/api/custom-apis?id=" +
-        encodeURIComponent(id),
-        {
-          method:"DELETE"
-        }
-      );
-
-
-    const data =
-      await response.json();
-
-
-    if(!data.success){
-
-      alert(
-        data.error ||
-        "Delete failed."
+      setStatus(
+        customStatus,
+        "Enter API name.",
+        "error"
       );
 
       return;
@@ -918,41 +1520,617 @@ async function deleteSavedApi(id){
     }
 
 
-    loadSavedApis();
+    if (!url) {
+
+      setStatus(
+        customStatus,
+        "Enter API URL.",
+        "error"
+      );
+
+      return;
+
+    }
 
 
-  }catch(error){
+    try {
 
-    alert(error.message);
+      new URL(url);
+
+    } catch {
+
+      setStatus(
+        customStatus,
+        "Enter a valid HTTPS API URL.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    if (
+      !url
+        .toLowerCase()
+        .startsWith("https://")
+    ) {
+
+      setStatus(
+        customStatus,
+        "Only HTTPS API URLs are allowed.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const button =
+      document.getElementById(
+        "addApiBtn"
+      );
+
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      "Saving...";
+
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/custom-apis",
+          {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+
+              "Accept":
+                "application/json"
+            },
+
+            body:
+              JSON.stringify({
+                name,
+                url,
+                method,
+                description
+              })
+
+          }
+        );
+
+
+      const data =
+        await response
+          .json()
+          .catch(
+            () => ({})
+          );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Unable to save API"
+        );
+
+      }
+
+
+      setStatus(
+        customStatus,
+        "API saved successfully.",
+        "success"
+      );
+
+
+      document
+        .getElementById(
+          "apiName"
+        )
+        .value = "";
+
+
+      document
+        .getElementById(
+          "apiURL"
+        )
+        .value = "";
+
+
+      document
+        .getElementById(
+          "apiDescription"
+        )
+        .value = "";
+
+
+      await loadSavedApis();
+
+    } catch (error) {
+
+      setStatus(
+        customStatus,
+        error.message ||
+        "Unable to save API.",
+        "error"
+      );
+
+    } finally {
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        "+ Add Custom API";
+
+    }
 
   }
 
-}
+
+  // ==========================================
+  // OPEN CUSTOM API
+  // ==========================================
+
+  function openCustomApi(api) {
+
+    selectedCustomApi =
+      api;
 
 
-/* =========================
-   HTML ESCAPE
-========================= */
-
-function escapeHtml(value){
-
-  return String(value)
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
-}
+    customRunTitle.textContent =
+      (
+        api.name ||
+        "Custom API"
+      ) +
+      " · " +
+      (
+        api.method ||
+        "GET"
+      );
 
 
-/* =========================
-   START
-========================= */
+    customInput.value =
+      "";
 
-loadSavedApis();
+
+    customInput.placeholder =
+      getCustomPlaceholder(
+        api
+      );
+
+
+    customRun.classList.add(
+      "show"
+    );
+
+
+    customRun.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+
+
+    setTimeout(
+      () => {
+        customInput.focus();
+      },
+      250
+    );
+
+  }
+
+
+  // ==========================================
+  // CUSTOM PLACEHOLDER
+  // ==========================================
+
+  function getCustomPlaceholder(api) {
+
+    const text =
+      (
+        api.name ||
+        ""
+      ).toLowerCase();
+
+
+    const url =
+      (
+        api.url ||
+        ""
+      ).toLowerCase();
+
+
+    if (
+      text.includes("pin") ||
+      url.includes("pin")
+    ) {
+      return "Enter PIN code...";
+    }
+
+
+    if (
+      text.includes("ifsc") ||
+      url.includes("ifsc")
+    ) {
+      return "Enter IFSC code...";
+    }
+
+
+    if (
+      text.includes("mobile") ||
+      text.includes("phone") ||
+      text.includes("number") ||
+      url.includes("mobile") ||
+      url.includes("phone") ||
+      url.includes("number")
+    ) {
+      return "Enter mobile/number...";
+    }
+
+
+    if (
+      text.includes("email") ||
+      url.includes("email")
+    ) {
+      return "Enter email...";
+    }
+
+
+    if (
+      text.includes("vehicle") ||
+      url.includes("vehicle")
+    ) {
+      return "Enter vehicle number...";
+    }
+
+
+    if (
+      text.includes("upi") ||
+      url.includes("upi")
+    ) {
+      return "Enter UPI ID...";
+    }
+
+
+    if (
+      text.includes("ip") ||
+      url.includes("ip")
+    ) {
+      return "Enter IP address...";
+    }
+
+
+    return "Enter information...";
+  }
+
+
+  // ==========================================
+  // RUN CUSTOM API
+  // ==========================================
+
+  customRunBtn.addEventListener(
+    "click",
+    runCustomApi
+  );
+
+
+  customInput.addEventListener(
+    "keydown",
+    event => {
+
+      if (
+        event.key === "Enter"
+      ) {
+
+        event.preventDefault();
+
+        runCustomApi();
+
+      }
+
+    }
+  );
+
+
+  async function runCustomApi() {
+
+    if (
+      !selectedCustomApi
+    ) {
+
+      setStatus(
+        customStatus,
+        "Select a saved API first.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const message =
+      customInput.value.trim();
+
+
+    if (!message) {
+
+      setStatus(
+        customStatus,
+        "Enter information to search.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    customRunBtn.disabled =
+      true;
+
+    customRunBtn.textContent =
+      "Searching...";
+
+
+    try {
+
+      const id =
+        String(
+          selectedCustomApi.id ||
+          ""
+        ).trim();
+
+
+      if (!id) {
+
+        throw new Error(
+          "Saved API has no valid ID."
+        );
+
+      }
+
+
+      const params =
+        new URLSearchParams();
+
+
+      params.set(
+        "id",
+        id
+      );
+
+      params.set(
+        "message",
+        message
+      );
+
+
+      const response =
+        await fetch(
+          "/api/custom-proxy?" +
+          params.toString(),
+          {
+            method: "GET",
+            headers: {
+              "Accept":
+                "application/json"
+            }
+          }
+        );
+
+
+      const data =
+        await response
+          .json()
+          .catch(
+            () => ({
+              success: false,
+              error:
+                "Invalid API response"
+            })
+          );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Custom API request failed"
+        );
+
+      }
+
+
+      lookupOutput.textContent =
+        JSON.stringify(
+          data,
+          null,
+          2
+        );
+
+
+      lookupResult.style.display =
+        "block";
+
+
+      setStatus(
+        customStatus,
+        data.success === false
+          ? (
+              data.error ||
+              "API returned an error."
+            )
+          : "API request completed.",
+        data.success === false
+          ? "error"
+          : "success"
+      );
+
+
+      lookupResult.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+    } catch (error) {
+
+      setStatus(
+        customStatus,
+        error.message ||
+        "Custom API request failed.",
+        "error"
+      );
+
+    } finally {
+
+      customRunBtn.disabled =
+        false;
+
+      customRunBtn.textContent =
+        "Search";
+
+    }
+
+  }
+
+
+  // ==========================================
+  // DELETE CUSTOM API
+  // ==========================================
+
+  async function deleteCustomApi(id) {
+
+    const apiId =
+      String(
+        id ||
+        ""
+      ).trim();
+
+
+    if (!apiId) {
+
+      setStatus(
+        customStatus,
+        "Valid API ID is required.",
+        "error"
+      );
+
+      return;
+
+    }
+
+
+    const confirmed =
+      window.confirm(
+        "Delete this saved API?"
+      );
+
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/custom-apis?id=" +
+          encodeURIComponent(
+            apiId
+          ),
+          {
+            method: "DELETE",
+            headers: {
+              "Accept":
+                "application/json"
+            }
+          }
+        );
+
+
+      const data =
+        await response
+          .json()
+          .catch(
+            () => ({})
+          );
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          "Unable to delete API"
+        );
+
+      }
+
+
+      if (
+        selectedCustomApi &&
+        String(
+          selectedCustomApi.id
+        ) === apiId
+      ) {
+
+        selectedCustomApi =
+          null;
+
+        customRun.classList.remove(
+          "show"
+        );
+
+      }
+
+
+      setStatus(
+        customStatus,
+        "API deleted successfully.",
+        "success"
+      );
+
+
+      await loadSavedApis();
+
+    } catch (error) {
+
+      setStatus(
+        customStatus,
+        error.message ||
+        "Unable to delete API.",
+        "error"
+      );
+
+    }
+
+  }
+
+
+  // ==========================================
+  // INITIAL LOAD
+  // ==========================================
+
+  selectTool(
+    "auto"
+  );
+
+  loadSavedApis();
 
 </script>
 
 </body>
-</html>
+  </html>
