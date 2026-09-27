@@ -1,283 +1,390 @@
-<!-- index.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>TXG Information</title>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-<style>
-* {
-  box-sizing: border-box;
-}
+  <title>TXG Information Center</title>
 
-body {
-  margin: 0;
-  background: #080b10;
-  color: #f5f7fa;
-  font-family: Arial, sans-serif;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-.container {
-  width: min(1100px, 94%);
-  margin: 25px auto;
-}
+    body {
+      margin: 0;
+      font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      background: #08090d;
+      color: #f5f7fb;
+    }
 
-h1 {
-  margin-bottom: 5px;
-}
+    .container {
+      width: min(1100px, 94%);
+      margin: 30px auto;
+    }
 
-.subtitle {
-  color: #8f98a8;
-  margin-bottom: 25px;
-}
+    .header {
+      margin-bottom: 25px;
+    }
 
-.tools {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px;
-}
+    .header h1 {
+      margin: 0;
+      font-size: 30px;
+    }
 
-.tool {
-  border: 1px solid #242b36;
-  background: #11161e;
-  color: #fff;
-  padding: 14px 10px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: .2s;
-}
+    .header p {
+      color: #8d94a6;
+      margin-top: 8px;
+    }
 
-.tool:hover,
-.tool.active {
-  border-color: #4d8dff;
-  background: #172236;
-}
+    .tools {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
 
-.search-box {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-}
+    .tool {
+      border: 1px solid #202431;
+      background: #11131a;
+      color: #fff;
+      padding: 14px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: .2s;
+    }
 
-input,
-select,
-textarea {
-  width: 100%;
-  background: #0e131a;
-  border: 1px solid #29313d;
-  color: #fff;
-  padding: 13px;
-  border-radius: 10px;
-  outline: none;
-}
+    .tool:hover,
+    .tool.active {
+      border-color: #5d6cff;
+      background: #171a27;
+    }
 
-input:focus,
-select:focus,
-textarea:focus {
-  border-color: #4d8dff;
-}
+    .panel {
+      background: #101219;
+      border: 1px solid #202431;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
 
-button {
-  cursor: pointer;
-}
+    .panel h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
 
-.search-btn,
-.add-btn {
-  border: 0;
-  background: #2563eb;
-  color: white;
-  padding: 0 20px;
-  border-radius: 10px;
-  font-weight: 700;
-}
+    .search-row {
+      display: flex;
+      gap: 10px;
+    }
 
-.section {
-  margin-top: 25px;
-  background: #0d1219;
-  border: 1px solid #202733;
-  border-radius: 15px;
-  padding: 18px;
-}
+    input,
+    select {
+      width: 100%;
+      background: #080a0f;
+      color: #fff;
+      border: 1px solid #292e3b;
+      border-radius: 10px;
+      padding: 13px;
+      outline: none;
+    }
 
-.section h2 {
-  margin-top: 0;
-}
+    input:focus,
+    select:focus {
+      border-color: #5d6cff;
+    }
 
-.hidden {
-  display: none;
-}
+    button {
+      font-family: inherit;
+    }
 
-.result {
-  margin-top: 15px;
-  background: #070a0f;
-  border: 1px solid #202733;
-  border-radius: 12px;
-  padding: 15px;
-  overflow: auto;
-}
+    .primary {
+      border: 0;
+      background: #5d6cff;
+      color: #fff;
+      padding: 13px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
 
-pre {
-  margin: 0;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
+    .primary:hover {
+      opacity: .9;
+    }
 
-.custom-form {
-  display: grid;
-  gap: 12px;
-}
+    .result {
+      margin-top: 18px;
+    }
 
-.saved-list {
-  display: grid;
-  gap: 12px;
-  margin-top: 18px;
-}
+    .loading,
+    .error,
+    .empty {
+      padding: 15px;
+      border-radius: 10px;
+      background: #0a0c11;
+      border: 1px solid #242938;
+    }
 
-.api-card {
-  background: #11161e;
-  border: 1px solid #252d38;
-  border-radius: 13px;
-  padding: 15px;
-}
+    .error {
+      color: #ff7f7f;
+      border-color: #5c2727;
+    }
 
-.api-top {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  align-items: center;
-}
+    .result-card {
+      background: #0a0c11;
+      border: 1px solid #242938;
+      border-radius: 12px;
+      overflow: hidden;
+    }
 
-.api-name {
-  font-weight: 700;
-  font-size: 16px;
-}
+    .result-head {
+      padding: 14px;
+      border-bottom: 1px solid #242938;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
 
-.api-meta {
-  color: #8791a1;
-  font-size: 12px;
-  margin-top: 5px;
-}
+    .result-head span {
+      color: #8d94a6;
+      font-size: 13px;
+    }
 
-.api-url {
-  color: #6fa2ff;
-  font-size: 12px;
-  margin-top: 8px;
-  word-break: break-all;
-}
+    pre {
+      margin: 0;
+      padding: 15px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: #dce1ee;
+      font-size: 13px;
+      line-height: 1.55;
+    }
 
-.api-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 13px;
-  flex-wrap: wrap;
-}
+    .api-form {
+      display: grid;
+      gap: 10px;
+    }
 
-.run-btn,
-.delete-btn {
-  border: 0;
-  padding: 9px 13px;
-  border-radius: 8px;
-  color: #fff;
-  font-weight: 600;
-}
+    .api-grid {
+      display: grid;
+      grid-template-columns:
+        1fr 1fr;
+      gap: 10px;
+    }
 
-.run-btn {
-  background: #16803c;
-}
+    .saved-api {
+      border: 1px solid #252a36;
+      background: #0b0d12;
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 10px;
+    }
 
-.delete-btn {
-  background: #b4232f;
-}
+    .saved-api-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
 
-.api-runner {
-  display: none;
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid #252d38;
-}
+    .saved-api-name {
+      font-weight: 700;
+    }
 
-.api-runner.show {
-  display: block;
-}
+    .saved-api-url {
+      color: #777f92;
+      font-size: 12px;
+      margin-top: 5px;
+      word-break: break-all;
+    }
 
-.runner-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
+    .api-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
 
-.runner-row button {
-  border: 0;
-  background: #2563eb;
-  color: #fff;
-  padding: 0 18px;
-  border-radius: 9px;
-}
+    .small-btn {
+      border: 1px solid #2a3040;
+      background: #141720;
+      color: #fff;
+      border-radius: 8px;
+      padding: 9px 12px;
+      cursor: pointer;
+    }
 
-.status {
-  margin-top: 12px;
-  color: #8f98a8;
-}
+    .small-btn:hover {
+      border-color: #5d6cff;
+    }
 
-@media(max-width:600px) {
-  .search-box,
-  .runner-row {
-    flex-direction: column;
-  }
+    .delete-btn:hover {
+      border-color: #ff4f4f;
+      color: #ff7474;
+    }
 
-  .search-btn,
-  .add-btn,
-  .runner-row button {
-    height: 46px;
-  }
-}
-</style>
+    .api-runner {
+      display: none;
+      margin-top: 15px;
+    }
+
+    .api-runner.show {
+      display: block;
+    }
+
+    .muted {
+      color: #7e8699;
+      font-size: 13px;
+    }
+
+    @media (max-width: 650px) {
+
+      .container {
+        width: 92%;
+        margin: 20px auto;
+      }
+
+      .search-row {
+        flex-direction: column;
+      }
+
+      .api-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .saved-api-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="container">
 
-  <h1>TXG Information</h1>
-  <div class="subtitle">
-    Information & API Lookup Center
+  <div class="header">
+    <h1>TXG Information Center</h1>
+    <p>
+      Search public and authorized information from one place.
+    </p>
   </div>
 
   <div class="tools">
 
-    <button class="tool active" data-type="auto">Auto</button>
-    <button class="tool" data-type="mobile">Mobile</button>
-    <button class="tool" data-type="email">Email</button>
-    <button class="tool" data-type="vehicle">Vehicle</button>
-    <button class="tool" data-type="ip">IP</button>
-    <button class="tool" data-type="url">URL</button>
-    <button class="tool" data-type="pin">PIN</button>
-    <button class="tool" data-type="ifsc">IFSC</button>
-    <button class="tool" data-type="upi">UPI</button>
-    <button class="tool" data-type="company">Company</button>
-    <button class="tool" data-type="crm">CRM</button>
-    <button class="tool" data-type="custom">Custom API</button>
+    <button
+      class="tool active"
+      data-type="auto"
+    >
+      Auto
+    </button>
+
+    <button
+      class="tool"
+      data-type="mobile"
+    >
+      Mobile
+    </button>
+
+    <button
+      class="tool"
+      data-type="email"
+    >
+      Email
+    </button>
+
+    <button
+      class="tool"
+      data-type="vehicle"
+    >
+      Vehicle
+    </button>
+
+    <button
+      class="tool"
+      data-type="ip"
+    >
+      IP
+    </button>
+
+    <button
+      class="tool"
+      data-type="url"
+    >
+      URL
+    </button>
+
+    <button
+      class="tool"
+      data-type="pin"
+    >
+      PIN
+    </button>
+
+    <button
+      class="tool"
+      data-type="ifsc"
+    >
+      IFSC
+    </button>
+
+    <button
+      class="tool"
+      data-type="upi"
+    >
+      UPI
+    </button>
+
+    <button
+      class="tool"
+      data-type="company"
+    >
+      Company
+    </button>
+
+    <button
+      class="tool"
+      data-type="crm"
+    >
+      CRM
+    </button>
+
+    <button
+      class="tool"
+      data-type="custom"
+    >
+      Custom API
+    </button>
 
   </div>
 
-  <div id="lookupSection" class="section">
+  <div class="panel">
 
-    <h2 id="lookupTitle">Information Search</h2>
+    <h2>Information Lookup</h2>
 
-    <div class="search-box">
+    <div class="search-row">
 
       <input
-        id="lookupInput"
+        id="searchInput"
         type="text"
-        placeholder="Enter information..."
         autocomplete="off"
+        placeholder="Enter mobile, email, IP, PIN, IFSC, UPI, URL..."
       >
 
       <button
-        id="lookupButton"
-        class="search-btn"
+        id="searchButton"
+        class="primary"
         type="button"
       >
         Search
@@ -285,771 +392,160 @@ pre {
 
     </div>
 
-    <div id="lookupStatus" class="status"></div>
-
-    <div id="lookupResult" class="result hidden">
-      <pre id="lookupOutput"></pre>
-    </div>
+    <div
+      id="result"
+      class="result"
+    ></div>
 
   </div>
 
-  <div id="customSection" class="section">
+  <div
+    id="customApiPanel"
+    class="panel"
+    style="display:none;"
+  >
 
-    <h2>Custom APIs</h2>
+    <h2>Custom API Manager</h2>
 
-    <div class="custom-form">
+    <p class="muted">
+      Save your own HTTPS API and run it from the dashboard.
+    </p>
 
-      <input
-        id="apiName"
-        type="text"
-        placeholder="API name"
-      >
+    <form
+      id="apiForm"
+      class="api-form"
+    >
+
+      <div class="api-grid">
+
+        <input
+          id="apiName"
+          type="text"
+          placeholder="API Name"
+          required
+        >
+
+        <select id="apiMethod">
+
+          <option value="GET">
+            GET
+          </option>
+
+          <option value="POST">
+            POST
+          </option>
+
+          <option value="PUT">
+            PUT
+          </option>
+
+          <option value="PATCH">
+            PATCH
+          </option>
+
+          <option value="DELETE">
+            DELETE
+          </option>
+
+        </select>
+
+      </div>
 
       <input
         id="apiUrl"
         type="url"
         placeholder="https://example.com/api?value={message}"
+        required
       >
-
-      <select id="apiMethod">
-        <option value="GET">GET</option>
-        <option value="POST">POST</option>
-        <option value="PUT">PUT</option>
-        <option value="PATCH">PATCH</option>
-        <option value="DELETE">DELETE</option>
-      </select>
 
       <input
-        id="apiCategory"
-        type="text"
-        placeholder="Category e.g. PIN / IFSC / Email"
-        value="Custom"
-      >
-
-      <textarea
         id="apiDescription"
-        rows="3"
-        placeholder="Description"
-      ></textarea>
+        type="text"
+        placeholder="Description (optional)"
+      >
 
       <button
-        id="addApiButton"
-        class="add-btn"
-        type="button"
+        class="primary"
+        type="submit"
       >
-        Add Custom API
+        Add API
       </button>
 
+    </form>
+
+    <div
+      id="savedApis"
+      style="margin-top:20px;"
+    ></div>
+
+    <div
+      id="apiRunner"
+      class="api-runner"
+    >
+
+      <input
+        id="apiRunnerInput"
+        type="text"
+        placeholder="Enter value..."
+      >
+
+      <button
+        id="apiRunButton"
+        class="primary"
+        type="button"
+        style="margin-top:10px;"
+      >
+        Run API
+      </button>
+
+      <div
+        id="apiRunnerResult"
+        class="result"
+      ></div>
+
     </div>
-
-    <div id="apiStatus" class="status"></div>
-
-    <div id="savedApis" class="saved-list"></div>
 
   </div>
 
 </div>
 
 <script>
-"use strict";
 
 let selectedType = "auto";
-let customApiList = [];
+let selectedAPI = null;
 
-const tools = document.querySelectorAll(".tool");
-const lookupInput = document.getElementById("lookupInput");
-const lookupButton = document.getElementById("lookupButton");
-const lookupTitle = document.getElementById("lookupTitle");
-const lookupStatus = document.getElementById("lookupStatus");
-const lookupResult = document.getElementById("lookupResult");
-const lookupOutput = document.getElementById("lookupOutput");
+const tools =
+  document.querySelectorAll(".tool");
 
-const apiName = document.getElementById("apiName");
-const apiUrl = document.getElementById("apiUrl");
-const apiMethod = document.getElementById("apiMethod");
-const apiCategory = document.getElementById("apiCategory");
-const apiDescription = document.getElementById("apiDescription");
-const addApiButton = document.getElementById("addApiButton");
-const apiStatus = document.getElementById("apiStatus");
-const savedApis = document.getElementById("savedApis");
+const searchInput =
+  document.getElementById("searchInput");
 
-const placeholders = {
-  auto: "Enter mobile, email, IP, PIN, IFSC, UPI, URL...",
-  mobile: "Enter mobile number...",
-  email: "Enter email address...",
-  vehicle: "Enter vehicle registration number...",
-  ip: "Enter IP address...",
-  url: "Enter URL or domain...",
-  pin: "Enter PIN code...",
-  ifsc: "Enter IFSC code...",
-  upi: "Enter UPI ID...",
-  company: "Enter company name...",
-  crm: "Enter CRM search value...",
-  custom: "Enter search value..."
-};
+const searchButton =
+  document.getElementById("searchButton");
 
-tools.forEach(button => {
-  button.addEventListener("click", () => {
+const resultBox =
+  document.getElementById("result");
 
-    tools.forEach(item => {
-      item.classList.remove("active");
-    });
+const customApiPanel =
+  document.getElementById("customApiPanel");
 
-    button.classList.add("active");
+const apiForm =
+  document.getElementById("apiForm");
 
-    selectedType = button.dataset.type || "auto";
+const savedApisBox =
+  document.getElementById("savedApis");
 
-    lookupInput.placeholder =
-      placeholders[selectedType] ||
-      placeholders.auto;
+const apiRunner =
+  document.getElementById("apiRunner");
 
-    lookupTitle.textContent =
-      selectedType === "custom"
-        ? "Custom API"
-        : "Information Search";
+const apiRunnerInput =
+  document.getElementById("apiRunnerInput");
 
-    lookupInput.focus();
-  });
-});
+const apiRunButton =
+  document.getElementById("apiRunButton");
 
-lookupButton.addEventListener("click", performLookup);
-
-lookupInput.addEventListener("keydown", event => {
-  if (event.key === "Enter") {
-    performLookup();
-  }
-});
-
-async function performLookup() {
-
-  const query = lookupInput.value.trim();
-
-  if (!query) {
-    lookupStatus.textContent =
-      "Enter a value first.";
-    return;
-  }
-
-  lookupStatus.textContent = "Searching...";
-  lookupResult.classList.add("hidden");
-  lookupOutput.textContent = "";
-
-  try {
-
-    const url =
-      "/api/lookup?q=" +
-      encodeURIComponent(query) +
-      "&query=" +
-      encodeURIComponent(query) +
-      "&type=" +
-      encodeURIComponent(selectedType);
-
-    const response = await fetch(url);
-
-    const data = await response.json();
-
-    if (!response.ok || data.success === false) {
-      throw new Error(
-        data.error || "Lookup failed"
-      );
-    }
-
-    lookupOutput.textContent =
-      JSON.stringify(data, null, 2);
-
-    lookupResult.classList.remove("hidden");
-
-    lookupStatus.textContent =
-      "Search completed.";
-
-  } catch (error) {
-
-    lookupStatus.textContent =
-      error.message || "Search failed.";
-
-    lookupOutput.textContent =
-      JSON.stringify({
-        success: false,
-        error: error.message
-      }, null, 2);
-
-    lookupResult.classList.remove("hidden");
-  }
-}
-
-addApiButton.addEventListener(
-  "click",
-  addCustomApi
-);
-
-async function addCustomApi() {
-
-  const name = apiName.value.trim();
-  const url = apiUrl.value.trim();
-  const method = apiMethod.value;
-  const category = apiCategory.value.trim() || "Custom";
-  const description = apiDescription.value.trim();
-
-  if (!name) {
-    apiStatus.textContent =
-      "API name is required.";
-    return;
-  }
-
-  if (!url) {
-    apiStatus.textContent =
-      "API URL is required.";
-    return;
-  }
-
-  try {
-
-    new URL(url);
-
-  } catch {
-
-    apiStatus.textContent =
-      "Invalid API URL.";
-    return;
-  }
-
-  if (!url.startsWith("https://")) {
-    apiStatus.textContent =
-      "Only HTTPS URLs are allowed.";
-    return;
-  }
-
-  apiStatus.textContent =
-    "Adding API...";
-
-  try {
-
-    const response = await fetch(
-      "/api/custom-apis",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          name,
-          url,
-          method,
-          category,
-          description
-        })
-      }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok || !data.success) {
-      throw new Error(
-        data.error || "Failed to add API"
-      );
-    }
-
-    apiName.value = "";
-    apiUrl.value = "";
-    apiMethod.value = "GET";
-    apiCategory.value = "Custom";
-    apiDescription.value = "";
-
-    apiStatus.textContent =
-      "API added successfully.";
-
-    await loadSavedApis();
-
-  } catch (error) {
-
-    apiStatus.textContent =
-      error.message || "Failed to add API";
-  }
-}
-
-async function loadSavedApis() {
-
-  savedApis.innerHTML =
-    "<div class='status'>Loading APIs...</div>";
-
-  try {
-
-    const response = await fetch(
-      "/api/custom-apis"
-    );
-
-    const data = await response.json();
-
-    if (!response.ok || !data.success) {
-      throw new Error(
-        data.error || "Failed to load APIs"
-      );
-    }
-
-    customApiList =
-      Array.isArray(data.apis)
-        ? data.apis
-        : [];
-
-    renderSavedApis();
-
-  } catch (error) {
-
-    savedApis.innerHTML =
-      "<div class='status'>" +
-      escapeHtml(
-        error.message || "Failed to load APIs"
-      ) +
-      "</div>";
-  }
-}
-
-function renderSavedApis() {
-
-  if (!customApiList.length) {
-
-    savedApis.innerHTML =
-      "<div class='status'>No custom APIs saved.</div>";
-
-    return;
-  }
-
-  savedApis.innerHTML =
-    customApiList.map(api => {
-
-      const id = String(api.id || "");
-
-      return `
-        <div class="api-card">
-
-          <div class="api-top">
-
-            <div>
-              <div class="api-name">
-                ${escapeHtml(api.name || "Unnamed API")}
-              </div>
-
-              <div class="api-meta">
-                ${escapeHtml(api.category || "Custom")}
-                ·
-                ${escapeHtml(api.method || "GET")}
-              </div>
-            </div>
-
-          </div>
-
-          <div class="api-url">
-            ${escapeHtml(api.url || "")}
-          </div>
-
-          ${
-            api.description
-              ? `<div class="api-meta">
-                  ${escapeHtml(api.description)}
-                 </div>`
-              : ""
-          }
-
-          <div class="api-actions">
-
-            <button
-              type="button"
-              class="run-btn"
-              data-action="run"
-              data-id="${escapeAttribute(id)}"
-            >
-              Search
-            </button>
-
-            <button
-              type="button"
-              class="delete-btn"
-              data-action="delete"
-              data-id="${escapeAttribute(id)}"
-            >
-              Delete
-            </button>
-
-          </div>
-
-          <div
-            class="api-runner"
-            id="runner-${safeId(id)}"
-          >
-
-            <input
-              type="text"
-              class="runner-input"
-              placeholder="${escapeAttribute(
-                getApiPlaceholder(api)
-              )}"
-              data-id="${escapeAttribute(id)}"
-            >
-
-            <div class="runner-row">
-
-              <button
-                type="button"
-                data-action="execute"
-                data-id="${escapeAttribute(id)}"
-              >
-                Run API
-              </button>
-
-            </div>
-
-            <div
-              class="status"
-              data-status="${escapeAttribute(id)}"
-            ></div>
-
-            <div
-              class="result hidden"
-              data-result="${escapeAttribute(id)}"
-            >
-              <pre data-output="${escapeAttribute(id)}"></pre>
-            </div>
-
-          </div>
-
-        </div>
-      `;
-
-    }).join("");
-
-  bindApiButtons();
-}
-
-function bindApiButtons() {
-
-  savedApis
-    .querySelectorAll("[data-action='run']")
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          const id =
-            String(
-              button.dataset.id || ""
-            ).trim();
-
-          const runner =
-            document.getElementById(
-              "runner-" + safeId(id)
-            );
-
-          if (!runner) return;
-
-          runner.classList.add("show");
-
-          const input =
-            runner.querySelector(
-              ".runner-input"
-            );
-
-          if (input) {
-            input.focus();
-          }
-        }
-      );
-    });
-
-  savedApis
-    .querySelectorAll("[data-action='delete']")
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          const id =
-            String(
-              button.dataset.id || ""
-            ).trim();
-
-          deleteCustomApi(id);
-        }
-      );
-    });
-
-  savedApis
-    .querySelectorAll("[data-action='execute']")
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          const id =
-            String(
-              button.dataset.id || ""
-            ).trim();
-
-          runCustomApi(id);
-        }
-      );
-    });
-
-  savedApis
-    .querySelectorAll(".runner-input")
-    .forEach(input => {
-
-      input.addEventListener(
-        "keydown",
-        event => {
-
-          if (event.key !== "Enter") {
-            return;
-          }
-
-          runCustomApi(
-            String(
-              input.dataset.id || ""
-            ).trim()
-          );
-        }
-      );
-    });
-}
-
-async function runCustomApi(id) {
-
-  const apiId =
-    String(id || "").trim();
-
-  if (!apiId) {
-    return;
-  }
-
-  const runner =
-    document.getElementById(
-      "runner-" + safeId(apiId)
-    );
-
-  if (!runner) {
-    return;
-  }
-
-  const input =
-    runner.querySelector(
-      ".runner-input"
-    );
-
-  const status =
-    runner.querySelector(
-      ".status"
-    );
-
-  const result =
-    runner.querySelector(
-      ".result"
-    );
-
-  const output =
-    runner.querySelector(
-      "pre"
-    );
-
-  const message =
-    String(
-      input?.value || ""
-    ).trim();
-
-  if (!message) {
-
-    status.textContent =
-      "Enter a value first.";
-
-    return;
-  }
-
-  status.textContent =
-    "Running API...";
-
-  result.classList.add("hidden");
-  output.textContent = "";
-
-  try {
-
-    const response = await fetch(
-      "/api/custom-proxy?id=" +
-      encodeURIComponent(apiId) +
-      "&message=" +
-      encodeURIComponent(message)
-    );
-
-    const data =
-      await response.json();
-
-    if (!response.ok || !data.success) {
-      throw new Error(
-        data.error || "API request failed"
-      );
-    }
-
-    output.textContent =
-      JSON.stringify(data, null, 2);
-
-    result.classList.remove("hidden");
-
-    status.textContent =
-      "Completed.";
-
-  } catch (error) {
-
-    status.textContent =
-      error.message ||
-      "API request failed.";
-
-    output.textContent =
-      JSON.stringify({
-        success: false,
-        error: error.message
-      }, null, 2);
-
-    result.classList.remove("hidden");
-  }
-}
-
-async function deleteCustomApi(id) {
-
-  const apiId =
-    String(
-      typeof id === "object"
-        ? id?.id || ""
-        : id || ""
-    ).trim();
-
-  if (
-    !apiId ||
-    apiId === "[object Object]"
-  ) {
-    alert(
-      "Valid API ID is required"
-    );
-    return;
-  }
-
-  if (
-    !confirm(
-      "Delete this API?"
-    )
-  ) {
-    return;
-  }
-
-  try {
-
-    const response = await fetch(
-      "/api/custom-apis?id=" +
-      encodeURIComponent(apiId),
-      {
-        method: "DELETE"
-      }
-    );
-
-    const data =
-      await response.json();
-
-    if (
-      !response.ok ||
-      !data.success
-    ) {
-      throw new Error(
-        data.error ||
-        "Delete failed"
-      );
-    }
-
-    await loadSavedApis();
-
-  } catch (error) {
-
-    alert(
-      error.message ||
-      "Delete failed"
-    );
-  }
-}
-
-function getApiPlaceholder(api) {
-
-  const text =
-    (
-      String(api?.name || "") +
-      " " +
-      String(api?.category || "") +
-      " " +
-      String(api?.url || "")
-    ).toLowerCase();
-
-  if (
-    text.includes("pin") ||
-    text.includes("postal")
-  ) {
-    return "Enter PIN code...";
-  }
-
-  if (
-    text.includes("ifsc") ||
-    text.includes("bank")
-  ) {
-    return "Enter IFSC code...";
-  }
-
-  if (
-    text.includes("email")
-  ) {
-    return "Enter email address...";
-  }
-
-  if (
-    text.includes("mobile") ||
-    text.includes("phone") ||
-    text.includes("number")
-  ) {
-    return "Enter mobile number...";
-  }
-
-  if (
-    text.includes("vehicle") ||
-    text.includes("rc")
-  ) {
-    return "Enter vehicle number...";
-  }
-
-  if (
-    text.includes("ip")
-  ) {
-    return "Enter IP address...";
-  }
-
-  if (
-    text.includes("url") ||
-    text.includes("domain")
-  ) {
-    return "Enter URL/domain...";
-  }
-
-  if (
-    text.includes("upi")
-  ) {
-    return "Enter UPI ID...";
-  }
-
-  return "Enter search value...";
-}
-
-function safeId(value) {
-
-  return String(value || "")
-    .replace(
-      /[^a-zA-Z0-9_-]/g,
-      "_"
-    );
-}
+const apiRunnerResult =
+  document.getElementById("apiRunnerResult");
 
 function escapeHtml(value) {
 
@@ -1061,11 +557,646 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-function escapeAttribute(value) {
-  return escapeHtml(value);
+tools.forEach(button => {
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      tools.forEach(x =>
+        x.classList.remove("active")
+      );
+
+      button.classList.add("active");
+
+      selectedType =
+        button.dataset.type || "auto";
+
+      if (selectedType === "custom") {
+
+        customApiPanel.style.display =
+          "block";
+
+        searchInput.placeholder =
+          "Select a saved API below...";
+
+      } else {
+
+        customApiPanel.style.display =
+          "none";
+
+        const placeholders = {
+
+          auto:
+            "Enter mobile, email, IP, PIN, IFSC, UPI, URL...",
+
+          mobile:
+            "Enter mobile number...",
+
+          email:
+            "Enter email address...",
+
+          vehicle:
+            "Enter vehicle registration number...",
+
+          ip:
+            "Enter IP address...",
+
+          url:
+            "Enter URL or domain...",
+
+          pin:
+            "Enter 6 digit PIN code...",
+
+          ifsc:
+            "Enter IFSC code...",
+
+          upi:
+            "Enter UPI ID...",
+
+          company:
+            "Enter company information...",
+
+          crm:
+            "Enter CRM search value..."
+        };
+
+        searchInput.placeholder =
+          placeholders[selectedType] ||
+          placeholders.auto;
+      }
+
+    }
+  );
+
+});
+
+async function performLookup() {
+
+  const value =
+    searchInput.value.trim();
+
+  if (!value) {
+
+    resultBox.innerHTML = `
+      <div class="error">
+        Value is required
+      </div>
+    `;
+
+    return;
+  }
+
+  resultBox.innerHTML = `
+    <div class="loading">
+      Searching...
+    </div>
+  `;
+
+  try {
+
+    const params =
+      new URLSearchParams();
+
+    /*
+      Send ALL supported parameter names.
+
+      This keeps compatibility with
+      both old and new frontend/backend code.
+    */
+
+    params.set("value", value);
+    params.set("query", value);
+    params.set("q", value);
+    params.set("input", value);
+
+    if (
+      selectedType &&
+      selectedType !== "auto"
+    ) {
+      params.set(
+        "type",
+        selectedType
+      );
+    }
+
+    const response =
+      await fetch(
+        `/api/lookup?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Accept":
+              "application/json"
+          }
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data?.error ||
+        "Lookup failed"
+      );
+    }
+
+    if (data.success === false) {
+      throw new Error(
+        data.error ||
+        "Lookup failed"
+      );
+    }
+
+    resultBox.innerHTML = `
+
+      <div class="result-card">
+
+        <div class="result-head">
+
+          <strong>
+            ${escapeHtml(
+              data.type || "Result"
+            )}
+          </strong>
+
+          <span>
+            ${Number(
+              data.result_count || 0
+            )} result(s)
+          </span>
+
+        </div>
+
+        <pre>${escapeHtml(
+          JSON.stringify(
+            data.results ??
+            data.result ??
+            data,
+            null,
+            2
+          )
+        )}</pre>
+
+      </div>
+
+    `;
+
+  } catch (error) {
+
+    resultBox.innerHTML = `
+      <div class="error">
+        ${escapeHtml(
+          error.message ||
+          "Something went wrong"
+        )}
+      </div>
+    `;
+  }
 }
 
+searchButton.addEventListener(
+  "click",
+  performLookup
+);
+
+searchInput.addEventListener(
+  "keydown",
+  event => {
+
+    if (event.key === "Enter") {
+      event.preventDefault();
+      performLookup();
+    }
+
+  }
+);
+
+async function loadSavedApis() {
+
+  savedApisBox.innerHTML = `
+    <div class="loading">
+      Loading saved APIs...
+    </div>
+  `;
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/custom-apis",
+        {
+          method: "GET",
+          headers: {
+            "Accept":
+              "application/json"
+          }
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (!response.ok ||
+        data.success === false) {
+
+      throw new Error(
+        data.error ||
+        "Failed to load APIs"
+      );
+    }
+
+    const apis =
+      Array.isArray(data.apis)
+        ? data.apis
+        : [];
+
+    if (!apis.length) {
+
+      savedApisBox.innerHTML = `
+        <div class="empty">
+          No saved APIs yet.
+        </div>
+      `;
+
+      return;
+    }
+
+    savedApisBox.innerHTML =
+      apis.map(api => `
+
+        <div
+          class="saved-api"
+          data-id="${escapeHtml(api.id)}"
+        >
+
+          <div class="saved-api-top">
+
+            <div>
+
+              <div class="saved-api-name">
+                ${escapeHtml(
+                  api.name
+                )}
+              </div>
+
+              <div class="saved-api-url">
+                ${escapeHtml(
+                  api.method
+                )}
+                ${escapeHtml(
+                  api.url
+                )}
+              </div>
+
+            </div>
+
+          </div>
+
+          ${
+            api.description
+              ? `
+                <div
+                  class="muted"
+                  style="margin-top:8px;"
+                >
+                  ${escapeHtml(
+                    api.description
+                  )}
+                </div>
+              `
+              : ""
+          }
+
+          <div class="api-actions">
+
+            <button
+              type="button"
+              class="small-btn run-api"
+              data-id="${escapeHtml(api.id)}"
+            >
+              Search
+            </button>
+
+            <button
+              type="button"
+              class="small-btn delete-btn delete-api"
+              data-id="${escapeHtml(api.id)}"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+
+      `).join("");
+
+    document
+      .querySelectorAll(".run-api")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            selectedAPI =
+              button.dataset.id;
+
+            apiRunner.classList.add(
+              "show"
+            );
+
+            apiRunnerInput.focus();
+
+          }
+        );
+
+      });
+
+    document
+      .querySelectorAll(".delete-api")
+      .forEach(button => {
+
+        button.addEventListener(
+          "click",
+          async () => {
+
+            await deleteAPI(
+              button.dataset.id
+            );
+
+          }
+        );
+
+      });
+
+  } catch (error) {
+
+    savedApisBox.innerHTML = `
+      <div class="error">
+        ${escapeHtml(
+          error.message ||
+          "Failed to load APIs"
+        )}
+      </div>
+    `;
+  }
+}
+
+apiForm.addEventListener(
+  "submit",
+  async event => {
+
+    event.preventDefault();
+
+    const name =
+      document
+        .getElementById("apiName")
+        .value.trim();
+
+    const url =
+      document
+        .getElementById("apiUrl")
+        .value.trim();
+
+    const method =
+      document
+        .getElementById("apiMethod")
+        .value;
+
+    const description =
+      document
+        .getElementById("apiDescription")
+        .value.trim();
+
+    if (!name || !url) {
+      return;
+    }
+
+    try {
+
+      const response =
+        await fetch(
+          "/api/custom-apis",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+              "Accept":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+              name,
+              url,
+              method,
+              description
+            })
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (!response.ok ||
+          data.success === false) {
+
+        throw new Error(
+          data.error ||
+          "Failed to add API"
+        );
+      }
+
+      apiForm.reset();
+
+      await loadSavedApis();
+
+    } catch (error) {
+
+      savedApisBox.innerHTML = `
+        <div class="error">
+          ${escapeHtml(
+            error.message ||
+            "Failed to add API"
+          )}
+        </div>
+      `;
+    }
+
+  }
+);
+
+async function deleteAPI(id) {
+
+  if (!id) {
+    return;
+  }
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/custom-apis?id=${encodeURIComponent(id)}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Accept":
+              "application/json"
+          }
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (!response.ok ||
+        data.success === false) {
+
+      throw new Error(
+        data.error ||
+        "Delete failed"
+      );
+    }
+
+    if (
+      selectedAPI &&
+      String(selectedAPI) === String(id)
+    ) {
+
+      selectedAPI = null;
+
+      apiRunner.classList.remove(
+        "show"
+      );
+
+    }
+
+    await loadSavedApis();
+
+  } catch (error) {
+
+    savedApisBox.innerHTML = `
+      <div class="error">
+        ${escapeHtml(
+          error.message ||
+          "Delete failed"
+        )}
+      </div>
+    `;
+  }
+}
+
+apiRunButton.addEventListener(
+  "click",
+  async () => {
+
+    if (!selectedAPI) {
+
+      apiRunnerResult.innerHTML = `
+        <div class="error">
+          Select a saved API first.
+        </div>
+      `;
+
+      return;
+    }
+
+    const value =
+      apiRunnerInput.value.trim();
+
+    if (!value) {
+
+      apiRunnerResult.innerHTML = `
+        <div class="error">
+          Value is required
+        </div>
+      `;
+
+      return;
+    }
+
+    apiRunnerResult.innerHTML = `
+      <div class="loading">
+        Running API...
+      </div>
+    `;
+
+    try {
+
+      const response =
+        await fetch(
+          `/api/custom-proxy?id=${encodeURIComponent(
+            selectedAPI
+          )}&message=${encodeURIComponent(
+            value
+          )}`,
+          {
+            method: "GET",
+            headers: {
+              "Accept":
+                "application/json"
+            }
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (!response.ok ||
+          data.success === false) {
+
+        throw new Error(
+          data.error ||
+          "API request failed"
+        );
+      }
+
+      apiRunnerResult.innerHTML = `
+
+        <div class="result-card">
+
+          <div class="result-head">
+
+            <strong>
+              API Response
+            </strong>
+
+          </div>
+
+          <pre>${escapeHtml(
+            JSON.stringify(
+              data.response ??
+              data,
+              null,
+              2
+            )
+          )}</pre>
+
+        </div>
+
+      `;
+
+    } catch (error) {
+
+      apiRunnerResult.innerHTML = `
+        <div class="error">
+          ${escapeHtml(
+            error.message ||
+            "API request failed"
+          )}
+        </div>
+      `;
+    }
+
+  }
+);
+
 loadSavedApis();
+
 </script>
 
 </body>
