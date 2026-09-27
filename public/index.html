@@ -1,692 +1,259 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TXG Information</title>
-
 <style>
-*{
-    box-sizing:border-box;
-}
-
-body{
-    margin:0;
-    min-height:100vh;
-    background:#080b12;
-    color:#f5f7fb;
-    font-family:Inter,Arial,sans-serif;
-}
-
-.app{
-    width:100%;
-    max-width:1100px;
-    margin:auto;
-    padding:22px 16px 50px;
-}
-
-.header{
-    text-align:center;
-    margin-bottom:24px;
-}
-
-.logo{
-    font-size:30px;
-    font-weight:900;
-    letter-spacing:-1px;
-}
-
-.logo span{
-    color:#00d99a;
-}
-
-.subtitle{
-    color:#8992a5;
-    font-size:14px;
-    margin-top:7px;
-}
-
-.search-box{
-    background:#10151f;
-    border:1px solid #202838;
-    border-radius:20px;
-    padding:18px;
-    margin-bottom:20px;
-}
-
-.search-row{
-    display:flex;
-    gap:10px;
-}
-
-#value{
-    flex:1;
-    min-width:0;
-    background:#080b12;
-    color:#fff;
-    border:1px solid #293243;
-    border-radius:13px;
-    padding:14px 15px;
-    outline:none;
-    font-size:15px;
-}
-
-#value:focus{
-    border-color:#00d99a;
-}
-
-#searchBtn{
-    border:0;
-    border-radius:13px;
-    padding:0 22px;
-    background:#00d99a;
-    color:#06100c;
-    font-weight:900;
-    cursor:pointer;
-}
-
-#searchBtn:disabled{
-    opacity:.55;
-    cursor:not-allowed;
-}
-
-.categories{
-    display:grid;
-    grid-template-columns:repeat(6,1fr);
-    gap:9px;
-    margin-top:14px;
-}
-
-.category{
-    border:1px solid #252d3d;
-    background:#0b1018;
-    color:#cbd2df;
-    border-radius:11px;
-    padding:10px 7px;
-    font-size:12px;
-    font-weight:800;
-    cursor:pointer;
-}
-
-.category.active{
-    background:#00d99a;
-    color:#06100c;
-    border-color:#00d99a;
-}
-
-.status{
-    display:none;
-    text-align:center;
-    padding:16px;
-    color:#8e98aa;
-}
-
-.results{
-    display:flex;
-    flex-direction:column;
-    gap:13px;
-}
-
-.result-card{
-    background:#10151f;
-    border:1px solid #202838;
-    border-radius:18px;
-    overflow:hidden;
-}
-
-.result-head{
-    padding:14px 16px;
-    border-bottom:1px solid #202838;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-}
-
-.result-name{
-    font-size:15px;
-    font-weight:900;
-}
-
-.result-source{
-    font-size:11px;
-    color:#00d99a;
-    background:#06271d;
-    border:1px solid #0a4b39;
-    padding:5px 8px;
-    border-radius:7px;
-}
-
-.result-body{
-    padding:15px 16px;
-}
-
-.result-row{
-    display:flex;
-    justify-content:space-between;
-    gap:18px;
-    padding:9px 0;
-    border-bottom:1px solid #1c2330;
-}
-
-.result-row:last-child{
-    border-bottom:0;
-}
-
-.result-key{
-    color:#8992a5;
-    font-size:12px;
-    flex:0 0 38%;
-}
-
-.result-value{
-    color:#f1f4f8;
-    font-size:13px;
-    text-align:right;
-    word-break:break-word;
-}
-
-.raw-response{
-    margin:0;
-    white-space:pre-wrap;
-    word-break:break-word;
-    color:#cbd2df;
-    font-size:12px;
-    line-height:1.6;
-    background:#080b12;
-    border-radius:11px;
-    padding:13px;
-    overflow:auto;
-}
-
-.empty{
-    text-align:center;
-    padding:45px 20px;
-    color:#687286;
-}
-
-.error{
-    color:#ff7c88;
-}
-
-@media(max-width:750px){
-    .categories{
-        grid-template-columns:repeat(3,1fr);
-    }
-
-    .search-row{
-        flex-direction:column;
-    }
-
-    #searchBtn{
-        min-height:46px;
-    }
-}
-
-@media(max-width:420px){
-    .categories{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .result-row{
-        flex-direction:column;
-        gap:4px;
-    }
-
-    .result-value{
-        text-align:left;
-    }
-}
+:root{--bg:#07090d;--panel:#10151d;--panel2:#151c27;--line:#27313f;--text:#f4f7fb;--muted:#91a0b2;--accent:#6ee7b7;--bad:#ff8995}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top,#182530,#07090d 50%);color:var(--text);font-family:Inter,system-ui,Arial,sans-serif}
+.wrap{width:min(1160px,94%);margin:auto}
+.top{padding:26px 0 18px;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.logo{font-size:27px;font-weight:900;letter-spacing:.3px}
+.sub{font-size:13px;color:var(--muted);margin-top:4px}
+.btn,.input{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:12px;padding:12px 14px;font:inherit}
+.btn{cursor:pointer}.btn:hover{border-color:#4c6079}
+.primary{background:var(--accent);color:#06100b;border:0;font-weight:850}
+.logout{color:#ff9da7}.hidden{display:none!important}
+.login,.searchbox,.card{background:rgba(16,21,29,.95);border:1px solid var(--line);border-radius:18px;padding:22px}
+.login{max-width:430px;margin:80px auto}
+.login h1{margin:0 0 5px}
+.login .input{width:100%;margin:18px 0 10px}
+.login .primary{width:100%}
+.searchrow{display:grid;grid-template-columns:1fr 135px;gap:10px}
+.searchrow .input{width:100%}
+.tools{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.tool.active{color:var(--accent);border-color:var(--accent)}
+.status{font-size:13px;color:var(--muted);margin-top:12px}
+.ok{color:#9bf2c9}.error{color:var(--bad)}
+.results{display:grid;gap:14px;margin:16px 0 40px}
+.head{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:11px;margin-bottom:11px}
+.name{font-weight:850}.source{font-size:11px;color:var(--accent);border:1px solid #2b5144;border-radius:99px;padding:4px 8px}
+.state{font-size:12px;color:var(--muted)}
+pre{white-space:pre-wrap;overflow:auto;font-size:12px;line-height:1.6;margin:0;color:#dce4ed}
+@media(max-width:650px){.searchrow{grid-template-columns:1fr}.searchrow .btn{width:100%}.top{align-items:flex-start}}
 </style>
 </head>
-
 <body>
+<div class="wrap">
 
-<div class="app">
+<header class="top">
+  <div>
+    <div class="logo">TXG Information</div>
+    <div class="sub">Connected public & authorized lookup center</div>
+  </div>
+  <button id="logout" class="btn logout hidden">Logout</button>
+</header>
 
-    <div class="header">
-        <div class="logo">TXG <span>Information</span></div>
-        <div class="subtitle">
-            Connected Information Lookup Center
-        </div>
-    </div>
+<section id="loginBox" class="login">
+  <h1>Admin Login</h1>
+  <div class="sub">Secure server-side session.</div>
+  <input id="password" class="input" type="password" placeholder="Admin password" autocomplete="current-password">
+  <button id="login" class="btn primary">Login</button>
+  <div id="loginMsg" class="status"></div>
+</section>
 
-    <div class="search-box">
+<main id="app" class="hidden">
 
-        <div class="search-row">
-            <input
-                id="value"
-                type="text"
-                autocomplete="off"
-                placeholder="Enter number, email, IP, URL..."
-            >
+<section class="searchbox">
+  <div class="searchrow">
+    <input id="query" class="input" placeholder="Mobile, Email, IP, URL, PIN, IFSC, UPI, Vehicle or Company">
+    <button id="search" class="btn primary">Search</button>
+  </div>
 
-            <button id="searchBtn" type="button">
-                Search
-            </button>
-        </div>
+  <div id="tools" class="tools"></div>
+  <div id="status" class="status">Ready.</div>
+</section>
 
-        <div class="categories">
+<section id="results" class="results"></section>
 
-            <button class="category active" data-type="mobile">
-                Mobile
-            </button>
-
-            <button class="category" data-type="email">
-                Email
-            </button>
-
-            <button class="category" data-type="vehicle">
-                Vehicle
-            </button>
-
-            <button class="category" data-type="ip">
-                IP
-            </button>
-
-            <button class="category" data-type="url">
-                URL
-            </button>
-
-            <button class="category" data-type="pin">
-                PIN
-            </button>
-
-            <button class="category" data-type="ifsc">
-                IFSC
-            </button>
-
-            <button class="category" data-type="upi">
-                UPI
-            </button>
-
-            <button class="category" data-type="company">
-                Company
-            </button>
-
-            <button class="category" data-type="crm">
-                CRM
-            </button>
-
-            <button class="category" data-type="custom">
-                Custom API
-            </button>
-
-        </div>
-
-    </div>
-
-    <div id="status" class="status">
-        Searching...
-    </div>
-
-    <div id="results" class="results">
-
-        <div class="empty">
-            Search something to see connected information.
-        </div>
-
-    </div>
-
+</main>
 </div>
 
 <script>
+const tools=[
+  ["auto","Auto"],
+  ["mobile","Mobile"],
+  ["email","Email"],
+  ["vehicle","Vehicle"],
+  ["ip","IP"],
+  ["url","URL"],
+  ["pin","PIN"],
+  ["ifsc","IFSC"],
+  ["upi","UPI"],
+  ["company","Company"],
+  ["crm","CRM"],
+  ["custom","Custom API"]
+];
 
-let selectedType = "mobile";
+let selected="auto";
+const $=id=>document.getElementById(id);
 
-const valueInput = document.getElementById("value");
-const searchBtn = document.getElementById("searchBtn");
-const results = document.getElementById("results");
-const statusBox = document.getElementById("status");
-const categoryButtons = document.querySelectorAll(".category");
-
-
-categoryButtons.forEach(button => {
-
-    button.addEventListener("click", () => {
-
-        categoryButtons.forEach(btn => {
-            btn.classList.remove("active");
-        });
-
-        button.classList.add("active");
-
-        selectedType = button.dataset.type;
-
-        const placeholders = {
-            mobile: "Enter mobile number...",
-            email: "Enter email address...",
-            vehicle: "Enter vehicle registration number...",
-            ip: "Enter IP address...",
-            url: "Enter URL or domain...",
-            pin: "Enter PIN code...",
-            ifsc: "Enter IFSC code...",
-            upi: "Enter UPI ID...",
-            company: "Enter company name...",
-            crm: "Enter CRM search...",
-            custom: "Enter search value..."
-        };
-
-        valueInput.placeholder =
-            placeholders[selectedType] ||
-            "Enter search value...";
-
-    });
-
-});
-
-
-searchBtn.addEventListener("click", runSearch);
-
-
-valueInput.addEventListener("keydown", event => {
-
-    if(event.key === "Enter"){
-        runSearch();
-    }
-
-});
-
-
-async function runSearch(){
-
-    const value = valueInput.value.trim();
-
-    if(!value){
-        results.innerHTML = `
-            <div class="empty error">
-                Please enter a value to search.
-            </div>
-        `;
-        return;
-    }
-
-    searchBtn.disabled = true;
-
-    statusBox.style.display = "block";
-    statusBox.textContent = "Searching connected sources...";
-
-    results.innerHTML = "";
-
-    try{
-
-        const url =
-            "/api/lookup?type=" +
-            encodeURIComponent(selectedType) +
-            "&value=" +
-            encodeURIComponent(value);
-
-        const response = await fetch(url, {
-            method:"GET",
-            headers:{
-                "Accept":"application/json"
-            },
-            cache:"no-store"
-        });
-
-        const data = await response.json();
-
-        if(!response.ok){
-
-            throw new Error(
-                data.message ||
-                "Search request failed."
-            );
-
-        }
-
-        renderResults(data);
-
-    }catch(error){
-
-        results.innerHTML = `
-            <div class="result-card">
-                <div class="result-head">
-                    <div class="result-name">Search Error</div>
-                    <div class="result-source">ERROR</div>
-                </div>
-
-                <div class="result-body">
-                    <div class="raw-response error">
-                        ${escapeHtml(error.message || "Unknown error")}
-                    </div>
-                </div>
-            </div>
-        `;
-
-    }finally{
-
-        searchBtn.disabled = false;
-        statusBox.style.display = "none";
-
-    }
-
+function message(el,text,className=""){
+  el.textContent=text;
+  el.className="status "+className;
 }
 
+function drawTools(){
+  $("tools").innerHTML="";
+  tools.forEach(([key,label])=>{
+    const b=document.createElement("button");
+    b.type="button";
+    b.className="btn tool"+(key===selected?" active":"");
+    b.textContent=label;
+    b.onclick=()=>{
+      selected=key;
+      drawTools();
+    };
+    $("tools").appendChild(b);
+  });
+}
+
+function showApp(){
+  $("loginBox").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  $("logout").classList.remove("hidden");
+  drawTools();
+}
+
+function showLogin(){
+  $("loginBox").classList.remove("hidden");
+  $("app").classList.add("hidden");
+  $("logout").classList.add("hidden");
+}
+
+async function login(){
+  message($("loginMsg"),"Checking...");
+  try{
+    const r=await fetch("/api/auth",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        action:"login",
+        password:$("password").value
+      })
+    });
+
+    const d=await r.json();
+
+    if(!r.ok) throw new Error(d.error||"Login failed");
+
+    showApp();
+  }catch(e){
+    message($("loginMsg"),e.message,"error");
+  }
+}
+
+async function logout(){
+  try{
+    await fetch("/api/auth",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({action:"logout"})
+    });
+  }finally{
+    showLogin();
+  }
+}
 
 function renderResults(data){
+  const root=$("results");
+  root.innerHTML="";
 
-    results.innerHTML = "";
+  if(!data.results || !data.results.length){
+    root.innerHTML='<div class="card state">No results returned.</div>';
+    return;
+  }
 
-    /*
-        Backend can return:
+  data.results.forEach(item=>{
+    const card=document.createElement("article");
+    card.className="card";
 
-        {
-            "results":[
-                {
-                    "name":"CRM",
-                    "source":"Zoho CRM",
-                    "data":{...}
-                },
-                {
-                    "name":"Company",
-                    "source":"Company API",
-                    "data":{...}
-                }
-            ]
-        }
+    const head=document.createElement("div");
+    head.className="head";
 
-        Every result becomes its own block.
-    */
+    const name=document.createElement("div");
+    name.className="name";
+    name.textContent=item.name||"RESULT";
 
-    let items = [];
+    const source=document.createElement("div");
+    source.className="source";
+    source.textContent=(item.source||"SOURCE")+" · "+(item.status||"success");
 
-    if(Array.isArray(data)){
-        items = data;
-    }else if(Array.isArray(data.results)){
-        items = data.results;
-    }else if(Array.isArray(data.sources)){
-        items = data.sources;
-    }else{
+    const pre=document.createElement("pre");
+    pre.textContent=
+      typeof item.data==="string"
+        ? item.data
+        : JSON.stringify(item.data,null,2);
 
-        items = [{
-            name:data.name || "Response",
-            source:data.source || "TXG",
-            data:data
-        }];
-
-    }
-
-
-    if(!items.length){
-
-        results.innerHTML = `
-            <div class="empty">
-                No information found.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    items.forEach(item => {
-
-        const card = document.createElement("div");
-
-        card.className = "result-card";
-
-        const name =
-            item.name ||
-            item.title ||
-            item.type ||
-            "Information";
-
-        const source =
-            item.source ||
-            item.provider ||
-            "TXG";
-
-
-        const body =
-            item.data !== undefined
-                ? item.data
-                : item.response !== undefined
-                    ? item.response
-                    : item;
-
-
-        card.innerHTML = `
-            <div class="result-head">
-
-                <div class="result-name">
-                    ${escapeHtml(String(name))}
-                </div>
-
-                <div class="result-source">
-                    ${escapeHtml(String(source))}
-                </div>
-
-            </div>
-
-            <div class="result-body">
-                ${renderBody(body)}
-            </div>
-        `;
-
-
-        results.appendChild(card);
-
-    });
-
+    head.append(name,source);
+    card.append(head,pre);
+    root.appendChild(card);
+  });
 }
 
+async function search(){
+  const value=$("query").value.trim();
 
-function renderBody(data){
+  if(!value){
+    message($("status"),"Enter a value first.");
+    return;
+  }
 
-    if(
-        data === null ||
-        data === undefined
-    ){
-        return `
-            <div class="raw-response">
-                Not available
-            </div>
-        `;
+  message($("status"),"Searching...");
+  $("results").innerHTML="";
+
+  try{
+    const url=
+      "/api/lookup?type="+
+      encodeURIComponent(selected)+
+      "&value="+
+      encodeURIComponent(value);
+
+    const r=await fetch(url,{cache:"no-store"});
+    const d=await r.json();
+
+    if(r.status===401){
+      showLogin();
+      message($("loginMsg"),"Session expired. Login again.","error");
+      return;
     }
 
+    if(!r.ok) throw new Error(d.error||"Lookup failed");
 
-    if(
-        typeof data !== "object"
-    ){
-        return `
-            <div class="raw-response">
-                ${escapeHtml(String(data))}
-            </div>
-        `;
-    }
-
-
-    const entries = Object.entries(data);
-
-    if(!entries.length){
-
-        return `
-            <div class="raw-response">
-                No data returned.
-            </div>
-        `;
-
-    }
-
-
-    let html = "";
-
-    entries.forEach(([key,value]) => {
-
-        if(
-            value !== null &&
-            typeof value === "object"
-        ){
-
-            html += `
-                <div class="result-row">
-
-                    <div class="result-key">
-                        ${escapeHtml(formatKey(key))}
-                    </div>
-
-                    <div class="result-value">
-                        ${escapeHtml(
-                            JSON.stringify(value,null,2)
-                        )}
-                    </div>
-
-                </div>
-            `;
-
-        }else{
-
-            html += `
-                <div class="result-row">
-
-                    <div class="result-key">
-                        ${escapeHtml(formatKey(key))}
-                    </div>
-
-                    <div class="result-value">
-                        ${escapeHtml(
-                            value === null
-                                ? "Not available"
-                                : String(value)
-                        )}
-                    </div>
-
-                </div>
-            `;
-
-        }
-
-    });
-
-
-    return html;
-
+    renderResults(d);
+    message(
+      $("status"),
+      `${d.result_count||0} result block(s) returned.`,
+      "ok"
+    );
+  }catch(e){
+    $("results").innerHTML=
+      `<div class="card error">${e.message}</div>`;
+    message($("status"),"Search failed.","error");
+  }
 }
 
+$("login").onclick=login;
+$("logout").onclick=logout;
+$("search").onclick=search;
 
-function formatKey(key){
+$("password").addEventListener("keydown",e=>{
+  if(e.key==="Enter") login();
+});
 
-    return String(key)
-        .replace(/_/g," ")
-        .replace(/([a-z])([A-Z])/g,"$1 $2")
-        .replace(/\b\w/g,c => c.toUpperCase());
+$("query").addEventListener("keydown",e=>{
+  if(e.key==="Enter") search();
+});
 
-}
-
-
-function escapeHtml(value){
-
-    return String(value)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-}
-
+fetch("/api/auth",{cache:"no-store"})
+  .then(r=>r.json())
+  .then(d=>{
+    if(d.authenticated) showApp();
+    else showLogin();
+  })
+  .catch(showLogin);
 </script>
-
 </body>
 </html>
